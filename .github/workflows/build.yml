@@ -1,0 +1,130 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop, 'feature/**' ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup CMake
+      uses: lukka/get-cmake@latest
+    
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    
+    - name: Build
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+    
+    - name: Run Tests
+      working-directory: build
+      run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: windows-build-artifacts
+        path: |
+          build/**/*.exe
+          build/**/*.dll
+          build/**/*.lib
+        retention-days: 7
+
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake g++ lcov
+    
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    
+    - name: Build
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+    
+    - name: Run Tests
+      working-directory: build
+      run: ctest --output-on-failure
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: linux-build-artifacts
+        path: |
+          build/**/localeventplanner*
+          build/**/*.so
+          build/**/*.a
+        retention-days: 7
+
+  code-coverage:
+    runs-on: windows-latest
+    needs: build-windows
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup CMake
+      uses: lukka/get-cmake@latest
+    
+    - name: Install OpenCppCoverage
+      run: |
+        choco install opencppcoverage -y
+        echo "C:\Program Files\OpenCppCoverage" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    
+    - name: Configure CMake (Debug for Coverage)
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Debug
+    
+    - name: Build (Debug)
+      run: cmake --build build --config Debug
+    
+    - name: Run Tests with Coverage
+      run: |
+        OpenCppCoverage.exe --sources src\localeventplanner --export_type=cobertura:coverage.xml -- build\src\tests\localeventplanner\Debug\localeventplanner_tests.exe
+      continue-on-error: true
+    
+    - name: Upload Coverage Report
+      uses: codecov/codecov-action@v4
+      if: always()
+      with:
+        files: ./coverage.xml
+        flags: unittests
+        name: codecov-localeventplanner
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  lint-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install clang-format
+      run: sudo apt-get install -y clang-format
+    
+    - name: Check Code Formatting
+      run: |
+        find src -name '*.cpp' -o -name '*.h' | xargs clang-format --dry-run --Werror
+      continue-on-error: true
+
