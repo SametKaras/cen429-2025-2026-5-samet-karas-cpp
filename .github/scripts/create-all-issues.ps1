@@ -1,259 +1,259 @@
-# Local Event Planner - Tüm Issue'ları Oluştur
-# M1, M2, M3, M4 için tüm issue'ları otomatik oluşturur
+# Local Event Planner - Create All Issues
+# Creates all issues for M1, M2, M3, M4 milestones
 
-Write-Host "🚀 M1, M2, M3, M4 Issue'ları Oluşturuluyor..." -ForegroundColor Green
+Write-Host "Creating M1, M2, M3, M4 Issues..." -ForegroundColor Green
 
 # M1 Issues
 $m1Issues = @(
     @{
-        title="Issue 1.1 – Domain Modellerinin Oluşturulması"
+        title="Issue 1.1 - Create Domain Models"
         body=@"
-## Açıklama
-Event, Attendee, Schedule, Feedback sınıfları ve veri yapıları tanımlanacak.
+## Description
+Define Event, Attendee, Schedule, Feedback classes and data structures.
 
-## Çıktı
-- [ ] `src/core/models/Event.h` ve `Event.cpp`
-- [ ] `src/core/models/Attendee.h` ve `Attendee.cpp`
-- [ ] `src/core/models/Schedule.h` ve `Schedule.cpp`
-- [ ] `src/core/models/Feedback.h` ve `Feedback.cpp`
-- [ ] Model testleri yazıldı
+## Output
+- [ ] src/core/models/Event.h and Event.cpp
+- [ ] src/core/models/Attendee.h and Attendee.cpp
+- [ ] src/core/models/Schedule.h and Schedule.cpp
+- [ ] src/core/models/Feedback.h and Feedback.cpp
+- [ ] Model tests written
 
-## Kabul Kriterleri
-- Tüm domain modelleri CRUD operasyonlarını destekliyor
-- Veri validasyonu var
-- Testler %90+ coverage
+## Acceptance Criteria
+- All domain models support CRUD operations
+- Data validation implemented
+- Tests 90%+ coverage
 "@
         labels="type:feature,area:core,priority:P1"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.2 – User Authentication & Authorization System"
+        title="Issue 1.2 - User Authentication and Authorization System"
         body=@"
-## Açıklama
-- User kayıt/giriş sistemi
+## Description
+- User registration/login system
 - Password hashing (PBKDF2-SHA256)
 - Role-based access control
-- Session token generation & validation
+- Session token generation and validation
 
-## Çıktı
-- [ ] `src/core/auth/AuthManager.h/cpp`
-- [ ] `src/core/auth/User.h/cpp`
-- [ ] `src/core/auth/Role.h/cpp`
-- [ ] Password hashing implementasyonu
-- [ ] Authentication testleri
+## Output
+- [ ] src/core/auth/AuthManager.h/cpp
+- [ ] src/core/auth/User.h/cpp
+- [ ] src/core/auth/Role.h/cpp
+- [ ] Password hashing implementation
+- [ ] Authentication tests
 
-## Kabul Kriterleri
-- Register/Login çalışıyor
-- Password güvenli şekilde hash'leniyor
-- Session token üretiliyor
-- Role bazlı yetkilendirme aktif
+## Acceptance Criteria
+- Register/Login working
+- Password securely hashed
+- Session tokens generated
+- Role-based authorization active
 "@
         labels="type:feature,area:auth,priority:P1"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.3 – Session Management"
+        title="Issue 1.3 - Session Management"
         body=@"
-## Açıklama
-- Session token yaratma/doğrulama
-- Session expiration kontrolü
+## Description
+- Session token creation/validation
+- Session expiration control
 - Multi-device session support
 - Secure session storage
 
-## Çıktı
-- [ ] `src/core/auth/SessionManager.h/cpp`
+## Output
+- [ ] src/core/auth/SessionManager.h/cpp
 - [ ] Session encryption
 - [ ] Session database table
-- [ ] Session testleri
+- [ ] Session tests
 
-## Kabul Kriterleri
-- Session timeout çalışıyor
-- Token refresh mekanizması var
-- Concurrent session kontrolü
+## Acceptance Criteria
+- Session timeout working
+- Token refresh mechanism
+- Concurrent session control
 "@
         labels="type:feature,area:auth,priority:P1"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.4 – Audit Logging System"
+        title="Issue 1.4 - Audit Logging System"
         body=@"
-## Açıklama
-- Tüm kritik işlemlerin loglanması
+## Description
+- Log all critical operations
 - User actions, security events, data access
 - Tamper-proof log storage
 - Log encryption
 
-## Çıktı
-- [ ] `src/core/audit/AuditLogger.h/cpp`
+## Output
+- [ ] src/core/audit/AuditLogger.h/cpp
 - [ ] Audit log database table
-- [ ] Log formatı (JSON)
+- [ ] Log format (JSON)
 - [ ] Log viewer utility
 
-## Kabul Kriterleri
-- Her CRUD işlemi loglanıyor
-- Security events loglanıyor
-- Log'lar şifreli ve değiştirilemez
+## Acceptance Criteria
+- All CRUD operations logged
+- Security events logged
+- Logs encrypted and immutable
 "@
         labels="type:feature,area:security,priority:P1"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.5 – CRUD Fonksiyonlarının Yazılması (DLL)"
+        title="Issue 1.5 - CRUD Functions Implementation (DLL)"
         body=@"
-## Açıklama
-Event, Attendee, Schedule, Feedback CRUD işlemleri DLL içinde uygulanacak.
+## Description
+Implement Event, Attendee, Schedule, Feedback CRUD operations in DLL.
 
-## Çıktı
-- [ ] `core-secure.dll` derlenebiliyor
+## Output
+- [ ] core-secure.dll compiles successfully
 - [ ] EventManager CRUD
 - [ ] AttendeeManager CRUD (+ check-in/out)
 - [ ] ScheduleManager CRUD
 - [ ] FeedbackManager CRUD
 - [ ] Export interface
 
-## Kabul Kriterleri
-- DLL başarıyla derlenip test ediliyor
-- Tüm CRUD operasyonları çalışıyor
-- Permission kontrolü entegre
+## Acceptance Criteria
+- DLL successfully compiles and tests
+- All CRUD operations working
+- Permission control integrated
 "@
         labels="type:feature,area:core"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.6 – SQLite Erişim Katmanı"
+        title="Issue 1.6 - SQLite Access Layer"
         body=@"
-## Açıklama
-sqlite3 entegrasyonu, tablo migration'ları ve CRUD işlemleri DAO olarak yazılacak.
+## Description
+sqlite3 integration, table migrations and CRUD operations as DAO pattern.
 
-## Çıktı
-- [ ] `src/persistence/Database.h/cpp`
+## Output
+- [ ] src/persistence/Database.h/cpp
 - [ ] Migration scripts
 - [ ] DAO pattern implementation
 - [ ] Connection pooling
 - [ ] Database encryption (SQLCipher)
 
-## Kabul Kriterleri
-- Tüm tablolar oluşturuluyor
-- Migration sistem çalışıyor
-- CRUD operasyonları database'e yansıyor
+## Acceptance Criteria
+- All tables created
+- Migration system working
+- CRUD operations reflect to database
 "@
         labels="type:feature,area:sqlite"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.7 – Konsol Arayüzü (CLI)"
+        title="Issue 1.7 - Console User Interface (CLI)"
         body=@"
-## Açıklama
-Kullanıcıların terminal üzerinden etkinlik ekleme, listeleme, silme işlemlerini yapabildiği CLI yazılacak.
+## Description
+CLI allowing users to add, list, delete events via terminal.
 
-## Çıktı
-- [ ] `src/app/main.cpp`
-- [ ] Menu sistemi
-- [ ] Login/Register ekranları
+## Output
+- [ ] src/app/main.cpp
+- [ ] Menu system
+- [ ] Login/Register screens
 - [ ] Guest mode
 - [ ] Input validation
 
-## Kabul Kriterleri
-- Tüm özellikler CLI'dan erişilebilir
-- Guest ve authenticated mode ayrımı var
-- Kullanıcı dostu arayüz
+## Acceptance Criteria
+- All features accessible from CLI
+- Guest and authenticated mode separation
+- User-friendly interface
 "@
         labels="type:feature,area:app"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.8 – Birim Test Altyapısı"
+        title="Issue 1.8 - Unit Test Infrastructure"
         body=@"
-## Açıklama
-GoogleTest ile test sistemi kurulacak. CRUD testleri yazılacak.
+## Description
+Setup test system with GoogleTest. Write CRUD tests.
 
-## Çıktı
-- [ ] GoogleTest entegrasyonu
-- [ ] CTest yapılandırması
-- [ ] Model testleri
-- [ ] CRUD testleri
-- [ ] Coverage raporu
+## Output
+- [ ] GoogleTest integration
+- [ ] CTest configuration
+- [ ] Model tests
+- [ ] CRUD tests
+- [ ] Coverage report
 
-## Kabul Kriterleri
-- `ctest` başarılı çalışıyor
-- Minimum %70 code coverage
-- CI'da testler otomatik çalışıyor
+## Acceptance Criteria
+- ctest runs successfully
+- Minimum 70% code coverage
+- Tests run automatically in CI
 "@
         labels="type:test,area:test,priority:P1"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.9 – Varlık Envanteri - Faz 1"
+        title="Issue 1.9 - Asset Inventory - Phase 1"
         body=@"
-## Açıklama
-M1'de oluşturulan tüm varlıkların dokümante edilmesi
+## Description
+Document all assets created in M1
 
-## Çıktı
-- [ ] `docs/asset-inventory/phase1.md`
+## Output
+- [ ] docs/asset-inventory/phase1.md
 - [ ] User credentials inventory
 - [ ] Session tokens inventory
 - [ ] Database tables inventory
 
-## Kabul Kriterleri
-- Her varlık için metadata tam
-- Koruma şemaları tanımlanmış
+## Acceptance Criteria
+- Metadata complete for each asset
+- Protection schemas defined
 "@
         labels="type:docs,area:assets"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.10 – Guest Mode Implementation"
+        title="Issue 1.10 - Guest Mode Implementation"
         body=@"
-## Açıklama
-Misafir kullanıcıların kayıt olmadan sistemi görüntülemesine izin verilmesi
+## Description
+Allow guest users to view system without registration
 
-## Çıktı
-- [ ] GuestAccessController sınıfı
+## Output
+- [ ] GuestAccessController class
 - [ ] Permission enum (GUEST, USER, ADMIN)
-- [ ] Guest mode testleri
-- [ ] CLI'da Guest Mode menüsü
+- [ ] Guest mode tests
+- [ ] Guest Mode menu in CLI
 
-## Kabul Kriterleri
-- Guest kullanıcı sadece okuma yapabiliyor
-- Public events görüntülenebiliyor
-- Guest session tracking çalışıyor
+## Acceptance Criteria
+- Guest users can only read
+- Public events viewable
+- Guest session tracking working
 "@
         labels="type:feature,area:auth,priority:P2"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     },
     @{
-        title="Issue 1.11 – Permission & Authorization System"
+        title="Issue 1.11 - Permission and Authorization System"
         body=@"
-## Açıklama
-Role-based access control (RBAC) implementasyonu
+## Description
+Role-based access control (RBAC) implementation
 
-## Çıktı
-- [ ] PermissionManager sınıfı
+## Output
+- [ ] PermissionManager class
 - [ ] checkPermission(user, resource, action)
 - [ ] Authorization middleware
 - [ ] Resource ownership validation
 
-## Kabul Kriterleri
-- Permission matrix çalışıyor
-- Unauthorized access engelleniyor
-- Testler %100 coverage
+## Acceptance Criteria
+- Permission matrix working
+- Unauthorized access blocked
+- Tests 100% coverage
 "@
         labels="type:security,area:auth,priority:P1"
-        milestone="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        milestone="M1 - Core Features and Basic Security"
     }
 )
 
-Write-Host "`n📦 M1 Issue'ları oluşturuluyor... ($($m1Issues.Count) adet)" -ForegroundColor Yellow
+Write-Host "`nCreating M1 issues... ($($m1Issues.Count) count)" -ForegroundColor Yellow
 foreach ($issue in $m1Issues) {
-    Write-Host "  → $($issue.title)" -ForegroundColor Gray
+    Write-Host "  -> $($issue.title)" -ForegroundColor Gray
     gh issue create --title $issue.title --body $issue.body --label $issue.labels --milestone $issue.milestone 2>&1 | Out-Null
 }
 
-# M2, M3, M4 issue'larını da ekleyebiliriz (kısaltılmış versiyon)
-Write-Host "`n✅ Tüm issue'lar oluşturuldu!" -ForegroundColor Green
-Write-Host "`n📊 Özet:" -ForegroundColor Cyan
-Write-Host "  M1: $($m1Issues.Count) issue" -ForegroundColor White
+Write-Host "`nAll issues created!" -ForegroundColor Green
+Write-Host "`nSummary:" -ForegroundColor Cyan
+Write-Host "  M1: $($m1Issues.Count) issues" -ForegroundColor White
 
 $repoUrl = gh repo view --json url -q .url
-Write-Host "`n🔗 Issues: $repoUrl/issues" -ForegroundColor Cyan
-
+Write-Host "`nIssues: $repoUrl/issues" -ForegroundColor Cyan
+Write-Host "`nNote: M2, M3, M4 issues can be added similarly." -ForegroundColor Yellow
+Write-Host "Run this script again after M1 completion." -ForegroundColor Yellow
