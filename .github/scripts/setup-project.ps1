@@ -66,32 +66,32 @@ Write-ColorOutput Green "✅ Label'lar oluşturuldu ($($labels.Count) adet)"
 
 Write-ColorOutput Cyan "`n🎯 2. MILESTONE'LARI OLUŞTURUYOR..."
 
-# Milestone'ları oluştur
+# Milestone'lari olustur
 $milestones = @(
     @{
-        title="M0 – Proje Planı & Onay"
+        title="M0 - Proje Plani ve Onay"
         due="2024-10-10"
-        description="Amaç: GitHub repo kurulumunu, proje planını ve güvenlik politikalarını hazırlamak.`nKriter: CI, CodeQL ve Project board çalışır durumda olmalı."
+        description="Amac: GitHub repo kurulumunu, proje planini ve guvenlik politikalarini hazirlamak.`nKriter: CI, CodeQL ve Project board calisir durumda olmali."
     },
     @{
-        title="M1 – Çekirdek İşlevler + Temel Güvenlik"
+        title="M1 - Cekirdek Islevler ve Temel Guvenlik"
         due="2024-11-05"
-        description="Amaç: Temel uygulama iskeleti, CRUD işlemleri, SQLite bağlantısı ve test altyapısı.`nKriter: Event, Attendee, Schedule ve Feedback modülleri DLL üzerinden çalışmalı."
+        description="Amac: Temel uygulama iskeleti, CRUD islemleri, SQLite baglantisi ve test altyapisi.`nKriter: Event, Attendee, Schedule ve Feedback modulleri DLL uzerinden calismali."
     },
     @{
-        title="M2 – Vize & İlk Güvenlik Katmanı"
+        title="M2 - Vize ve Ilk Guvenlik Katmani"
         due="2024-11-07"
-        description="Amaç: Kullanımda veri güvenliği, şifreleme ve Vize raporu teslimi.`nKriter: Bellek koruma ve veri şifreleme fonksiyonları çalışır durumda olmalı."
+        description="Amac: Kullanimda veri guvenligi, sifreleme ve Vize raporu teslimi.`nKriter: Bellek koruma ve veri sifreleme fonksiyonlari calisir durumda olmali."
     },
     @{
-        title="M3 – Gelişmiş Güvenlik, RASP & Sertleştirme"
+        title="M3 - Gelismis Guvenlik RASP ve Sertlestirme"
         due="2024-12-31"
-        description="Amaç: Veri koruma, sertifika doğrulama, RASP ve kod sertleştirme.`nKriter: Tüm güvenlik katmanları aktif; uygulama anti-debug ve checksum doğrulamasına sahip."
+        description="Amac: Veri koruma, sertifika dogrulama, RASP ve kod sertlestirme.`nKriter: Tum guvenlik katmanlari aktif; uygulama anti-debug ve checksum dogrulamasina sahip."
     },
     @{
-        title="M4 – Testler, Pentest & Final Raporu"
+        title="M4 - Testler Pentest ve Final Raporu"
         due="2025-02-02"
-        description="Amaç: Tüm sistemin test edilmesi, pentest planının uygulanması ve final teslim.`nKriter: %80+ test kapsamı, pentest planı tamam, final raporu ve sunum hazırlanmış."
+        description="Amac: Tum sistemin test edilmesi, pentest planinin uygulanmasi ve final teslim.`nKriter: %80+ test kapsami, pentest plani tamam, final raporu ve sunum hazirlanmis."
     }
 )
 
@@ -107,93 +107,93 @@ Write-ColorOutput Cyan "`n📝 3. ISSUE'LARI OLUŞTURUYOR..."
 # M0 Issues
 $m0Issues = @(
     @{
-        title="Issue 0.1 – Proje Planının Eklenmesi"
+        title="Issue 0.1 - Proje Planinin Eklenmesi"
         body=@"
-## Açıklama
-Hazırlanan proje planı (`docs/plan.md`) dosyası repoya eklenmeli ve commitlenmeli.
+## Aciklama
+Hazirlanan proje plani (docs/plan.md) dosyasi repoya eklenmeli ve commitlenmeli.
 
-## Çıktı
-- [ ] `docs/plan.md` dosyası oluşturuldu
-- [ ] Commit log'da imzalı commit: `feat(docs): add project plan`
+## Cikti
+- [ ] docs/plan.md dosyasi olusturuldu
+- [ ] Commit log'da imzali commit: feat(docs): add project plan
 - [ ] Milestone ve issue listesi eklendi
 
 ## Kabul Kriterleri
-- Proje planı markdown formatında
-- Tüm milestone'lar detaylandırılmış
-- Issue'lar açıkça tanımlanmış
+- Proje plani markdown formatinda
+- Tum milestone'lar detaylandirilmis
+- Issue'lar acikca tanimlanmis
 "@
         labels="type:docs,priority:P1"
-        milestone="M0 – Proje Planı & Onay"
+        milestone="M0 - Proje Plani ve Onay"
     },
     @{
-        title="Issue 0.2 – GitHub Project Board Kurulumu"
+        title="Issue 0.2 - GitHub Project Board Kurulumu"
         body=@"
-## Açıklama
-Project view oluşturulacak; kolonlar: **Backlog → Ready → In Progress → In Review → Testing → Done**
+## Aciklama
+Project view olusturulacak; kolonlar: Backlog, Ready, In Progress, In Review, Testing, Done
 
-## Çıktı
-- [ ] GitHub Projects board oluşturuldu
-- [ ] Kolonlar tanımlandı
-- [ ] Board linki ve screenshot proje planına eklendi
+## Cikti
+- [ ] GitHub Projects board olusturuldu
+- [ ] Kolonlar tanimlandi
+- [ ] Board linki ve screenshot proje planina eklendi
 
 ## Kabul Kriterleri
-- Board'da tüm issue'lar görünüyor
+- Board'da tum issue'lar gorunuyor
 - Otomatik kart ekleme aktif
 - Workflow automation kurulu
 "@
         labels="type:docs,area:management"
-        milestone="M0 – Proje Planı & Onay"
+        milestone="M0 - Proje Plani ve Onay"
     },
     @{
-        title="Issue 0.3 – CI & CodeQL Kurulumu"
+        title="Issue 0.3 - CI and CodeQL Kurulumu"
         body=@"
-## Açıklama
-- `.github/workflows/build.yml` (CMake build + CTest)
-- `.github/workflows/codeql.yml` kurulacak, CodeQL güvenlik taraması çalışmalı
+## Aciklama
+- .github/workflows/build.yml (CMake build + CTest)
+- .github/workflows/codeql.yml kurulacak, CodeQL guvenlik taramasi calismali
 
-## Çıktı
-- [ ] `build.yml` workflow eklendi
-- [ ] `codeql.yml` workflow eklendi
-- [ ] CI workflow'ları yeşil geçiyor
+## Cikti
+- [ ] build.yml workflow eklendi
+- [ ] codeql.yml workflow eklendi
+- [ ] CI workflow'lari yesil geciyor
 
 ## Kabul Kriterleri
-- CMake build başarılı
-- Test suite çalışıyor
+- CMake build basarili
+- Test suite calisiyor
 - CodeQL security scanning aktif
 "@
         labels="type:security,area:ci"
-        milestone="M0 – Proje Planı & Onay"
+        milestone="M0 - Proje Plani ve Onay"
     },
     @{
-        title="Issue 0.4 – Branch Protection ve Signed Commits"
+        title="Issue 0.4 - Branch Protection ve Signed Commits"
         body=@"
-## Açıklama
-`main` branch korumalı olacak, squash merge ve imzalı commit zorunlu hale getirilecek.
+## Aciklama
+main branch korumali olacak, squash merge ve imzali commit zorunlu hale getirilecek.
 
-## Çıktı
+## Cikti
 - [ ] Branch protection rules aktif
 - [ ] Require signed commits enabled
 - [ ] Require pull request reviews
 - [ ] Require status checks
 
 ## Kabul Kriterleri
-- Doğrudan main'e push engellenmiş
+- Dogrudan main'e push engellenmis
 - PR approval zorunlu
 - GPG signed commits zorunlu
 "@
         labels="type:security,priority:P2"
-        milestone="M0 – Proje Planı & Onay"
+        milestone="M0 - Proje Plani ve Onay"
     },
     @{
-        title="Issue 0.5 – Label Set ve Issue Şablonları"
+        title="Issue 0.5 - Label Set ve Issue Sablonlari"
         body=@"
-## Açıklama
-Etiket seti ve issue/pr şablonları `.github/ISSUE_TEMPLATE/` dizinine eklenecek.
+## Aciklama
+Etiket seti ve issue/pr sablonlari .github/ISSUE_TEMPLATE/ dizinine eklenecek.
 
-## Çıktı
-- [ ] Issue templates oluşturuldu
+## Cikti
+- [ ] Issue templates olusturuldu
 - [ ] PR template eklendi
-- [ ] Tüm label'lar tanımlandı
+- [ ] Tum label'lar tanimlandi
 
 ## Kabul Kriterleri
 - Feature request template
@@ -202,26 +202,26 @@ Etiket seti ve issue/pr şablonları `.github/ISSUE_TEMPLATE/` dizinine eklenece
 - PR template with checklist
 "@
         labels="type:docs,area:management"
-        milestone="M0 – Proje Planı & Onay"
+        milestone="M0 - Proje Plani ve Onay"
     },
     @{
-        title="Issue 0.6 – Onay Talebi"
+        title="Issue 0.6 - Onay Talebi"
         body=@"
-## Açıklama
-Proje planı, GitHub project ve workflow ekran görüntüleriyle birlikte onay için danışmana gönderilecek.
+## Aciklama
+Proje plani, GitHub project ve workflow ekran goruntuleriyle birlikte onay icin danismana gonderilecek.
 
-## Çıktı
-- [ ] Proje planı PDF olarak hazırlandı
+## Cikti
+- [ ] Proje plani PDF olarak hazirlandi
 - [ ] Screenshots eklendi
-- [ ] Onay talebi e-postası gönderildi
-- [ ] "Proje planı onaylandı" cevabı alındı
+- [ ] Onay talebi e-postasi gonderildi
+- [ ] Proje plani onaylandi cevabi alindi
 
 ## Kabul Kriterleri
-- Danışman onayı alınmış
-- Feedback'ler uygulanmış
+- Danisman onayi alinmis
+- Feedback'ler uygulanmis
 "@
         labels="type:docs,priority:P1"
-        milestone="M0 – Proje Planı & Onay"
+        milestone="M0 - Proje Plani ve Onay"
     }
 )
 
