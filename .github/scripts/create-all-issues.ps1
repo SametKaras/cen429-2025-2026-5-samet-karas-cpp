@@ -256,11 +256,471 @@ foreach ($issue in $m1Issues) {
     $body | gh api repos/:owner/:repo/issues -X POST --input - 2>&1 | Out-Null
 }
 
+# M2 Issues
+$m2Issues = @(
+    @{
+        title="Issue 2.1 - Memory Data Security"
+        body=@"
+## Description
+Implement secure memory handling, encryption of data in use, and secure deletion.
+
+## Output
+- [ ] src/security/memguard.h/cpp
+- [ ] Secure memory allocation
+- [ ] Memory encryption functions
+- [ ] Secure memory wiping
+- [ ] Memory protection tests
+
+## Acceptance Criteria
+- Sensitive data encrypted in memory
+- Memory securely cleared after use
+- No memory leaks detected
+"@
+        labels="type:security,area:mem"
+        milestone="M2 - Midterm and First Security Layer"
+    },
+    @{
+        title="Issue 2.2 - Payload Encryption and MAC"
+        body=@"
+## Description
+Implement AES encryption and HMAC-SHA256 for payload security.
+
+## Output
+- [ ] src/security/transport.h/cpp
+- [ ] AES-256 encryption/decryption
+- [ ] HMAC-SHA256 implementation
+- [ ] Key derivation functions
+- [ ] Transport security tests
+
+## Acceptance Criteria
+- Payload encrypted with AES-256
+- HMAC validation working
+- Tests 100% coverage
+"@
+        labels="type:security,area:crypto,priority:P1"
+        milestone="M2 - Midterm and First Security Layer"
+    },
+    @{
+        title="Issue 2.3 - Session Key Management"
+        body=@"
+## Description
+Implement session key generation, encryption, and rotation.
+
+## Output
+- [ ] SessionKeyManager class
+- [ ] Key generation (secure random)
+- [ ] Key encryption/decryption
+- [ ] Key rotation policy
+- [ ] Secure key storage
+
+## Acceptance Criteria
+- Session keys cryptographically secure
+- Key rotation automated
+- Keys never stored in plaintext
+"@
+        labels="type:security,area:crypto,priority:P1"
+        milestone="M2 - Midterm and First Security Layer"
+    },
+    @{
+        title="Issue 2.4 - Midterm Report Preparation"
+        body=@"
+## Description
+Prepare midterm report covering M0-M2 progress.
+
+## Output
+- [ ] docs/reports/midterm.md
+- [ ] PDF version
+- [ ] Screenshots of working features
+- [ ] Test results included
+
+## Acceptance Criteria
+- All M0-M2 work documented
+- Authentication system demonstrated
+- Security features explained
+"@
+        labels="type:docs"
+        milestone="M2 - Midterm and First Security Layer"
+    }
+)
+
+Write-Host "`nCreating M2 issues... ($($m2Issues.Count) count)" -ForegroundColor Yellow
+foreach ($issue in $m2Issues) {
+    Write-Host "  -> $($issue.title)" -ForegroundColor Gray
+    $labels = $issue.labels -split ','
+    $body = @{
+        title = $issue.title
+        body = $issue.body
+        labels = $labels
+        milestone = 3  # M2 is third milestone (ID=3)
+    } | ConvertTo-Json -Compress
+    $body | gh api repos/:owner/:repo/issues -X POST --input - 2>&1 | Out-Null
+}
+
+# M3 Issues
+$m3Issues = @(
+    @{
+        title="Issue 3.1 - Storage Security"
+        body=@"
+## Description
+Implement Whitebox AES/DES for database file encryption.
+
+## Output
+- [ ] src/security/storage.h/cpp
+- [ ] Whitebox AES implementation
+- [ ] Whitebox DES implementation
+- [ ] Multi-layer encryption
+- [ ] SQLCipher integration
+
+## Acceptance Criteria
+- Database files encrypted
+- Multiple encryption layers active
+- Decryption only possible in app context
+"@
+        labels="type:security,area:storage"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    },
+    @{
+        title="Issue 3.2 - SoftHSM Integration"
+        body=@"
+## Description
+Integrate SoftHSM2 for cryptographic key storage.
+
+## Output
+- [ ] src/security/hsm/HSMKeyManager.h/cpp
+- [ ] SoftHSM2 configuration
+- [ ] PKCS#11 interface implementation
+- [ ] Master key protection
+- [ ] HSM tests
+- [ ] docs/hsm-setup.md
+
+## Acceptance Criteria
+- SoftHSM2 configured and working
+- Crypto keys stored in HSM
+- Master key never in plaintext
+"@
+        labels="type:security,area:hsm,priority:P1"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    },
+    @{
+        title="Issue 3.3 - Static and Dynamic Asset Protection"
+        body=@"
+## Description
+Implement protection for keys, hashes, source code, and runtime assets.
+
+## Output
+- [ ] Asset encryption mechanisms
+- [ ] Access control lists
+- [ ] Resource file protection
+- [ ] Dynamic key obfuscation
+- [ ] docs/asset-inventory/inventory.md completed
+
+## Acceptance Criteria
+- All sensitive assets identified
+- Protection mechanisms implemented
+- Asset inventory complete
+"@
+        labels="type:security,area:assets"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    },
+    @{
+        title="Issue 3.4 - Device Fingerprinting"
+        body=@"
+## Description
+Implement hardware-based device identification and binding.
+
+## Output
+- [ ] src/security/DeviceFingerprint.h/cpp
+- [ ] CPU ID collection
+- [ ] MAC address collection
+- [ ] Disk serial collection
+- [ ] Fingerprint generation
+- [ ] Device binding for sessions
+
+## Acceptance Criteria
+- Unique device fingerprint generated
+- Sessions bound to devices
+- Device change detected
+"@
+        labels="type:security,area:device"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    },
+    @{
+        title="Issue 3.5 - Code Hardening"
+        body=@"
+## Description
+Implement code obfuscation techniques: opaque loops, string hiding, control flow obfuscation.
+
+## Output
+- [ ] src/security/obf.h/cpp
+- [ ] Opaque boolean variables
+- [ ] String encryption
+- [ ] Function name obfuscation
+- [ ] Control flow flattening
+- [ ] Fake branches
+
+## Acceptance Criteria
+- Code difficult to reverse engineer
+- String literals encrypted
+- Control flow obscured
+"@
+        labels="type:security,area:obf"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    },
+    @{
+        title="Issue 3.6 - RASP Module"
+        body=@"
+## Description
+Implement Runtime Application Self-Protection: anti-debug, checksum, tamper detection.
+
+## Output
+- [ ] src/security/rasp/RuntimeProtection.h/cpp
+- [ ] Anti-debugging mechanisms
+- [ ] Checksum verification
+- [ ] Hook detection
+- [ ] Emulator detection
+- [ ] Root/jailbreak detection
+- [ ] Tamper response mechanisms
+
+## Acceptance Criteria
+- Debugger attachment prevented
+- Code integrity verified at runtime
+- Tampering triggers response
+"@
+        labels="type:security,area:rasp,priority:P1"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    },
+    @{
+        title="Issue 3.7 - SSL/TLS and Certificate Pinning"
+        body=@"
+## Description
+Implement secure TLS connections with certificate pinning.
+
+## Output
+- [ ] src/security/tls.h/cpp
+- [ ] TLS 1.3 support
+- [ ] Certificate pinning
+- [ ] Mutual authentication
+- [ ] Certificate validation tests
+
+## Acceptance Criteria
+- TLS connections encrypted
+- Certificate pinning working
+- MITM attacks prevented
+"@
+        labels="type:security,area:tls"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    },
+    @{
+        title="Issue 3.8 - Memory Protection (SafeStack)"
+        body=@"
+## Description
+Implement Clang SafeStack for stack overflow protection.
+
+## Output
+- [ ] SafeStack CMake configuration
+- [ ] Stack overflow protection tests
+- [ ] Buffer overflow mitigation
+- [ ] Secure memory cleanup functions
+
+## Acceptance Criteria
+- SafeStack enabled in build
+- Stack overflow attempts blocked
+- Memory protection tests pass
+"@
+        labels="type:security,area:mem"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    },
+    @{
+        title="Issue 3.9 - Asset Inventory - Phase 2"
+        body=@"
+## Description
+Document all crypto keys, certificates, and HSM tokens from M3.
+
+## Output
+- [ ] docs/asset-inventory/phase2.md
+- [ ] Crypto keys inventory
+- [ ] Certificates inventory
+- [ ] HSM tokens inventory
+- [ ] Protection schemas verified
+
+## Acceptance Criteria
+- All M3 assets documented
+- Metadata complete
+- Protection mechanisms verified
+"@
+        labels="type:docs,area:assets"
+        milestone="M3 - Advanced Security RASP and Hardening"
+    }
+)
+
+Write-Host "`nCreating M3 issues... ($($m3Issues.Count) count)" -ForegroundColor Yellow
+foreach ($issue in $m3Issues) {
+    Write-Host "  -> $($issue.title)" -ForegroundColor Gray
+    $labels = $issue.labels -split ','
+    $body = @{
+        title = $issue.title
+        body = $issue.body
+        labels = $labels
+        milestone = 4  # M3 is fourth milestone (ID=4)
+    } | ConvertTo-Json -Compress
+    $body | gh api repos/:owner/:repo/issues -X POST --input - 2>&1 | Out-Null
+}
+
+# M4 Issues
+$m4Issues = @(
+    @{
+        title="Issue 4.1 - Test Coverage and Fuzzing"
+        body=@"
+## Description
+Achieve 80%+ test coverage and implement fuzzing tests.
+
+## Output
+- [ ] Unit tests for all modules
+- [ ] Integration tests
+- [ ] Fuzz testing setup
+- [ ] Coverage report >=80%
+- [ ] CI tests passing
+
+## Acceptance Criteria
+- Code coverage >= 80%
+- All critical paths tested
+- Fuzz tests catching edge cases
+"@
+        labels="type:test,area:test"
+        milestone="M4 - Tests Pentest and Final Report"
+    },
+    @{
+        title="Issue 4.2 - Penetration Test Plan"
+        body=@"
+## Description
+Create and execute penetration testing plan.
+
+## Output
+- [ ] docs/pentest-plan/plan.md
+- [ ] STRIDE threat model
+- [ ] Test scenarios defined
+- [ ] Tools identified (Burp, OWASP ZAP)
+- [ ] Pentest execution results
+- [ ] Vulnerability report
+
+## Acceptance Criteria
+- Complete pentest plan documented
+- All scenarios executed
+- Vulnerabilities identified and fixed
+"@
+        labels="type:security,area:pentest"
+        milestone="M4 - Tests Pentest and Final Report"
+    },
+    @{
+        title="Issue 4.3 - OWASP Top 10 Compliance Verification"
+        body=@"
+## Description
+Verify compliance with OWASP Top 10 2021 standards.
+
+## Output
+- [ ] docs/owasp-compliance.md
+- [ ] Test scenarios for each OWASP item
+- [ ] Compliance test results
+- [ ] Gap analysis
+- [ ] Remediation actions (if needed)
+
+## Acceptance Criteria
+- All OWASP Top 10 items tested
+- Compliance documented
+- Critical issues resolved
+"@
+        labels="type:security,area:owasp,priority:P1"
+        milestone="M4 - Tests Pentest and Final Report"
+    },
+    @{
+        title="Issue 4.4 - Security Certification Documentation"
+        body=@"
+## Description
+Prepare security certification documentation (ETSI/EMV/GSMA style).
+
+## Output
+- [ ] docs/security-certification/
+- [ ] Security evaluation report
+- [ ] Threat modeling (STRIDE)
+- [ ] Security architecture document
+- [ ] Compliance matrices
+
+## Acceptance Criteria
+- Complete certification package
+- All security controls documented
+- Ready for external audit
+"@
+        labels="type:docs,area:security"
+        milestone="M4 - Tests Pentest and Final Report"
+    },
+    @{
+        title="Issue 4.5 - Asset Inventory - Final"
+        body=@"
+## Description
+Consolidate all asset inventory phases into final comprehensive document.
+
+## Output
+- [ ] docs/asset-inventory/final.md
+- [ ] All phases merged
+- [ ] Missing assets added
+- [ ] Protection schemas verified for all assets
+- [ ] Asset lifecycle documented
+
+## Acceptance Criteria
+- Complete asset inventory
+- Every asset has metadata
+- Protection mechanisms verified
+"@
+        labels="type:docs,area:assets"
+        milestone="M4 - Tests Pentest and Final Report"
+    },
+    @{
+        title="Issue 4.6 - Final Report and Presentation"
+        body=@"
+## Description
+Prepare final technical report and presentation.
+
+## Output
+- [ ] docs/reports/final-report.md
+- [ ] PDF version
+- [ ] PowerPoint/PDF presentation
+- [ ] Demo video (optional)
+- [ ] All deliverables packaged
+
+## Acceptance Criteria
+- Complete final report
+- SoftHSM integration documented
+- Authentication system documented
+- OWASP compliance results included
+- Security certification status included
+- Presentation ready for defense
+"@
+        labels="type:docs,priority:P1"
+        milestone="M4 - Tests Pentest and Final Report"
+    }
+)
+
+Write-Host "`nCreating M4 issues... ($($m4Issues.Count) count)" -ForegroundColor Yellow
+foreach ($issue in $m4Issues) {
+    Write-Host "  -> $($issue.title)" -ForegroundColor Gray
+    $labels = $issue.labels -split ','
+    $body = @{
+        title = $issue.title
+        body = $issue.body
+        labels = $labels
+        milestone = 5  # M4 is fifth milestone (ID=5)
+    } | ConvertTo-Json -Compress
+    $body | gh api repos/:owner/:repo/issues -X POST --input - 2>&1 | Out-Null
+}
+
 Write-Host "`nAll issues created!" -ForegroundColor Green
 Write-Host "`nSummary:" -ForegroundColor Cyan
 Write-Host "  M1: $($m1Issues.Count) issues" -ForegroundColor White
+Write-Host "  M2: $($m2Issues.Count) issues" -ForegroundColor White
+Write-Host "  M3: $($m3Issues.Count) issues" -ForegroundColor White
+Write-Host "  M4: $($m4Issues.Count) issues" -ForegroundColor White
+Write-Host "  TOTAL: $(($m1Issues.Count + $m2Issues.Count + $m3Issues.Count + $m4Issues.Count)) new issues" -ForegroundColor Green
 
 $repoUrl = gh repo view --json url -q .url
 Write-Host "`nIssues: $repoUrl/issues" -ForegroundColor Cyan
-Write-Host "`nNote: M2, M3, M4 issues can be added similarly." -ForegroundColor Yellow
-Write-Host "Run this script again after M1 completion." -ForegroundColor Yellow
+Write-Host "Milestones: $repoUrl/milestones" -ForegroundColor Cyan
