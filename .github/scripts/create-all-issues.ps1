@@ -246,7 +246,14 @@ Role-based access control (RBAC) implementation
 Write-Host "`nCreating M1 issues... ($($m1Issues.Count) count)" -ForegroundColor Yellow
 foreach ($issue in $m1Issues) {
     Write-Host "  -> $($issue.title)" -ForegroundColor Gray
-    gh issue create --title $issue.title --body $issue.body --label $issue.labels --milestone $issue.milestone 2>&1 | Out-Null
+    $labels = $issue.labels -split ','
+    $body = @{
+        title = $issue.title
+        body = $issue.body
+        labels = $labels
+        milestone = 2  # M1 is second milestone (ID=2)
+    } | ConvertTo-Json -Compress
+    $body | gh api repos/:owner/:repo/issues -X POST --input - 2>&1 | Out-Null
 }
 
 Write-Host "`nAll issues created!" -ForegroundColor Green

@@ -97,7 +97,12 @@ $milestones = @(
 
 foreach ($ms in $milestones) {
     Write-Host "  Creating milestone: $($ms.title)" -ForegroundColor Gray
-    gh milestone create $ms.title --due $ms.due --description $ms.description 2>&1 | Out-Null
+    $body = @{
+        title = $ms.title
+        due_on = $ms.due + "T23:59:59Z"
+        description = $ms.description
+    } | ConvertTo-Json -Compress
+    $body | gh api repos/:owner/:repo/milestones -X POST --input - 2>&1 | Out-Null
 }
 
 Write-ColorOutput Green "Milestones created ($($milestones.Count) count)"
@@ -228,7 +233,14 @@ Project plan, GitHub project and workflow screenshots will be sent to advisor fo
 Write-ColorOutput Yellow "`nCreating M0 issues..."
 foreach ($issue in $m0Issues) {
     Write-Host "  Creating: $($issue.title)" -ForegroundColor Gray
-    gh issue create --title $issue.title --body $issue.body --label $issue.labels --milestone $issue.milestone 2>&1 | Out-Null
+    $labels = $issue.labels -split ','
+    $body = @{
+        title = $issue.title
+        body = $issue.body
+        labels = $labels
+        milestone = 1  # M0 is first milestone (ID=1)
+    } | ConvertTo-Json -Compress
+    $body | gh api repos/:owner/:repo/issues -X POST --input - 2>&1 | Out-Null
 }
 
 Write-ColorOutput Green "Issues created"
