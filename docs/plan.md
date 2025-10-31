@@ -6,7 +6,7 @@
 **Course:** CEN429 - Secure Programming  
 **Academic Year:** 2025-2026  
 **Team:** SametKaras  
-**Repository:** [cen429-2025-2026-5-samet-karas-cpp](https://github.com/SametKaras/cen429-2025-2026-5-samet-karas-cpp)
+**Repository:** [cen249-2025-2026-62-samet-karas-cpp](https://github.com/SametKaras/cen249-2025-2026-62-samet-karas-cpp)
 
 ---
 
@@ -355,7 +355,7 @@ Develop a secure Local Event Planner console application in C++ that demonstrate
 ## 📁 Project Structure
 
 ```
-cen429-2025-2026-5-samet-karas-cpp/
+cen249-2025-2026-62-samet-karas-cpp/
 │
 ├── .github/
 │   ├── workflows/              # CI/CD pipelines

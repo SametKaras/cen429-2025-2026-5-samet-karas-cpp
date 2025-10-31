@@ -1,4 +1,4 @@
-# Calculator Project Library Generation and Testing Template
+# LocalEventPlanner Project Library Generation and Testing Template
 
 ## Overview
 
@@ -144,9 +144,9 @@ We are running WSL on Windows 10 and solve our virtual machine problem. We make 
 
 you can use our public notes
 
-- https://github.com/coruhtech/vs-docker-wsl-cpp-development
+- https://github.com/SametKaras/vs-docker-wsl-cpp-development
 
-- [GitHub - ucoruh/ns3-wsl-win10-setup: ns3 windows 10 WSL2 setup and usage](https://github.com/ucoruh/ns3-wsl-win10-setup)
+- [GitHub - SametKaras/ns3-wsl-win10-setup: ns3 windows 10 WSL2 setup and usage](https://github.com/SametKaras/ns3-wsl-win10-setup)
 
 After WSL installation, right click and open WSL bash and run `7-build-app-linux.sh` this will provide similart task with windows and will generate report and libraries on release folder. 
 
