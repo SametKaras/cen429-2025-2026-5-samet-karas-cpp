@@ -2,7 +2,7 @@
 
 ## Step 1: Create New Project
 
-1. Go to: https://github.com/SametKaras/cen429-2025-2026-5-samet-karas-cpp/projects
+1. Go to: https://github.com/SametKaras/cen249-2025-2026-62-samet-karas-cpp/projects
 2. Click **"New project"** (green button, top right)
 3. Select **"Board"** template
 4. Click **"Create project"**
@@ -44,7 +44,7 @@ Default columns: Todo, In Progress, Done
 4. Toggle **ON**
 5. Set filters:
    ```
-   repo:SametKaras/cen429-2025-2026-5-samet-karas-cpp
+   repo:SametKaras/cen249-2025-2026-62-samet-karas-cpp
    ```
 6. Click **"Save"**
 
@@ -56,7 +56,7 @@ Now all new issues will be automatically added to the project!
 
 1. On your project board, click **"+ Add item"**
 2. Click **"Add items from repository"**
-3. Select repository: `SametKaras/cen429-2025-2026-5-samet-karas-cpp`
+3. Select repository: `SametKaras/cen249-2025-2026-62-samet-karas-cpp`
 4. You'll see all 36 open issues
 5. Press **Ctrl+A** (Windows) or **Cmd+A** (Mac) to select all
 6. Click **"Add selected items"**
