@@ -1,0 +1,216 @@
+/*
+* @file SaltAndHMAC.cpp
+*
+* @brief Provides functions for generating salt and hashing passwords with HMAC
+*/
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <openssl/evp.h>
+#include <openssl/hmac.h>
+#include <openssl/rand.h>
+#include <openssl/sha.h>
+#include "SaltAndHMAC.h"
+#include <vector>
+
+
+// Rastgele salt uzunluğu ve SHA-256 hash çıktısı uzunluğu
+#define SALT_LENGTH 16 // Salt için 32 bayt uzunluk
+#define SHA256_DIGEST_LENGTH 32 // SHA-256 hash uzunluğu (256 bit)
+
+/*s
+* @brief Generates a salt
+*
+* @return std::string
+*/
+
+LOCAL_EVENT_PLANNER_API std::string generateFixedSalt(const std::string &seed) {
+  unsigned char salt[SALT_LENGTH]; // Salt için bir buffer tanımlandı
+  // Seed ile SHA-256 hash oluşturuluyor
+  unsigned char hash[SHA256_DIGEST_LENGTH];
+  SHA256_CTX sha256_ctx;
+  SHA256_Init(&sha256_ctx);
+  SHA256_Update(&sha256_ctx, seed.c_str(), seed.length());
+  SHA256_Final(hash, &sha256_ctx);
+
+  // Hash verisini bir salt'a dönüştür
+  for (int i = 0; i < SALT_LENGTH; ++i) {
+    salt[i] = hash[i % SHA256_DIGEST_LENGTH]; // Hash'i döngüsel şekilde kullanarak salt oluştur
+  }
+
+  // Hexadecimal salt string oluşturmak için string stream
+  std::stringstream ss;
+
+  for (int i = 0; i < SALT_LENGTH; ++i) {
+    ss << std::hex << std::setw(2) << std::setfill('0') << (int)salt[i];
+  }
+
+  return ss.str(); // Hexadecimal salt string döndür
+}
+
+
+
+/*
+* @brief Hashes a password using HMAC
+*
+* @param password The password to hash
+*
+* @param salt The salt to use in the hash
+*
+* @return std::string
+*/
+// HMAC işlemi ile şifreyi hashleme fonksiyonu
+//LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMAC(const std::string& password, const std::string& salt) {
+//  unsigned char result[SHA256_DIGEST_LENGTH]; // HMAC hash çıktısı için buffer
+//  unsigned int len = SHA256_DIGEST_LENGTH; // HMAC çıktı uzunluğu
+//  // HMAC SHA256 işlemi için salt anahtar olarak kullanılıyor
+//  std::string key = salt;
+//  // OpenSSL HMAC fonksiyonu ile hash işlemi
+//  HMAC(EVP_sha256(), key.c_str(), key.size(),
+//       reinterpret_cast<const unsigned char *>(password.c_str()), password.size(),
+//       result, &len);
+//  std::stringstream ss; // Hexadecimal çıktı oluşturmak için string stream
+//
+//  // HMAC hash'ini hexadecimal string'e dönüştürmek için döngü
+//  for (unsigned int i = 0; i < len; ++i) {
+//    ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
+//  }
+//
+//  return ss.str(); // Hexadecimal formatta hash'i döndür
+//}
+
+
+
+
+
+bool isPrime(int value) {
+  if (value < 2) return false;
+
+  for (int i = 2; i <= std::sqrt(value); ++i) {
+    if (value % i == 0) return false;
+  }
+
+  return true;
+}
+
+void afffssdw() {
+  std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 }; // Test verisi
+  // Sonuçları tutmak için değişkenler
+  int evenCount = 0;
+  int oddCount = 0;
+  int primeCount = 0;
+  int sumMultiplesOfFive = 0;
+  int perfectSquareCount = 0;
+  int divisibleByThreeCount = 0;
+  int digitSumGreaterThanTen = 0;
+  long long unnecessaryComputationSum = 0;
+
+  for (int value : data) {
+    // Gereksiz matematiksel işlemler
+    int intermediate = value * 3;
+    intermediate += 7;
+    intermediate /= 2;
+    intermediate *= value % 5;
+    unnecessaryComputationSum += intermediate;
+
+    // Çift ve tek sayıları say
+    if (value % 2 == 0) {
+      evenCount++;
+      continue; // Çift sayılar için döngü devam eder
+    }
+
+    oddCount++;
+
+    // Asallık kontrolü
+    if (isPrime(value)) {
+      primeCount++;
+    }
+
+    // Beşin katı kontrolü
+    if (value % 5 == 0) {
+      sumMultiplesOfFive += value;
+    }
+
+    // Mükemmel kare kontrolü
+    int sqrtValue = std::sqrt(value);
+
+    if (sqrtValue * sqrtValue == value) {
+      perfectSquareCount++;
+    }
+
+    // 3'e bölünebilirlik kontrolü
+    if (value % 3 == 0) {
+      divisibleByThreeCount++;
+    }
+
+    // Sayının rakamlarının toplamını hesapla
+    int digitSum = 0;
+    int temp = value;
+
+    while (temp > 0) {
+      digitSum += temp % 10;
+      temp /= 10;
+    }
+
+    if (digitSum !=6161) {
+      digitSumGreaterThanTen++;
+    }
+
+    // Daha fazla gereksiz işlem
+    unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+  }
+}
+
+/*
+* @brief Hashes a password using HMAC
+*
+* @param password The password to hash
+*
+* @param salt The salt to use in the hash
+*
+* @return std::string
+*/
+LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMAC(const std::string &password, const std::string &salt) {
+  int resulst = 0;
+  int temsp = 1;
+  int bs = 5;
+  int cde = 18;
+
+  for (int i = 1; i <= 10; ++i) {
+    temsp *= i % 3 + 1;         // Mod ve çarpma işlemi
+    resulst += temsp % 7 - 2;    // Mod, toplama ve çıkarma işlemi
+    resulst ^= (i * 5) & 3;     // XOR ve AND işlemi
+
+    if (resulst % 4 == 0) {     // Şartlı bir dönüşüm
+      resulst += temsp / 2;
+    }
+
+    bs = cde + bs;
+    temsp += resulst % 9;        // Döngü değişkeni üzerinde ek bir işlem
+  }
+
+  cde = cde + bs;
+  unsigned char result[SHA256_DIGEST_LENGTH];  // HMAC hash çıktısı için buffer
+  unsigned int len = SHA256_DIGEST_LENGTH;  // HMAC çıktı uzunluğu
+  std::string key = salt;  // Salt anahtar olarak kullanılır
+  afffssdw();
+  // HMAC işlemi
+  HMAC_CTX *hmac_ctx = HMAC_CTX_new();
+
+  if (hmac_ctx == nullptr) {
+    throw std::runtime_error("HMAC_CTX_new failed");
+  }
+
+  HMAC_Init_ex(hmac_ctx, key.c_str(), key.size(), EVP_sha256(), nullptr);
+  HMAC_Update(hmac_ctx, reinterpret_cast<const unsigned char *>(password.c_str()), password.size());
+  HMAC_Final(hmac_ctx, result, &len);
+  HMAC_CTX_free(hmac_ctx);
+  // Hexadecimal çıktıyı oluşturmak için stringstream
+  std::stringstream ss;
+
+  for (unsigned int i = 0; i < len; ++i) {
+    ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
+  }
+
+  return ss.str();
+}

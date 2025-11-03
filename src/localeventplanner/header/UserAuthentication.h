@@ -1,0 +1,31 @@
+#ifndef USER_AUTHENTICATION_H
+#define USER_AUTHENTICATION_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluşturulurken dışa aktarım
+#else
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanılırken içe aktarım
+#endif
+
+#include <string>
+#include "sqlite3.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+LOCAL_EVENT_PLANNER_API bool userAuthentication();
+LOCAL_EVENT_PLANNER_API bool loginUser();
+LOCAL_EVENT_PLANNER_API void registerUser();
+LOCAL_EVENT_PLANNER_API extern bool isGuestMode;
+LOCAL_EVENT_PLANNER_API bool getGuestMode();
+LOCAL_EVENT_PLANNER_API void setGuestMode(bool mode);
+LOCAL_EVENT_PLANNER_API void secureErase(std::string &str);
+LOCAL_EVENT_PLANNER_API sqlite3 *openUserDatabase();
+LOCAL_EVENT_PLANNER_API bool isPasswordStrong(const std::string &password);
+#ifdef __cplusplus
+}
+
+#endif
+
+#endif // USER_AUTHENTICATION_H

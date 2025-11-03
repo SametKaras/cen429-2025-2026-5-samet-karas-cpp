@@ -1,0 +1,46 @@
+// SessionEncryption.h
+#ifndef SESSION_ENCRYPTION_H
+#define SESSION_ENCRYPTION_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluşturulurken dışa aktarım
+#else
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanılırken içe aktarım
+#endif
+
+#include <string>
+#include "sqlite3.h"  // sqlite3_stmt kullanımı için gerekli
+#include <vector>
+
+
+
+
+// Oturum verilerini şifreleme ve deşifreleme
+LOCAL_EVENT_PLANNER_API std::string encryptSessionData(const std::string &data);
+LOCAL_EVENT_PLANNER_API std::string decryptSessionData(const std::string &encryptedData);
+
+// Anahtar şifreleme ve deşifreleme
+LOCAL_EVENT_PLANNER_API std::string encryptKey(const unsigned char *key, size_t keyLen);
+LOCAL_EVENT_PLANNER_API bool decryptKey(const std::string &encryptedKey, unsigned char *key, size_t keyLen);
+
+// Şifrelenmiş oturum anahtarı ve IV'yi alma
+LOCAL_EVENT_PLANNER_API std::string getEncryptedSessionKey();
+LOCAL_EVENT_PLANNER_API std::string getEncryptedSessionIV();
+
+// Oturum anahtarını ve IV'yi ayarlama
+LOCAL_EVENT_PLANNER_API bool setSessionKey(const std::string &encryptedSessionKey);
+LOCAL_EVENT_PLANNER_API bool setSessionIV(const std::string &encryptedSessionIV);
+
+// Oturum şifrelemesini başlatan ve anahtarları yöneten fonksiyon
+LOCAL_EVENT_PLANNER_API bool setupSessionEncryption();
+
+// Kullanıcı bilgilerini toplayan ve oturum verilerini şifreleyen fonksiyon
+LOCAL_EVENT_PLANNER_API bool collectAndEncryptSessionData(sqlite3_stmt *stmt);
+
+// Base64 kodlama fonksiyonu
+LOCAL_EVENT_PLANNER_API extern std::string base64Encode(const unsigned char *buffer, size_t length);
+
+LOCAL_EVENT_PLANNER_API std::vector<unsigned char> base64Decode(const std::string &encodedData);
+
+
+#endif // SESSION_ENCRYPTION_H

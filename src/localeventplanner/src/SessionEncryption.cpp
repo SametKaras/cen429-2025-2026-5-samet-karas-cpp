@@ -1,0 +1,589 @@
+// SessionEncryption.cpp
+/*
+* @file SessionEncryption.cpp
+*
+* @brief Provides functions for session encryption
+*/
+#include "SessionEncryption.h"
+#include "DynamicAssetProtection.h" // Cihaz parmak izi fonksiyonu için
+#include <openssl/evp.h>
+#include <openssl/rand.h>
+#include <openssl/buffer.h>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <vector>
+#include <cstring> // memset için
+
+
+// Master anahtar
+static unsigned char masterKey[32];
+
+// Encrypted oturum anahtarý ve IV
+static std::string encryptedSessionKey = "";//Þifrelenmiþ oturum anahtarý
+static std::string encryptedSessionIV = "";//Þifrelenmiþ oturum IV
+
+// Oturum anahtarý ve IV
+static unsigned char sessionKey[32];//Oturum anahtarý
+static unsigned char sessionIV[16];//Oturum IV.
+
+/*
+* @brief Base64 encode process
+*
+* @param data Data to encode
+*
+* @param len Length of the data
+*
+* @return std::string
+*/
+// Yardýmcý fonksiyon: Base64'ü çözerek binary veriye dönüþtürme
+LOCAL_EVENT_PLANNER_API std::vector<unsigned char> base64Decode(const std::string &encodedData) {//Base64 çözme
+  BIO *bio = BIO_new_mem_buf(encodedData.data(), encodedData.length());//BIO bellek tamponu oluþtur
+  BIO *b64 = BIO_new(BIO_f_base64());//Base64 BIO oluþtur
+  bio = BIO_push(b64, bio);//BIO'larý birleþtir
+  BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);//Base64 satýr sonu karakterlerini kaldýr
+  std::vector<unsigned char> decodedData(encodedData.size());//Çözülen veri için bellek ayýr
+  int decodedLen = BIO_read(bio, decodedData.data(), encodedData.size());//Base64 veriyi çöz
+
+  if (decodedLen <= 0) {//Çözme baþarýsýzsa
+    //std::cerr << "Base64 decode hatasý." << std::endl;//Hata mesajý yaz
+    decodedData.clear();//Çözülen veriyi temizle
+  } else { //Çözme baþarýlýysa
+    decodedData.resize(decodedLen);//Çözülen verinin boyutunu ayarla
+  }
+
+  BIO_free_all(bio);//BIO'larý serbest býrak
+  return decodedData;//Çözülen veriyi döndür
+}
+
+/*
+* @brief Base64 encode process
+*
+* @param buffer Data to encode
+*
+* @param length Length of the data
+*
+* @return std::string
+*/
+// Oturum verilerini þifreleme fonksiyonu
+LOCAL_EVENT_PLANNER_API std::string encryptSessionData(const std::string &data) {
+  // Þifreleme için bir yeni þifreleme baðlamý oluþturuyoruz.
+  EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+
+  if (!ctx) {
+    // Þifreleme baðlamý oluþturulamazsa hata mesajý veriliyor.
+    //std::cerr << "Cipher context oluþturulamadý." << std::endl;
+    return "";
+  }
+
+  // AES-256-CBC algoritmasýný baþlatýyoruz ve oturum anahtarý ile IV kullanýyoruz.
+  if (EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, sessionKey, sessionIV) != 1) {
+    // Þifreleme algoritmasý baþlatýlamazsa hata mesajý veriliyor ve baðlam serbest býrakýlýyor.
+    //std::cerr << "EVP_EncryptInit_ex baþarýsýz." << std::endl;
+    EVP_CIPHER_CTX_free(ctx);
+    return "";
+  }
+
+  // Þifrelenmiþ veriyi tutmak için bir vektör oluþturuyoruz. Boyut, giriþ verisinin boyutu + blok boyutu.
+  std::vector<unsigned char> ciphertext(data.size() + EVP_CIPHER_block_size(EVP_aes_256_cbc()));
+  int len, ciphertext_len;
+
+  // Verinin þifrelenmiþ ilk kýsmýný üretiyoruz.
+  if (EVP_EncryptUpdate(ctx, ciphertext.data(), &len, reinterpret_cast<const unsigned char *>(data.c_str()), data.size()) != 1) {
+    // Þifreleme sýrasýnda hata oluþursa hata mesajý veriliyor ve baðlam serbest býrakýlýyor.
+    //std::cerr << "EVP_EncryptUpdate baþarýsýz." << std::endl;
+    EVP_CIPHER_CTX_free(ctx);
+    return "";
+  }
+
+  ciphertext_len = len; // Þifrelenmiþ verinin uzunluðunu kaydediyoruz.
+
+  // Þifreleme iþlemini tamamlýyoruz.
+  if (EVP_EncryptFinal_ex(ctx, ciphertext.data() + len, &len) != 1) {
+    // Þifreleme iþlemi tamamlanamazsa hata mesajý veriliyor ve baðlam serbest býrakýlýyor.
+    //std::cerr << "EVP_EncryptFinal_ex baþarýsýz." << std::endl;
+    EVP_CIPHER_CTX_free(ctx);
+    return "";
+  }
+
+  ciphertext_len += len; // Tam þifrelenmiþ verinin uzunluðunu güncelliyoruz.
+  // Þifreleme baðlamýný serbest býrakýyoruz.
+  EVP_CIPHER_CTX_free(ctx);
+  // Þifrelenmiþ veriyi Base64 formatýna dönüþtürerek döndürüyoruz.
+  return base64Encode(ciphertext.data(), ciphertext_len);
+}
+
+/*
+* @brief Base64 encode process
+*
+* @param encryptedData Data to decode
+*
+* @return std::string
+*/
+// Oturum verilerini deþifre etme fonksiyonu
+LOCAL_EVENT_PLANNER_API std::string decryptSessionData(const std::string &encryptedData) {
+  // Base64 ile kodlanmýþ þifrelenmiþ veriyi çözerek binary forma dönüþtürüyoruz.
+  std::vector<unsigned char> ciphertext = base64Decode(encryptedData);
+
+  // Eðer çözme iþlemi baþarýsýz olursa boþ bir string döndürüyoruz.
+  if (ciphertext.empty()) return "";
+
+  // Þifre çözme iþlemi için bir yeni þifreleme baðlamý oluþturuyoruz.
+  EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+
+  // Eðer baðlam oluþturulamaz veya þifre çözme baþlatýlamazsa hata veriyoruz.
+  if (!ctx || EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, sessionKey, sessionIV) != 1) {
+    //std::cerr << "Cipher context veya deþifre baþlatýlamadý." << std::endl;
+    EVP_CIPHER_CTX_free(ctx); // Baðlamý serbest býrakýyoruz.
+    return "";
+  }
+
+  // Çözülen metni tutmak için bir vektör oluþturuyoruz, boyut þifreli metnin boyutuyla ayný.
+  std::vector<unsigned char> plaintext(ciphertext.size());
+  int len, plaintext_len;
+
+  // Þifreli metni çözmeye baþlýyoruz.
+  if (EVP_DecryptUpdate(ctx, plaintext.data(), &len, ciphertext.data(), ciphertext.size()) != 1) {
+    // Eðer þifre çözme sýrasýnda hata olursa, hata mesajý veriyoruz ve baðlamý serbest býrakýyoruz.
+    //std::cerr << "EVP_DecryptUpdate baþarýsýz." << std::endl;
+    EVP_CIPHER_CTX_free(ctx);
+    return "";
+  }
+
+  plaintext_len = len; // Çözülen kýsmýn uzunluðunu kaydediyoruz.
+
+  // Þifre çözme iþlemini tamamlýyoruz.
+  if (EVP_DecryptFinal_ex(ctx, plaintext.data() + len, &len) != 1) {
+    // Eðer tamamlanamazsa hata mesajý veriyoruz ve baðlamý serbest býrakýyoruz.
+    //std::cerr << "EVP_DecryptFinal_ex baþarýsýz." << std::endl;
+    EVP_CIPHER_CTX_free(ctx);
+    return "";
+  }
+
+  plaintext_len += len; // Tam çözülen verinin uzunluðunu güncelliyoruz.
+  // Þifreleme baðlamýný serbest býrakýyoruz.
+  EVP_CIPHER_CTX_free(ctx);
+  // Çözülen metni std::string formatýnda döndürüyoruz.
+  return std::string(reinterpret_cast<char *>(plaintext.data()), plaintext_len);
+}
+
+/*
+* @brief Base64 encode process
+*
+* @param data Data to encode
+*
+* @param len Length of the data
+*
+* @return std::string
+*/
+// Oturum anahtarýný þifreleme fonksiyonu
+LOCAL_EVENT_PLANNER_API std::string encryptKey(const unsigned char *key, size_t keyLen) {
+  // Yeni bir þifreleme baðlamý oluþturuyoruz.
+  EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+  // IV (Initialization Vector) baþlatýyoruz, ECB modunda kullanýlmasa da bir boþ IV oluþturuluyor.
+  unsigned char iv[16] = {};
+  // Þifreli veriyi tutacak bir vektör oluþturuyoruz, boyutu anahtar boyutundan biraz büyük olmalý.
+  std::vector<unsigned char> ciphertext(keyLen + EVP_CIPHER_block_size(EVP_aes_256_ecb()));
+  int len, ciphertext_len;
+
+  // Þifreleme iþlemini baþlatýyoruz, AES-256-ECB algoritmasý ve masterKey ile.
+  if (!ctx || EVP_EncryptInit_ex(ctx, EVP_aes_256_ecb(), NULL, masterKey, iv) != 1) {
+    // Eðer baðlam oluþturulamazsa veya iþlem baþlatýlamazsa hata mesajý veriyoruz.
+    //std::cerr << "Anahtar þifreleme baþlatýlamadý." << std::endl;
+    EVP_CIPHER_CTX_free(ctx); // Baðlamý serbest býrakýyoruz.
+    return "";
+  }
+
+  // Þifreleme iþlemini baþlatýyoruz ve anahtar verisini þifreliyoruz.
+  if (EVP_EncryptUpdate(ctx, ciphertext.data(), &len, key, keyLen) != 1) {
+    // Eðer þifreleme sýrasýnda hata olursa, hata mesajý veriyoruz ve baðlamý serbest býrakýyoruz.
+    //std::cerr << "Anahtar þifreleme baþarýsýz." << std::endl;
+    EVP_CIPHER_CTX_free(ctx);
+    return "";
+  }
+
+  ciphertext_len = len; // Þifrelenen kýsmýn uzunluðunu kaydediyoruz.
+
+  // Þifreleme iþlemini tamamlýyoruz.
+  if (EVP_EncryptFinal_ex(ctx, ciphertext.data() + len, &len) != 1) {
+    // Eðer tamamlanamazsa hata mesajý veriyoruz ve baðlamý serbest býrakýyoruz.
+    //std::cerr << "Anahtar þifreleme tamamlanamadý." << std::endl;
+    EVP_CIPHER_CTX_free(ctx);
+    return "";
+  }
+
+  ciphertext_len += len; // Tam þifrelenmiþ verinin uzunluðunu güncelliyoruz.
+  // Þifreleme baðlamýný serbest býrakýyoruz.
+  EVP_CIPHER_CTX_free(ctx);
+  // Þifrelenmiþ veriyi Base64 formatýna çevirip döndürüyoruz.
+  return base64Encode(ciphertext.data(), ciphertext_len);
+}
+
+/*
+* @brief Base64 decrypt key process
+*
+* @param encryptedKey Encrypted key to decrypt
+*
+* @param key Buffer to store the decrypted key
+*
+* @param keyLen Length of the key buffer
+*
+* @return bool
+*/
+// Oturum anahtarýný deþifreleme fonksiyonu
+LOCAL_EVENT_PLANNER_API bool decryptKey(const std::string &encryptedKey, unsigned char *key, size_t keyLen) {
+  // Þifrelenmiþ anahtarý Base64 formatýndan çözerek binary forma dönüþtürüyoruz.
+  std::vector<unsigned char> ciphertext = base64Decode(encryptedKey);
+
+  // Eðer çözümleme baþarýsýz olursa iþlemi sonlandýrýyoruz.
+  if (ciphertext.empty()) return false;
+
+  // Þifre çözme baðlamý oluþturuyoruz.
+  EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+  // IV (Initialization Vector) baþlatýyoruz. ECB modunda kullanýlmasa da boþ bir IV saðlanýyor.
+  unsigned char iv[16] = {};
+  int len, plaintext_len;
+
+  // Þifre çözme iþlemini baþlatýyoruz. AES-256-ECB algoritmasý ve masterKey kullanýyoruz.
+  if (!ctx || EVP_DecryptInit_ex(ctx, EVP_aes_256_ecb(), NULL, masterKey, iv) != 1) {
+    // Eðer baðlam oluþturulamazsa veya iþlem baþlatýlamazsa hata mesajý veriyoruz.
+    //std::cerr << "Anahtar deþifreleme baþlatýlamadý." << std::endl;
+    EVP_CIPHER_CTX_free(ctx); // Baðlamý serbest býrakýyoruz.
+    return false;
+  }
+
+  // Þifrelenmiþ veriyi çözmeye baþlýyoruz.
+  if (EVP_DecryptUpdate(ctx, key, &len, ciphertext.data(), ciphertext.size()) != 1) {
+    // Eðer çözümleme sýrasýnda hata oluþursa hata mesajý veriyoruz.
+    //std::cerr << "Anahtar deþifreleme baþarýsýz." << std::endl;
+    EVP_CIPHER_CTX_free(ctx); // Baðlamý serbest býrakýyoruz.
+    return false;
+  }
+
+  plaintext_len = len; // Çözülmüþ verinin uzunluðunu kaydediyoruz.
+
+  // Þifre çözme iþlemini tamamlýyoruz.
+  if (EVP_DecryptFinal_ex(ctx, key + len, &len) != 1) {
+    // Eðer tamamlanamazsa hata mesajý veriyoruz.
+    //std::cerr << "Anahtar deþifreleme tamamlanamadý." << std::endl;
+    EVP_CIPHER_CTX_free(ctx); // Baðlamý serbest býrakýyoruz.
+    return false;
+  }
+
+  plaintext_len += len; // Tam çözülmüþ verinin uzunluðunu güncelliyoruz.
+  // Þifre çözme baðlamýný serbest býrakýyoruz.
+  EVP_CIPHER_CTX_free(ctx);
+  return true; // Baþarýlý bir þekilde tamamlandýðýný belirtiyoruz.
+}
+
+
+
+/*
+* @brief Get the encrypted session key
+*
+* @return std::string
+
+*/
+/// Þifrelenmiþ oturum anahtarý ve IV'yi alma fonksiyonlarý
+
+// Oturum anahtarýný þifreleyerek þifrelenmiþ oturum anahtarýný döndüren fonksiyon
+LOCAL_EVENT_PLANNER_API std::string getEncryptedSessionKey() {
+  if (encryptedSessionKey.empty()) { // Eðer þifrelenmiþ oturum anahtarý henüz oluþturulmamýþsa
+    encryptedSessionKey = encryptKey(sessionKey, sizeof(sessionKey)); // Oturum anahtarýný þifreler ve saklar
+  }
+
+  return encryptedSessionKey; // Þifrelenmiþ oturum anahtarýný döndürür
+}
+
+bool sqwrrlfdw(int value) {
+  if (value < 2) return false;
+
+  for (int i = 2; i <= std::sqrt(value); ++i) {
+    if (value % i == 0) return false;
+  }
+
+  return true;
+}
+
+void ttassoiyrrxcfd() {
+  std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
+  std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
+  std::vector<int> finalData = { 101, 202, 303, 404, 505 };
+  // Gereksiz deðiþkenler
+  int evenCount = 0, oddCount = 0, primeCount = 0;
+  int sumMultiplesOfFive = 0, perfectSquareCount = 0;
+  int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
+  long long unnecessaryComputationSum = 0, totalIterations = 0;
+  long long specialConditionCount = 0, modSevenCount = 0;
+  double accumulatedSquareRoots = 0.0;
+  int totalDigitProduct = 1;
+  // Gereksiz deðiþkenler
+  int a = 0;
+  int b = 1;
+  int c = 2;
+  int d = 3;
+  int uselessCalculation1 = 0;
+  int uselessCalculation2 = 0;
+  int uselessCalculation3 = 0;
+
+  for (int value : data) {
+    totalIterations++;
+    // Gereksiz iþlemler
+    int intermediate = value * 3;
+    intermediate += 7;
+    intermediate -= 7;
+    intermediate /= 2;
+    intermediate *= value % 5;
+    intermediate += 1 - 1;
+    unnecessaryComputationSum += intermediate;
+    int e = 4;
+    int f = 5;
+    int g = 6;
+    int h = 7;
+    int i = 8;
+    int j = 9;
+    a = a + 1 - 1 + 2 - 2; // Daha fazla gereksiz iþlem
+    b = b * 2 / 2 + 5 - 5;
+    c = c + a - b + 3 - 3;
+    d = d * 4 / 4 - c + 6 - 6;
+
+    if (value % 2 == 0) {
+      evenCount++;
+      continue;
+    }
+
+    oddCount++;
+
+    if (sqwrrlfdw(value)) {
+      primeCount++;
+    }
+
+    if (value % 5 == 0) {
+      sumMultiplesOfFive += value;
+    }
+
+    int sqrtValue = std::sqrt(value);
+
+    if (sqrtValue * sqrtValue == value) {
+      perfectSquareCount++;
+    }
+
+    if (value % 3 == 0) {
+      divisibleByThreeCount++;
+    }
+
+    if (value % 7 == 0) {
+      modSevenCount++;
+    }
+
+    int digitSum = 0, digitProduct = 1;
+    int temp = value;
+
+    while (temp > 0) {
+      int digit = temp % 10;
+      digitSum += digit;
+      digitProduct *= digit;
+      temp /= 10;
+      uselessCalculation1 = uselessCalculation1 + digit - digit;
+      uselessCalculation2 = uselessCalculation2 * digit / (digit == 0 ? 1 : digit);
+      uselessCalculation3 = uselessCalculation3 + digitProduct - digitProduct;
+    }
+
+    if (digitSum > 10) {
+      digitSumGreaterThanTen++;
+    }
+
+    totalDigitProduct *= (digitProduct % 1000);
+    accumulatedSquareRoots += std::sqrt(value);
+
+    if (value % 2 == 0 && value % 3 == 0) {
+      specialConditionCount++;
+    }
+
+    unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+  }
+
+  int resulst = 0;
+  int temsp = 1;
+  int bs = 5;
+  int cde = 18;
+
+  for (int i = 1; i <= 10; ++i) {
+    temsp *= i % 3 + 1;         // Mod ve çarpma iþlemi
+    resulst += temsp % 7 - 2;    // Mod, toplama ve çýkarma iþlemi
+    resulst ^= (i * 5) & 3;     // XOR ve AND iþlemi
+
+    if (resulst % 4 == 0) {     // Þartlý bir dönüþüm
+      resulst += temsp / 2;
+    }
+
+    bs = cde + bs;
+    temsp += resulst % 9;        // Döngü deðiþkeni üzerinde ek bir iþlem
+  }
+
+  cde = cde + bs;
+
+  for (int value : additionalData) {
+    int dummyCalculation = value * 2 + 3 - 3;
+    dummyCalculation *= dummyCalculation % 10 + 1 - 1;
+    accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    unnecessaryComputationSum += dummyCalculation % 10 + 4 - 4;
+  }
+
+  for (int value : finalData) {
+    int dummyCalculation = value * 3 - 5 + 5 - 5;
+    dummyCalculation *= 2;
+    accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    unnecessaryComputationSum += dummyCalculation % 20 + 8 - 8;
+  }
+
+  // Daha fazla gereksiz deðiþken
+  int p = 10;
+  int q = 20;
+  int r = 30;
+  int s = 40;
+  int t = 50;
+  p = p + q - r + s - t;
+  q = q * 2 - p + r - s + t;
+  r = r * 3 / 3 + q - p;
+}
+/*
+* @brief Get the encrypted session IV
+*
+* @return std::string
+*/
+// IV'yi þifreleyerek þifrelenmiþ IV'yi döndüren fonksiyon
+LOCAL_EVENT_PLANNER_API std::string getEncryptedSessionIV() {
+  int resulst = 0;
+  int temsp = 1;
+  int bs = 5;
+  int cde = 18;
+
+  for (int i = 1; i <= 10; ++i) {
+    temsp *= i % 3 + 1;         // Mod ve çarpma iþlemi
+    resulst += temsp % 7 - 2;    // Mod, toplama ve çýkarma iþlemi
+    resulst ^= (i * 5) & 3;     // XOR ve AND iþlemi
+
+    if (resulst % 4 == 0) {     // Þartlý bir dönüþüm
+      resulst += temsp / 2;
+    }
+
+    bs = cde + bs;
+    temsp += resulst % 9;        // Döngü deðiþkeni üzerinde ek bir iþlem
+  }
+
+  cde = cde + bs;
+  ttassoiyrrxcfd();
+
+  if (encryptedSessionIV.empty()) { // Eðer þifrelenmiþ IV henüz oluþturulmamýþsa
+    encryptedSessionIV = encryptKey(sessionIV, sizeof(sessionIV)); // IV'yi þifreler ve saklar
+  }
+
+  return encryptedSessionIV; // Þifrelenmiþ IV'yi döndürür
+}
+
+/*
+* @brief Set the session key
+*
+* @param encryptedSessionKey Encrypted session key
+*
+* @return bool
+*/
+// Oturum anahtarýný ayarlama fonksiyonlarý
+
+// Þifrelenmiþ oturum anahtarýný çözüp oturum anahtarýný ayarlayan fonksiyon
+LOCAL_EVENT_PLANNER_API bool setSessionKey(const std::string &encryptedSessionKey) {
+  return decryptKey(encryptedSessionKey, sessionKey, sizeof(sessionKey)); // Þifrelenmiþ anahtarý çözerek oturum anahtarýný ayarlar
+}
+
+/*
+* @brief Set the session IV
+*
+* @param encryptedSessionIV Encrypted session IV
+*
+* @return bool
+*/
+// Þifrelenmiþ IV'yi çözüp IV'yi ayarlayan fonksiyon
+LOCAL_EVENT_PLANNER_API bool setSessionIV(const std::string &encryptedSessionIV) {
+  int resulst = 0;
+  int temsp = 1;
+  int bs = 5;
+  int cde = 18;
+
+  for (int i = 1; i <= 10; ++i) {
+    temsp *= i % 3 + 1;         // Mod ve çarpma iþlemi
+    resulst += temsp % 7 - 2;    // Mod, toplama ve çýkarma iþlemi
+    resulst ^= (i * 5) & 3;     // XOR ve AND iþlemi
+
+    if (resulst % 4 == 0) {     // Þartlý bir dönüþüm
+      resulst += temsp / 2;
+    }
+
+    bs = cde + bs;
+    temsp += resulst % 9;        // Döngü deðiþkeni üzerinde ek bir iþlem
+  }
+
+  cde = cde + bs;
+  return decryptKey(encryptedSessionIV, sessionIV, sizeof(sessionIV)); // Þifrelenmiþ IV'yi çözerek IV'yi ayarlar
+}
+
+
+/*
+* @brief Setup the session encryption
+*
+* @return bool
+*/
+// Oturum þifrelemesini baþlatan ve anahtarlarý yöneten fonksiyon
+
+// Oturum anahtarýný ve IV'yi rastgele oluþturup þifreleme için hazýr hale getiren fonksiyon
+LOCAL_EVENT_PLANNER_API bool setupSessionEncryption() {
+  if (!RAND_bytes(sessionKey, sizeof(sessionKey)) || !RAND_bytes(sessionIV, sizeof(sessionIV))) {
+    // Eðer oturum anahtarý veya IV oluþturulamazsa hata mesajý döndürür
+    //std::cerr << "Oturum anahtarý veya IV oluþturulamadý." << std::endl;
+    return false; // Ýþlem baþarýsýz
+  }
+
+  return true; // Ýþlem baþarýlý
+}
+
+/*
+* @brief Collect and encrypt session data
+*
+* @param stmt SQLite statement
+*
+* @return bool
+*/
+// Kullanýcý bilgilerini toplayan ve oturum verilerini þifreleyen fonksiyon
+LOCAL_EVENT_PLANNER_API bool collectAndEncryptSessionData(sqlite3_stmt *stmt) {
+  // Kullanýcý ID'sini veritabanýndan al
+  int userId = sqlite3_column_int(stmt, 0);
+  // Kullanýcý adýný veritabanýndan al (null olup olmadýðýný kontrol et)
+  const unsigned char *dbUsername = sqlite3_column_text(stmt, 1);
+  // Þu anki zamaný al
+  std::time_t loginTime = std::time(nullptr);
+  // Zamaný belirli bir formatta string olarak sakla
+  char timeStr[100];
+  std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", std::localtime(&loginTime));
+  // Oturum verilerini bir string'e dönüþtürmek için bir string stream kullan
+  std::ostringstream sessionDataStream;
+  sessionDataStream << "id:" << userId << ";"; // Kullanýcý ID'sini ekle
+  sessionDataStream << "username:" << (dbUsername ? reinterpret_cast<const char *>(dbUsername) : "") << ";"; // Kullanýcý adýný ekle
+  sessionDataStream << "login_time:" << timeStr; // Giriþ zamanýný ekle
+  // Stream'deki oturum verilerini bir string'e dönüþtür
+  std::string sessionData = sessionDataStream.str();
+  // Oturum verilerini þifrele
+  std::string encryptedSessionData = encryptSessionData(sessionData);
+
+  // Eðer þifreleme baþarýsýz olduysa hata mesajý döndür
+  if (encryptedSessionData.empty()) {
+    std::cerr << "Oturum verileri þifrelenemedi." << std::endl;
+    return false; // Ýþlem baþarýsýz
+  }
+
+  // Þifrelenmiþ oturum verilerini ekrana yazdýr
+  std::cout << "Oturum Verileri\n\n";
+  std::cout << "Oturum Verileri (Sifreli): " << encryptedSessionData << std::endl;
+  std::cout << "===============================\n";
+  // Ýþlem baþarýlýysa true döndür
+  return true;
+}

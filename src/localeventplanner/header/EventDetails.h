@@ -1,0 +1,27 @@
+#ifndef EVENT_DETAILS_H
+#define EVENT_DETAILS_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluşturulurken dışa aktarım
+#else
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanılırken içe aktarım
+#endif
+
+#include <string>
+#include "sqlite3.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+LOCAL_EVENT_PLANNER_API void eventDetails();
+LOCAL_EVENT_PLANNER_API void createEvent();
+LOCAL_EVENT_PLANNER_API void manageEvents();
+LOCAL_EVENT_PLANNER_API sqlite3 *openEventDatabase();
+
+#ifdef __cplusplus
+}
+
+#endif
+
+#endif
