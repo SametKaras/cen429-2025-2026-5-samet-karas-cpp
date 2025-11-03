@@ -1,0 +1,30 @@
+#ifndef SALT_AND_HMAC_H
+#define SALT_AND_HMAC_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluşturulurken dışa aktarım
+#else
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanılırken içe aktarım
+#endif
+
+#include <string>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// Salt üretme fonksiyonu
+LOCAL_EVENT_PLANNER_API std::string generateFixedSalt(const std::string &seed);
+
+// HMAC işlemi ile şifreyi hashleme fonksiyonu
+LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMAC(const std::string &password, const std::string &salt);
+
+LOCAL_EVENT_PLANNER_API std::string generateSalt();
+
+LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMACC(const std::string &password, const std::string &salt);
+
+#ifdef __cplusplus
+}
+
+#endif
+#endif // SALT_AND_HMAC_H

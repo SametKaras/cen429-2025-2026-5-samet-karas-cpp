@@ -1,6 +1,6 @@
-# tests/aka5g/CMakeLists.txt
+# tests/localeventplanner/CMakeLists.txt
 set(ROOT src/tests)
-set(TESTNAME calculator)
+set(TESTNAME localeventplanner)
 set(EXENAME ${TESTNAME}_tests)
 
 message(STATUS "[${ROOT}/${TESTNAME}] Module Tests...")
@@ -20,17 +20,17 @@ source_group("src" FILES ${LIB_SOURCES})
 
 enable_testing()
 
-# Define the target for aka5g tests
+# Define the target for localeventplanner tests
 add_executable(${EXENAME} ${LIB_HEADERS} ${LIB_SOURCES})
 
 # Add included headers
 target_include_directories(${EXENAME} PUBLIC
-						   ${CMAKE_CURRENT_SOURCE_DIR}/../../utility/header
-						   ${CMAKE_CURRENT_SOURCE_DIR}/../../calculator/header
-						   ${CMAKE_CURRENT_SOURCE_DIR})
+					   ${CMAKE_CURRENT_SOURCE_DIR}/../../utility/header
+					   ${CMAKE_CURRENT_SOURCE_DIR}/../../localeventplanner/header
+					   ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Add any dependencies or compile options specific to aka5g tests
-target_link_libraries(${EXENAME} PRIVATE calculator utility gtest gtest_main)
+# Add any dependencies or compile options specific to localeventplanner tests
+target_link_libraries(${EXENAME} PRIVATE localeventplanner utility gtest gtest_main)
 
 # Register the test with CTest
 # add_test(NAME ${EXENAME} COMMAND ${EXENAME})

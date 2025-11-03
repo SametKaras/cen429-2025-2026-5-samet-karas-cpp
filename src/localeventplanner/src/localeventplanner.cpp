@@ -1,23 +1,11 @@
-#include "../header/calculator.h"
-#include <stdexcept>
+/**
+ * @file localeventplanner.cpp
+ * @brief Local Event Planner main library file
+ */
 
-using namespace Coruh::Calculator;
+#include "../header/localeventplanner.h"
+#include "../header/UserAuthentication.h"
+#include "../header/EventDetails.h"
 
-double Calculator::add(double a, double b) {
-    return a + b;
-}
-
-double Calculator::subtract(double a, double b) {
-    return a - b;
-}
-
-double Calculator::multiply(double a, double b) {
-    return a * b;
-}
-
-double Calculator::divide(double a, double b) {
-    if (b == 0) {
-        throw std::invalid_argument("Division by zero is not allowed.");
-    }
-    return a / b;
-}
+// Main library implementation file
+// Actual implementations are in respective module files
