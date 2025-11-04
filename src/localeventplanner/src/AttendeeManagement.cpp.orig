@@ -1,0 +1,44 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include "LocalEventPlanner.h"
+#include "sqlite3.h"
+
+
+LOCAL_EVENT_PLANNER_API void attendeeManagement() {
+    int choice;
+
+    do {
+        std::cout << "Attendee Management:\n";
+        std::cout << "1. Register Attendees\n";
+        std::cout << "2. Track Attendees\n";
+        std::cout << "0. Exit\n";
+        std::cout << "Bir secenek secin: ";
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            registerAttendees();
+            break;
+
+        case 2:
+            trackAttendees();
+            break;
+
+        case 0:
+            std::cout << "Cikis yapiliyor...\n";
+            break;
+
+        default:
+            std::cout << "Gecersiz secim. Lutfen tekrar deneyin.\n";
+        }
+    } while (choice != 0);
+}
+
+LOCAL_EVENT_PLANNER_API void registerAttendees() {
+    std::cout << "Registering Attendees...\n";
+}
+
+LOCAL_EVENT_PLANNER_API void trackAttendees() {
+    std::cout << "Tracking Attendees...\n";
+}

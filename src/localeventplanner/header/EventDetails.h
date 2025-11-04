@@ -17,7 +17,8 @@ extern "C" {
 LOCAL_EVENT_PLANNER_API void eventDetails();
 LOCAL_EVENT_PLANNER_API void createEvent();
 LOCAL_EVENT_PLANNER_API void manageEvents();
-LOCAL_EVENT_PLANNER_API sqlite3 *openEventDatabase();
+LOCAL_EVENT_PLANNER_API void listEvents();
+LOCAL_EVENT_PLANNER_API sqlite3* openEventDatabase();
 
 #ifdef __cplusplus
 }

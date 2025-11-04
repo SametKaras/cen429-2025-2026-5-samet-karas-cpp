@@ -1,0 +1,126 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include "LocalEventPlanner.h"
+#include "sqlite3.h"
+
+sqlite3* openDatabase() {
+    sqlite3* db;
+    int exit = sqlite3_open("users.db", &db);
+
+    if (exit) {
+        std::cerr << "Veritabani acilamadi: " << sqlite3_errmsg(db) << std::endl;
+        return nullptr;
+    }
+    else {
+        std::cout << "Veritabani basariyla acildi.\n";
+        // `users` tablosu olup olmadığını kontrol et ve yoksa oluştur
+        const char* sqlCreateTable =
+            "CREATE TABLE IF NOT EXISTS users ("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "username TEXT NOT NULL, "
+            "password TEXT NOT NULL);";
+        char* errorMessage;
+        exit = sqlite3_exec(db, sqlCreateTable, nullptr, 0, &errorMessage);
+
+        if (exit != SQLITE_OK) {
+            std::cerr << "Tablo olusturma hatasi: " << errorMessage << std::endl;
+            sqlite3_free(errorMessage);
+        }
+    }
+
+    return db;
+}
+
+LOCAL_EVENT_PLANNER_API void loginUser() {
+    sqlite3* db = openDatabase();
+
+    if (!db) return;
+
+    std::string username, password;
+    std::cout << "Kullanici Adini Girin: ";
+    std::cin >> username;
+    std::cout << "Sifreyi Girin: ";
+    std::cin >> password;
+    std::string sql = "SELECT * FROM users WHERE username = ? AND password = ?;";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        std::cout << "Giris basarili.\n";
+        displayMainMenu();
+    }
+    else {
+        std::cout << "Gecersiz kullanici adi veya sifre.\n";
+    }
+
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+}
+
+// Kullanıcıyı veritabanına kaydeden işlev
+LOCAL_EVENT_PLANNER_API void registerUser() {
+    sqlite3* db = openDatabase();
+
+    if (!db) return;
+
+    std::string username, password;
+    std::cout << "Kullanici Adini Girin: ";
+    std::cin >> username;
+    std::cout << "Sifreyi Girin: ";
+    std::cin >> password;
+    std::string sql = "INSERT INTO users (username, password) VALUES (?, ?);";
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        std::cerr << "Veri ekleme hatasi: " << sqlite3_errmsg(db) << std::endl;
+    }
+    else {
+        std::cout << "Kayit basarili.\n";
+    }
+
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+}
+
+// Kullanıcı kimlik doğrulama menüsü
+LOCAL_EVENT_PLANNER_API void userAuthentication() {
+    int choice;
+
+    do {
+        std::cout << "Kullanici Kimlik Dogrulama:\n";
+        std::cout << "1. Giris Yap\n";
+        std::cout << "2. Kayit Ol\n";
+        std::cout << "3. Misafir Modu\n";
+        std::cout << "0. Ana Menuye Don\n";
+        std::cout << "Bir secenek secin: ";
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            loginUser();
+            break;
+
+        case 2:
+            registerUser();
+            break;
+
+        case 3:
+            std::cout << "Misafir Modu aktif. Sinirli erisim saglandi.\n";
+            displayMainMenu();
+            break;
+
+        case 0:
+            std::cout << "Ana Menuye Donuluyor...\n";
+            break;
+
+        default:
+            std::cout << "Gecersiz secim. Lutfen tekrar deneyin.\n";
+        }
+    } while (choice != 0);
+}

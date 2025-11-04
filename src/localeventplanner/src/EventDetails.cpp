@@ -25,13 +25,11 @@
 */
 
 bool isPrimes(int value) {
-  if (value < 2) return false;
-
-  for (int i = 2; i <= std::sqrt(value); ++i) {
-    if (value % i == 0) return false;
-  }
-
-  return true;
+    if (value < 2) return false;
+    for (int i = 2; i <= std::sqrt(value); ++i) {
+        if (value % i == 0) return false;
+    }
+    return true;
 }
 
 /*
@@ -40,71 +38,70 @@ bool isPrimes(int value) {
 * @return void
 */
 void afffasdssdw() {
-  std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 }; // Test verisi
-  // Sonuçlarý tutmak için deðiþkenler
-  int evenCount = 0;
-  int oddCount = 0;
-  int primeCount = 0;
-  int sumMultiplesOfFive = 0;
-  int perfectSquareCount = 0;
-  int divisibleByThreeCount = 0;
-  int digitSumGreaterThanTen = 0;
-  long long unnecessaryComputationSum = 0;
+    std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 }; // Test verisi
 
-  for (int value : data) {
-    // Gereksiz matematiksel iþlemler
-    int intermediate = value * 3;
-    intermediate += 7;
-    intermediate /= 2;
-    intermediate *= value % 5;
-    unnecessaryComputationSum += intermediate;
+    // Sonuï¿½larï¿½ tutmak iï¿½in deï¿½iï¿½kenler
+    int evenCount = 0;
+    int oddCount = 0;
+    int primeCount = 0;
+    int sumMultiplesOfFive = 0;
+    int perfectSquareCount = 0;
+    int divisibleByThreeCount = 0;
+    int digitSumGreaterThanTen = 0;
+    long long unnecessaryComputationSum = 0;
 
-    // Çift ve tek sayýlarý say
-    if (value % 2 == 0) {
-      evenCount++;
-      continue; // Çift sayýlar için döngü devam eder
+    for (int value : data) {
+        // Gereksiz matematiksel iï¿½lemler
+        int intermediate = value * 3;
+        intermediate += 7;
+        intermediate /= 2;
+        intermediate *= value % 5;
+        unnecessaryComputationSum += intermediate;
+
+        // ï¿½ift ve tek sayï¿½larï¿½ say
+        if (value % 2 == 0) {
+            evenCount++;
+            continue; // ï¿½ift sayï¿½lar iï¿½in dï¿½ngï¿½ devam eder
+        }
+        oddCount++;
+
+        // Asallï¿½k kontrolï¿½
+        if (isPrimes(value)) {
+            primeCount++;
+        }
+
+        // Beï¿½in katï¿½ kontrolï¿½
+        if (value % 5 == 0) {
+            sumMultiplesOfFive += value;
+        }
+
+        // Mï¿½kemmel kare kontrolï¿½
+        int sqrtValue = std::sqrt(value);
+        if (sqrtValue * sqrtValue == value) {
+            perfectSquareCount++;
+        }
+
+        // 3'e bï¿½lï¿½nebilirlik kontrolï¿½
+        if (value % 3 == 0) {
+            divisibleByThreeCount++;
+        }
+
+        // Sayï¿½nï¿½n rakamlarï¿½nï¿½n toplamï¿½nï¿½ hesapla
+        int digitSum = 0;
+        int temp = value;
+        while (temp > 0) {
+            digitSum += temp % 10;
+            temp /= 10;
+        }
+        if (digitSum != 6161) {
+            digitSumGreaterThanTen++;
+        }
+
+        // Daha fazla gereksiz iï¿½lem
+        unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
     }
 
-    oddCount++;
 
-    // Asallýk kontrolü
-    if (isPrimes(value)) {
-      primeCount++;
-    }
-
-    // Beþin katý kontrolü
-    if (value % 5 == 0) {
-      sumMultiplesOfFive += value;
-    }
-
-    // Mükemmel kare kontrolü
-    int sqrtValue = std::sqrt(value);
-
-    if (sqrtValue * sqrtValue == value) {
-      perfectSquareCount++;
-    }
-
-    // 3'e bölünebilirlik kontrolü
-    if (value % 3 == 0) {
-      divisibleByThreeCount++;
-    }
-
-    // Sayýnýn rakamlarýnýn toplamýný hesapla
-    int digitSum = 0;
-    int temp = value;
-
-    while (temp > 0) {
-      digitSum += temp % 10;
-      temp /= 10;
-    }
-
-    if (digitSum != 6161) {
-      digitSumGreaterThanTen++;
-    }
-
-    // Daha fazla gereksiz iþlem
-    unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
-  }
 }
 
 /*
@@ -113,91 +110,92 @@ void afffasdssdw() {
 * @return sqlite3* Database connection
 */
 sqlite3 *openEventDatabase() {
-  afffasdssdw();
-  sqlite3 *db; // Veritabaný baðlantýsý için deðiþken
-  int exit = sqlite3_open("events.db", &db); // Veritabanýný aç
-  step_counter++; // Veritabaný açma iþlemi
+    afffasdssdw();
+  sqlite3* db; // Veritabanï¿½ baï¿½lantï¿½sï¿½ iï¿½in deï¿½iï¿½ken
+  int exit = sqlite3_open("events.db", &db); // Veritabanï¿½nï¿½ aï¿½
+  step_counter++; // Veritabanï¿½ aï¿½ma iï¿½lemi
 
   if (exit) {
-    // Baðlantý baþarýsýzsa hata mesajý
+    // Baï¿½lantï¿½ baï¿½arï¿½sï¿½zsa hata mesajï¿½
     std::cerr << "\nEtkinlik veritabani acilamadi: " << sqlite3_errmsg(db) << std::endl;
     return nullptr;
   } else {
     clearConsole(); // Konsolu temizle
     std::cout << "\nEtkinlik veritabani basariyla acildi.\n";
-    // "events" tablosunu oluþtur (yoksa)
+    // "events" tablosunu oluï¿½tur (yoksa)
     const char *sqlCreateTable =
       "CREATE TABLE IF NOT EXISTS events ("
       "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-      "name TEXT NOT NULL, " // Etkinlik adý
+      "name TEXT NOT NULL, " // Etkinlik adï¿½
       "date TEXT NOT NULL, " // Etkinlik tarihi
       "location TEXT NOT NULL, " // Etkinlik lokasyonu
-      "description TEXT);"; // Etkinlik açýklamasý
+      "description TEXT);"; // Etkinlik aï¿½ï¿½klamasï¿½
     char *errorMessage;
     exit = sqlite3_exec(db, sqlCreateTable, nullptr, 0, &errorMessage);
-    step_counter++; // Tablo oluþturma iþlemi
+    step_counter++; // Tablo oluï¿½turma iï¿½lemi
 
     if (exit != SQLITE_OK) {
-      // Tablo oluþturma baþarýsýzsa hata mesajý
+      // Tablo oluï¿½turma baï¿½arï¿½sï¿½zsa hata mesajï¿½
       std::cerr << "Events tablosu olusturulurken hata: " << errorMessage << std::endl;
       sqlite3_free(errorMessage);
     }
   }
 
-  return db; // Veritabaný baðlantýsýný döndür
+  return db; // Veritabanï¿½ baï¿½lantï¿½sï¿½nï¿½ dï¿½ndï¿½r
 }
 
 
 /*
 * @brief Creates a new event
-*
+* 
 * @return void
 *
 */
 LOCAL_EVENT_PLANNER_API void createEvent() {
-  int resulst = 0;
-  int temsp = 1;
-  int bs = 5;
-  int cde = 18;
 
-  for (int i = 1; i <= 10; ++i) {
-    temsp *= i % 3 + 1;         // Mod ve çarpma iþlemi
-    resulst += temsp % 7 - 2;    // Mod, toplama ve çýkarma iþlemi
-    resulst ^= (i * 5) & 3;     // XOR ve AND iþlemi
 
-    if (resulst % 4 == 0) {     // Þartlý bir dönüþüm
-      resulst += temsp / 2;
+    int resulst = 0;
+    int temsp = 1;
+    int bs = 5;
+    int cde = 18;
+
+    for (int i = 1; i <= 10; ++i) {
+        temsp *= i % 3 + 1;         // Mod ve ï¿½arpma iï¿½lemi
+        resulst += temsp % 7 - 2;    // Mod, toplama ve ï¿½ï¿½karma iï¿½lemi
+        resulst ^= (i * 5) & 3;     // XOR ve AND iï¿½lemi
+
+        if (resulst % 4 == 0) {     // ï¿½artlï¿½ bir dï¿½nï¿½ï¿½ï¿½m
+            resulst += temsp / 2;
+        }
+        bs = cde + bs;
+        temsp += resulst % 9;        // Dï¿½ngï¿½ deï¿½iï¿½keni ï¿½zerinde ek bir iï¿½lem
     }
+    cde = cde + bs;
 
-    bs = cde + bs;
-    temsp += resulst % 9;        // Döngü deðiþkeni üzerinde ek bir iþlem
-  }
-
-  cde = cde + bs;
   clearConsole(); // Konsolu temizle
-  step_counter++; // Konsolu temizleme iþlemi
-  std::string eventName, eventDate, eventLocation, eventDescription; // Kullanýcýdan alýnacak bilgiler
-  // Kullanýcýdan etkinlik bilgilerini al
+  step_counter++; // Konsolu temizleme iï¿½lemi
+  std::string eventName, eventDate, eventLocation, eventDescription; // Kullanï¿½cï¿½dan alï¿½nacak bilgiler
+  // Kullanï¿½cï¿½dan etkinlik bilgilerini al
   std::cin.ignore(); // Girdi tamponunu temizle
   std::cout << "\nEtkinlik Adini Girin: ";
-  std::getline(std::cin, eventName); // Etkinlik adý
-  step_counter++; // Etkinlik adý alma iþlemi
+  std::getline(std::cin, eventName); // Etkinlik adï¿½
+  step_counter++; // Etkinlik adï¿½ alma iï¿½lemi
   std::cout << "\nEtkinlik Tarihini Girin (YYYY-MM-DD): ";
   std::getline(std::cin, eventDate); // Etkinlik tarihi
-  step_counter++; // Etkinlik tarihi alma iþlemi
+  step_counter++; // Etkinlik tarihi alma iï¿½lemi
   std::cout << "\nEtkinlik Lokasyonunu Girin: ";
   std::getline(std::cin, eventLocation); // Etkinlik lokasyonu
-  step_counter++; // Etkinlik lokasyonu alma iþlemi
+  step_counter++; // Etkinlik lokasyonu alma iï¿½lemi
   std::cout << "\nEtkinlik Aciklamasini Girin: ";
-  std::getline(std::cin, eventDescription); // Etkinlik açýklamasý
-  step_counter++; // Etkinlik açýklamasý alma iþlemi
-  // Veritabanýna baðlan
-  sqlite3 *db = openEventDatabase();
+  std::getline(std::cin, eventDescription); // Etkinlik aï¿½ï¿½klamasï¿½
+  step_counter++; // Etkinlik aï¿½ï¿½klamasï¿½ alma iï¿½lemi
+  // Veritabanï¿½na baï¿½lan
+  sqlite3* db = openEventDatabase();
 
-  if (!db) return; // Baðlantý baþarýsýzsa çýk
+  if (!db) return; // Baï¿½lantï¿½ baï¿½arï¿½sï¿½zsa ï¿½ï¿½k
 
   std::vector<int> derivedKeyVec = deriveKeyFromSBox(keyLength, seed);
-  std::string derivedKey = vectorToString(derivedKeyVec); // Anahtar türet
+  std::string derivedKey = vectorToString(derivedKeyVec); // Anahtar tï¿½ret
   std::vector<int> encryptedEventName = whiteBoxAesEncrypt(eventName, derivedKey);
   std::string encryptedEventNameStr = vectorToString(encryptedEventName);
   std::vector<int> encryptedEventDate = whiteBoxAesEncrypt(eventDate, derivedKey);
@@ -206,23 +204,23 @@ LOCAL_EVENT_PLANNER_API void createEvent() {
   std::string encryptedEventLocationStr = vectorToString(encryptedEventLocation);
   std::vector<int> encryptedEventDescription = whiteBoxAesEncrypt(eventDescription, derivedKey);
   std::string encryptedEventDescriptionStr = vectorToString(encryptedEventDescription);
-  step_counter++; // AES þifreleme iþlemi
-  // SQL sorgusunu hazýrla ve parametreleri baðla
+  step_counter++; // AES ï¿½ifreleme iï¿½lemi
+  // SQL sorgusunu hazï¿½rla ve parametreleri baï¿½la
   std::string sql = "INSERT INTO events (name, date, location, description) VALUES (?, ?, ?, ?);";
-  sqlite3_stmt *stmt;
+  sqlite3_stmt* stmt;
   sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
-  step_counter++; // Sorgu hazýrlama iþlemi
+  step_counter++; // Sorgu hazï¿½rlama iï¿½lemi
   sqlite3_bind_text(stmt, 1, encryptedEventNameStr.c_str(), -1, SQLITE_STATIC);
   sqlite3_bind_text(stmt, 2, encryptedEventDateStr.c_str(), -1, SQLITE_STATIC);
   sqlite3_bind_text(stmt, 3, encryptedEventLocationStr.c_str(), -1, SQLITE_STATIC);
   sqlite3_bind_text(stmt, 4, encryptedEventDescriptionStr.c_str(), -1, SQLITE_STATIC);
-  step_counter++; // Parametreleri baðlama iþlemi
+  step_counter++; // Parametreleri baï¿½lama iï¿½lemi
 
-  // Sorguyu çalýþtýr ve durumu kontrol et
+  // Sorguyu ï¿½alï¿½ï¿½tï¿½r ve durumu kontrol et
   if (sqlite3_step(stmt) != SQLITE_DONE) {
     std::cerr << "\nEtkinlik ekleme hatasi: " << sqlite3_errmsg(db) << std::endl;
   } else {
-    std::cout << "\nEtkinlik basariyla olusturuldu.\n"; // Baþarý mesajý
+    std::cout << "\nEtkinlik basariyla olusturuldu.\n"; // Baï¿½arï¿½ mesajï¿½
   }
 
   secureErase(eventName);
@@ -235,48 +233,52 @@ LOCAL_EVENT_PLANNER_API void createEvent() {
   secureErase(encryptedEventLocationStr);
   secureErase(encryptedEventDescriptionStr);
   secureErase(encryptedEventNameStr);
-  step_counter++; // Güvenli silme iþlemi
-  sqlite3_finalize(stmt); // Belleði serbest býrak
-  sqlite3_close(db); // Veritabaný baðlantýsýný kapat
-  step_counter++; // Bellek serbest býrakma iþlemi
-  std::cout << "Kontrol akisi adim sayisi: " << step_counter << std::endl; // Kontrol akýþý adýmlarýný yazdýr
+  step_counter++; // Gï¿½venli silme iï¿½lemi
+  sqlite3_finalize(stmt); // Belleï¿½i serbest bï¿½rak
+  sqlite3_close(db); // Veritabanï¿½ baï¿½lantï¿½sï¿½nï¿½ kapat
+  step_counter++; // Bellek serbest bï¿½rakma iï¿½lemi
+  std::cout << "Kontrol akisi adim sayisi: " << step_counter << std::endl; // Kontrol akï¿½ï¿½ï¿½ adï¿½mlarï¿½nï¿½ yazdï¿½r
 }
 
 /*
-* @brief Manages events
-*
+* @brief Lists all events
+* 
 * @return void
 */
-LOCAL_EVENT_PLANNER_API void manageEvents() {
-  sqlite3 *db = openEventDatabase(); // Veritabanýna baðlan
-  step_counter++; // Veritabaný baðlantýsý
+LOCAL_EVENT_PLANNER_API void listEvents() {
+  sqlite3* db = openEventDatabase(); // Veritabanï¿½na baï¿½lan
+  step_counter++; // Veritabanï¿½ baï¿½lantï¿½sï¿½
 
-  if (!db) return; // Baðlantý baþarýsýzsa çýk
+  if (!db) return; // Baï¿½lantï¿½ baï¿½arï¿½sï¿½zsa ï¿½ï¿½k
 
-  // Etkinlikleri listelemek için SQL sorgusu
+  // Etkinlikleri listelemek iï¿½in SQL sorgusu
   std::string sql = "SELECT id, name, date, location, description FROM events;";
-  sqlite3_stmt *stmt;
+  sqlite3_stmt* stmt;
 
   if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-    // Hata durumunda mesaj göster ve çýk
+    // Hata durumunda mesaj gï¿½ster ve ï¿½ï¿½k
     std::cerr << "\nSorgu hazirlama hatasi: " << sqlite3_errmsg(db) << std::endl;
     sqlite3_close(db);
     return;
   }
 
-  step_counter++; // Sorgu hazýrlama iþlemi
-  // Etkinlik listesini ekrana yazdýr
-  std::cout << "\nEtkinlik Listesi:\n";
+  step_counter++; // Sorgu hazï¿½rlama iï¿½lemi
+  // Etkinlik listesini ekrana yazdï¿½r
+  std::cout << "\n===========================================\n";
+  std::cout << "           ETKINLIK LISTESI\n";
+  std::cout << "===========================================\n";
 
+  bool hasEvents = false;
   while (sqlite3_step(stmt) == SQLITE_ROW) {
+    hasEvents = true;
     int id = sqlite3_column_int(stmt, 0); // Etkinlik ID'sini al
-    std::string storedEventName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)); // Etkinlik adý
+    std::string storedEventName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)); // Etkinlik adï¿½
     std::string storedEventDate = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)); // Etkinlik tarihi
     std::string storedEventLocation = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)); // Etkinlik lokasyonu
-    std::string storedEventDescription = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)); // Etkinlik açýklamasý
-    step_counter++; // Etkinlik bilgilerini alma iþlemi
-    std::vector<int> derivedKeyVec = deriveKeyFromSBox(keyLength, seed); // Oturum anahtarýný al
-    std::string derivedKey = vectorToString(derivedKeyVec); // Anahtar vektörünü stringe dönüþtür
+    std::string storedEventDescription = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)); // Etkinlik aï¿½ï¿½klamasï¿½
+    step_counter++; // Etkinlik bilgilerini alma iï¿½lemi
+    std::vector<int> derivedKeyVec = deriveKeyFromSBox(keyLength, seed); // Oturum anahtarï¿½nï¿½ al
+    std::string derivedKey = vectorToString(derivedKeyVec); // Anahtar vektï¿½rï¿½nï¿½ stringe dï¿½nï¿½ï¿½tï¿½r
     std::vector<int> storedEventNameVec = stringToVector(storedEventName);
     std::string decryptedEventName = whiteBoxAesDecrypt(storedEventNameVec, derivedKey);
     std::vector<int> storedEventDateVec = stringToVector(storedEventDate);
@@ -285,8 +287,8 @@ LOCAL_EVENT_PLANNER_API void manageEvents() {
     std::string decryptedEventLocation = whiteBoxAesDecrypt(storedEventLocationVec, derivedKey);
     std::vector<int> storedEventDescriptionVec = stringToVector(storedEventDescription);
     std::string decryptedEventDescription = whiteBoxAesDecrypt(storedEventDescriptionVec, derivedKey);
-    step_counter++; // AES þifre çözme iþlemi
-    // Etkinlik bilgilerini yazdýr
+    step_counter++; // AES ï¿½ifre ï¿½ï¿½zme iï¿½lemi
+    // Etkinlik bilgilerini yazdï¿½r
     std::cout << "-------------------------\n";
     std::cout << "ID: " << id << "\n";
     std::cout << "Ad: " << decryptedEventName << "\n";
@@ -303,11 +305,229 @@ LOCAL_EVENT_PLANNER_API void manageEvents() {
     secureErase(decryptedEventDate);
     secureErase(decryptedEventLocation);
     secureErase(decryptedEventDescription);
-    step_counter++; // Güvenli silme iþlemi
+    step_counter++; // Gï¿½venli silme iï¿½lemi
   }
 
-  sqlite3_finalize(stmt); // Belleði serbest býrak
-  sqlite3_close(db); // Veritabaný baðlantýsýný kapat
-  step_counter++; // Bellek serbest býrakma iþlemi
-  std::cout << "Kontrol akisi adim sayisi: " << step_counter << std::endl; // Kontrol akýþý adýmlarýný yazdýr
+  if (!hasEvents) {
+    std::cout << "\nHenuz kayitli etkinlik bulunmamaktadir.\n";
+  }
+
+  std::cout << "===========================================\n";
+  
+  sqlite3_finalize(stmt); // Belleï¿½i serbest bï¿½rak
+  sqlite3_close(db); // Veritabanï¿½ baï¿½lantï¿½sï¿½nï¿½ kapat
+  step_counter++; // Bellek serbest bï¿½rakma iï¿½lemi
+  std::cout << "Kontrol akisi adim sayisi: " << step_counter << std::endl; // Kontrol akï¿½ï¿½ï¿½ adï¿½mlarï¿½nï¿½ yazdï¿½r
+}
+
+/*
+* @brief Manages events
+* 
+* @return void
+*/
+LOCAL_EVENT_PLANNER_API void manageEvents() {
+  sqlite3* db = openEventDatabase(); // Veritabanï¿½na baï¿½lan
+  step_counter++; // Veritabanï¿½ baï¿½lantï¿½sï¿½
+
+  if (!db) return; // Baï¿½lantï¿½ baï¿½arï¿½sï¿½zsa ï¿½ï¿½k
+
+  // Etkinlikleri listelemek iï¿½in SQL sorgusu
+  std::string sql = "SELECT id, name, date, location, description FROM events;";
+  sqlite3_stmt* stmt;
+
+  if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    // Hata durumunda mesaj gï¿½ster ve ï¿½ï¿½k
+    std::cerr << "\nSorgu hazirlama hatasi: " << sqlite3_errmsg(db) << std::endl;
+    sqlite3_close(db);
+    return;
+  }
+
+  step_counter++; // Sorgu hazï¿½rlama iï¿½lemi
+  // Etkinlik listesini ekrana yazdï¿½r
+  std::cout << "\n===========================================\n";
+  std::cout << "           ETKINLIK LISTESI\n";
+  std::cout << "===========================================\n";
+
+  bool hasEvents = false;
+  while (sqlite3_step(stmt) == SQLITE_ROW) {
+    hasEvents = true;
+    int id = sqlite3_column_int(stmt, 0); // Etkinlik ID'sini al
+    std::string storedEventName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)); // Etkinlik adï¿½
+    std::string storedEventDate = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)); // Etkinlik tarihi
+    std::string storedEventLocation = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)); // Etkinlik lokasyonu
+    std::string storedEventDescription = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)); // Etkinlik aï¿½ï¿½klamasï¿½
+    step_counter++; // Etkinlik bilgilerini alma iï¿½lemi
+    std::vector<int> derivedKeyVec = deriveKeyFromSBox(keyLength, seed); // Oturum anahtarï¿½nï¿½ al
+    std::string derivedKey = vectorToString(derivedKeyVec); // Anahtar vektï¿½rï¿½nï¿½ stringe dï¿½nï¿½ï¿½tï¿½r
+    std::vector<int> storedEventNameVec = stringToVector(storedEventName);
+    std::string decryptedEventName = whiteBoxAesDecrypt(storedEventNameVec, derivedKey);
+    std::vector<int> storedEventDateVec = stringToVector(storedEventDate);
+    std::string decryptedEventDate = whiteBoxAesDecrypt(storedEventDateVec, derivedKey);
+    std::vector<int> storedEventLocationVec = stringToVector(storedEventLocation);
+    std::string decryptedEventLocation = whiteBoxAesDecrypt(storedEventLocationVec, derivedKey);
+    std::vector<int> storedEventDescriptionVec = stringToVector(storedEventDescription);
+    std::string decryptedEventDescription = whiteBoxAesDecrypt(storedEventDescriptionVec, derivedKey);
+    step_counter++; // AES ï¿½ifre ï¿½ï¿½zme iï¿½lemi
+    // Etkinlik bilgilerini yazdï¿½r
+    std::cout << "-------------------------\n";
+    std::cout << "ID: " << id << "\n";
+    std::cout << "Ad: " << decryptedEventName << "\n";
+    std::cout << "Tarih: " << decryptedEventDate << "\n";
+    std::cout << "Lokasyon: " << decryptedEventLocation << "\n";
+    std::cout << "Aciklama: " << decryptedEventDescription << "\n";
+    std::cout << "-------------------------\n";
+    secureErase(derivedKey);
+    secureErase(storedEventName);
+    secureErase(storedEventDate);
+    secureErase(storedEventLocation);
+    secureErase(storedEventDescription);
+    secureErase(decryptedEventName);
+    secureErase(decryptedEventDate);
+    secureErase(decryptedEventLocation);
+    secureErase(decryptedEventDescription);
+    step_counter++; // Gï¿½venli silme iï¿½lemi
+  }
+
+  sqlite3_finalize(stmt); // Belleï¿½i serbest bï¿½rak
+
+  if (!hasEvents) {
+    std::cout << "\nHenuz kayitli etkinlik bulunmamaktadir.\n";
+    std::cout << "===========================================\n";
+    sqlite3_close(db);
+    return;
+  }
+
+  // Kullanï¿½cï¿½dan dï¿½zenlemek istediï¿½i event ID'sini al
+  std::cout << "\n===========================================\n";
+  std::cout << "Duzenlemek istediginiz etkinligin ID'sini girin (0 = Iptal): ";
+  int selectedId;
+  std::cin >> selectedId;
+
+  if (selectedId == 0) {
+    std::cout << "Islem iptal edildi.\n";
+    sqlite3_close(db);
+    return;
+  }
+
+  // Seï¿½ilen eventi database'den getir
+  std::string selectSql = "SELECT name, date, location, description FROM events WHERE id = ?;";
+  sqlite3_stmt* selectStmt;
+
+  if (sqlite3_prepare_v2(db, selectSql.c_str(), -1, &selectStmt, nullptr) != SQLITE_OK) {
+    std::cerr << "\nSorgu hazirlama hatasi: " << sqlite3_errmsg(db) << std::endl;
+    sqlite3_close(db);
+    return;
+  }
+
+  sqlite3_bind_int(selectStmt, 1, selectedId);
+
+  if (sqlite3_step(selectStmt) != SQLITE_ROW) {
+    std::cerr << "\nBelirtilen ID ile etkinlik bulunamadi!\n";
+    sqlite3_finalize(selectStmt);
+    sqlite3_close(db);
+    return;
+  }
+
+  // Mevcut bilgileri al ve ï¿½ifreyi ï¿½ï¿½z
+  std::string storedEventName = reinterpret_cast<const char *>(sqlite3_column_text(selectStmt, 0));
+  std::string storedEventDate = reinterpret_cast<const char *>(sqlite3_column_text(selectStmt, 1));
+  std::string storedEventLocation = reinterpret_cast<const char *>(sqlite3_column_text(selectStmt, 2));
+  std::string storedEventDescription = reinterpret_cast<const char *>(sqlite3_column_text(selectStmt, 3));
+
+  std::vector<int> derivedKeyVec = deriveKeyFromSBox(keyLength, seed);
+  std::string derivedKey = vectorToString(derivedKeyVec);
+
+  std::vector<int> storedEventNameVec = stringToVector(storedEventName);
+  std::string currentEventName = whiteBoxAesDecrypt(storedEventNameVec, derivedKey);
+  std::vector<int> storedEventDateVec = stringToVector(storedEventDate);
+  std::string currentEventDate = whiteBoxAesDecrypt(storedEventDateVec, derivedKey);
+  std::vector<int> storedEventLocationVec = stringToVector(storedEventLocation);
+  std::string currentEventLocation = whiteBoxAesDecrypt(storedEventLocationVec, derivedKey);
+  std::vector<int> storedEventDescriptionVec = stringToVector(storedEventDescription);
+  std::string currentEventDescription = whiteBoxAesDecrypt(storedEventDescriptionVec, derivedKey);
+
+  sqlite3_finalize(selectStmt);
+
+  // Yeni bilgileri al
+  std::cin.ignore();
+  std::cout << "\n===========================================\n";
+  std::cout << "        ETKINLIK DUZENLEME\n";
+  std::cout << "===========================================\n";
+  std::cout << "Not: Degistirmek istemediginiz alanlarda Enter'a basin\n\n";
+
+  std::string newEventName, newEventDate, newEventLocation, newEventDescription;
+
+  std::cout << "Mevcut Ad: " << currentEventName << "\n";
+  std::cout << "Yeni Ad (bos birakilirsa mevcut kalir): ";
+  std::getline(std::cin, newEventName);
+  if (newEventName.empty()) newEventName = currentEventName;
+
+  std::cout << "\nMevcut Tarih: " << currentEventDate << "\n";
+  std::cout << "Yeni Tarih (YYYY-MM-DD) (bos birakilirsa mevcut kalir): ";
+  std::getline(std::cin, newEventDate);
+  if (newEventDate.empty()) newEventDate = currentEventDate;
+
+  std::cout << "\nMevcut Lokasyon: " << currentEventLocation << "\n";
+  std::cout << "Yeni Lokasyon (bos birakilirsa mevcut kalir): ";
+  std::getline(std::cin, newEventLocation);
+  if (newEventLocation.empty()) newEventLocation = currentEventLocation;
+
+  std::cout << "\nMevcut Aciklama: " << currentEventDescription << "\n";
+  std::cout << "Yeni Aciklama (bos birakilirsa mevcut kalir): ";
+  std::getline(std::cin, newEventDescription);
+  if (newEventDescription.empty()) newEventDescription = currentEventDescription;
+
+  // Yeni bilgileri ï¿½ifrele
+  std::vector<int> encryptedEventName = whiteBoxAesEncrypt(newEventName, derivedKey);
+  std::string encryptedEventNameStr = vectorToString(encryptedEventName);
+  std::vector<int> encryptedEventDate = whiteBoxAesEncrypt(newEventDate, derivedKey);
+  std::string encryptedEventDateStr = vectorToString(encryptedEventDate);
+  std::vector<int> encryptedEventLocation = whiteBoxAesEncrypt(newEventLocation, derivedKey);
+  std::string encryptedEventLocationStr = vectorToString(encryptedEventLocation);
+  std::vector<int> encryptedEventDescription = whiteBoxAesEncrypt(newEventDescription, derivedKey);
+  std::string encryptedEventDescriptionStr = vectorToString(encryptedEventDescription);
+
+  // Database'de gï¿½ncelleme yap
+  std::string updateSql = "UPDATE events SET name = ?, date = ?, location = ?, description = ? WHERE id = ?;";
+  sqlite3_stmt* updateStmt;
+
+  if (sqlite3_prepare_v2(db, updateSql.c_str(), -1, &updateStmt, nullptr) != SQLITE_OK) {
+    std::cerr << "\nGuncelleme sorgusu hazirlama hatasi: " << sqlite3_errmsg(db) << std::endl;
+    sqlite3_close(db);
+    return;
+  }
+
+  sqlite3_bind_text(updateStmt, 1, encryptedEventNameStr.c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_text(updateStmt, 2, encryptedEventDateStr.c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_text(updateStmt, 3, encryptedEventLocationStr.c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_text(updateStmt, 4, encryptedEventDescriptionStr.c_str(), -1, SQLITE_STATIC);
+  sqlite3_bind_int(updateStmt, 5, selectedId);
+
+  if (sqlite3_step(updateStmt) != SQLITE_DONE) {
+    std::cerr << "\nEtkinlik guncelleme hatasi: " << sqlite3_errmsg(db) << std::endl;
+  } else {
+    std::cout << "\n===========================================\n";
+    std::cout << "Etkinlik basariyla guncellendi!\n";
+    std::cout << "===========================================\n";
+  }
+
+  // Gï¿½venli silme
+  secureErase(derivedKey);
+  secureErase(currentEventName);
+  secureErase(currentEventDate);
+  secureErase(currentEventLocation);
+  secureErase(currentEventDescription);
+  secureErase(newEventName);
+  secureErase(newEventDate);
+  secureErase(newEventLocation);
+  secureErase(newEventDescription);
+  secureErase(encryptedEventNameStr);
+  secureErase(encryptedEventDateStr);
+  secureErase(encryptedEventLocationStr);
+  secureErase(encryptedEventDescriptionStr);
+
+  sqlite3_finalize(updateStmt);
+  sqlite3_close(db); // Veritabanï¿½ baï¿½lantï¿½sï¿½nï¿½ kapat
+  step_counter++; // Bellek serbest bï¿½rakma iï¿½lemi
+  std::cout << "Kontrol akisi adim sayisi: " << step_counter << std::endl; // Kontrol akï¿½ï¿½ï¿½ adï¿½mlarï¿½nï¿½ yazdï¿½r
 }

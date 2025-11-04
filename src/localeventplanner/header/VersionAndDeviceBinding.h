@@ -1,0 +1,26 @@
+#ifndef VERSION_AND_DEVICE_BINDING_H
+#define VERSION_AND_DEVICE_BINDING_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+#define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
+#else
+#define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
+#endif
+
+#include <string> // std::string kullanýmý için
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+	LOCAL_EVENT_PLANNER_API bool isVersionCompatible(const std::string& currentVersion, const std::string& requiredVersion);
+	LOCAL_EVENT_PLANNER_API bool isEnvironmentCompatible();
+
+	LOCAL_EVENT_PLANNER_API std::string getDeviceBrand();
+	LOCAL_EVENT_PLANNER_API bool isDeviceCompatible();
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // VERSION_AND_DEVICE_BINDING_H
