@@ -14,14 +14,14 @@ extern "C" {
 #endif
 
 // Salt üretme fonksiyonu
-LOCAL_EVENT_PLANNER_API std::string generateFixedSalt(const std::string &seed);
+LOCAL_EVENT_PLANNER_API std::string generateFixedSalt(const std::string& seed);
 
 // HMAC işlemi ile şifreyi hashleme fonksiyonu
-LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMAC(const std::string &password, const std::string &salt);
+LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMAC(const std::string& password, const std::string& salt);
 
 LOCAL_EVENT_PLANNER_API std::string generateSalt();
 
-LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMACC(const std::string &password, const std::string &salt);
+LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMACC(const std::string& password, const std::string& salt);
 
 #ifdef __cplusplus
 }

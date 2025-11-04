@@ -1,0 +1,45 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include "LocalEventPlanner.h"
+#include "sqlite3.h"
+
+LOCAL_EVENT_PLANNER_API void displayMainMenu() {
+    int choice;
+
+    do {
+        std::cout << "Ana Menu:\n";
+        std::cout << "1. Etkinlik Detaylari\n";
+        std::cout << "2. Katilimci Yonetimi\n";
+        std::cout << "3. Takvim Duzenleyici\n";
+        std::cout << "4. Geri Bildirim Toplama\n";
+        std::cout << "0. Cikis\n";
+        std::cout << "Bir secenek secin: ";
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            eventDetails();
+            break;
+
+        case 2:
+            attendeeManagement();
+            break;
+
+        case 3:
+            scheduleOrganizer();
+            break;
+
+        case 4:
+            feedbackCollection();
+            break;
+
+        case 0:
+            std::cout << "Cikis yapiliyor...\n";
+            break;
+
+        default:
+            std::cout << "Gecersiz secim. Lutfen tekrar deneyin.\n";
+        }
+    } while (choice != 0);
+}

@@ -27,6 +27,21 @@ target_include_directories(${LIBNAME} PUBLIC
 # creates preprocessor definition used for library exports
 add_compile_definitions("LOCK6G_UTILIY_LIB_EXPORTS")
 
+# CMake'i MDd (dinamik debug) olarak yapılandır
+if(MSVC)
+    # Visual Studio'da runtime library ayarını MDd (dinamik debug) yap
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MDd" CACHE STRING "MSVC runtime library" FORCE)
+endif()
+
+# Debug ve Release yapılandırmaları için özel ayarlar
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # Debug modu için /MDd kullan
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    # Release modu için /MD kullan (dinamik bağlantı)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+endif()
+
 install(TARGETS ${LIBNAME}
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib

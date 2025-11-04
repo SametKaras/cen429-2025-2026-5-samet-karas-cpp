@@ -1,6 +1,6 @@
 # Set the minimum required CMake version
 cmake_minimum_required(VERSION 3.12)
-project(localeventplannerapp)
+project(LocalEventPlannerapp)
 
 set(ROOT src)
 
@@ -40,18 +40,18 @@ set(CRYPTOPP_BUILD_SHARED OFF)
 set(CRYPTOPP_USE_MASTER_BRANCH FALSE)
 
 option(ENABLE_UTILITY "Enable Utility Module" ON)
-option(ENABLE_LOCALEVENTPLANNER "Enable LocalEventPlanner Module" ON)
-option(ENABLE_LOCALEVENTPLANNER_APP "Enable LocalEventPlanner Application" ON)
+option(ENABLE_LocalEventPlanner "Enable LocalEventPlanner Module" ON)
+option(ENABLE_LocalEventPlanner_APP "Enable LocalEventPlanner Application" ON)
 option(ENABLE_TESTS "Enable All Tests" ON)
 
 # Configure tests
 add_compile_definitions(ENABLE_UTILITY_TEST)
-add_compile_definitions(ENABLE_LOCALEVENTPLANNER_TEST)
+add_compile_definitions(ENABLE_LocalEventPlanner_TEST)
 
 
 # Configure logs
 add_compile_definitions(ENABLE_UTILITY_LOGGER)
-add_compile_definitions(ENABLE_LOCALEVENTPLANNER_LOGGER)
+add_compile_definitions(ENABLE_LocalEventPlanner_LOGGER)
 
 # Set the output directories for Debug and Release configurations
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/build/Debug)
@@ -87,8 +87,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   message(STATUS "[${ROOT}] Setting Windows C/C++ Flags")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 else()
   message(WARNING "[${ROOT}] Not supported with the current compiler.")
 endif()
@@ -101,13 +101,13 @@ if(ENABLE_UTILITY)
 endif()
 
 # Logger submodule
-if(ENABLE_LOCALEVENTPLANNER)
-	add_subdirectory(${ROOT}/localeventplanner)
+if(ENABLE_LocalEventPlanner)
+	add_subdirectory(${ROOT}/LocalEventPlanner)
 endif()
 
 # BigInteger for Crypto submodule
-if(ENABLE_LOCALEVENTPLANNER_APP)
-	add_subdirectory(${ROOT}/localeventplannerapp)
+if(ENABLE_LocalEventPlanner_APP)
+	add_subdirectory(${ROOT}/LocalEventPlannerapp)
 endif()
 
 # Tests

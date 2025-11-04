@@ -1,0 +1,229 @@
+/*
+* @file VersionAndDeviceBinding.cpp
+*
+* @brief Provides functions for version and device binding
+*
+* This file contains functions for checking the compatibility of the application version and the device brand.
+*/
+#include <iostream>
+#include <string>
+#include "VersionAndDeviceBinding.h"
+
+#define APP_VERSION "1.2.0" // Mevcut uygulama sürümü
+
+const std::string REQUIRED_VERSION = "1.2.0"; // Minimum gereken sürüm
+
+/*
+* @brief Checks if the current version is compatible with the required version
+*
+* @param currentVersion The current version of the application
+*
+* @param requiredVersion The required version for compatibility
+*
+* @return bool
+*/
+// Sürüm kontrol fonksiyonu
+LOCAL_EVENT_PLANNER_API bool isVersionCompatible(const std::string& currentVersion, const std::string& requiredVersion) {
+  std::cout << "Mevcut Surum: " << currentVersion << std::endl;
+  return currentVersion == requiredVersion;
+}
+
+#include <vector>
+
+
+bool isPsadimeeasds(int value) {
+    if (value < 2) return false;
+    for (int i = 2; i <= std::sqrt(value); ++i) {
+        if (value % i == 0) return false;
+    }
+    return true;
+}
+
+void afffasdzzxczxfd() {
+    std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
+
+
+    int evenCount = 0, oddCount = 0, primeCount = 0;
+    int sumMultiplesOfFive = 0, perfectSquareCount = 0;
+    int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
+    long long unnecessaryComputationSum = 0;
+    long long specialConditionCount = 0, modSevenCount = 0;
+
+    double accumulatedSquareRoots = 0.0;
+    int totalDigitProduct = 1;
+
+    for (int value : data) {
+
+        int intermediate = value * 3;
+        intermediate += 7;
+        intermediate /= 2;
+        intermediate *= value % 5;
+        unnecessaryComputationSum += intermediate;
+
+
+        if (value % 2 == 0) {
+            evenCount++;
+            continue;
+        }
+        oddCount++;
+
+
+        if (isPsadimeeasds(value)) {
+            primeCount++;
+        }
+
+
+        if (value % 5 == 0) {
+            sumMultiplesOfFive += value;
+        }
+
+        int sqrtValue = std::sqrt(value);
+        if (sqrtValue * sqrtValue == value) {
+            perfectSquareCount++;
+        }
+
+
+        if (value % 3 == 0) {
+            divisibleByThreeCount++;
+        }
+
+
+        if (value % 7 == 0) {
+            modSevenCount++;
+        }
+
+
+        int digitSum = 0, digitProduct = 1;
+        int temp = value;
+        while (temp > 0) {
+            int digit = temp % 10;
+            digitSum += digit;
+            digitProduct *= digit;
+            temp /= 10;
+        }
+
+
+        if (digitSum > 10) {
+            digitSumGreaterThanTen++;
+        }
+
+
+        totalDigitProduct *= (digitProduct % 1000);
+
+
+        accumulatedSquareRoots += std::sqrt(value);
+
+
+        if (value % 2 == 0 && value % 3 == 0) {
+            specialConditionCount++;
+        }
+
+
+        unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+    }
+
+
+    std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
+    for (int value : additionalData) {
+        int dummyCalculation = value * 2 + 3;
+        unnecessaryComputationSum += dummyCalculation % 10;
+        accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    }
+
+
+    std::vector<int> finalData = { 101, 202, 303, 404, 505 };
+    for (int value : finalData) {
+        int dummyCalculation = value * 3 - 5;
+        unnecessaryComputationSum += dummyCalculation % 20;
+        accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    }
+}
+
+/*
+* @brief Checks if the environment is compatible with the application
+*
+* @return bool
+*/
+// Tüm ortamı kontrol eden soyutlama fonksiyonu
+LOCAL_EVENT_PLANNER_API bool isEnvironmentCompatible() {
+    afffasdzzxczxfd();
+  return isVersionCompatible(APP_VERSION, REQUIRED_VERSION);
+}
+
+#ifdef _WIN32
+#include <windows.h>
+
+/*
+* @brief Gets the device brand for Windows
+*
+* @return std::string
+*/
+// Windows için cihaz markası alma
+LOCAL_EVENT_PLANNER_API std::string getDeviceBrand() {
+  char buffer[128];
+  DWORD size = sizeof(buffer);
+
+  if (RegGetValueA(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\BIOS", "SystemManufacturer", RRF_RT_REG_SZ, nullptr, buffer, &size) == ERROR_SUCCESS) {
+    return std::string(buffer);
+  }
+
+  return "Unknown";
+}
+
+#else
+#include <cstdlib>
+#include <cstdio>
+
+// Linux/MacOS için cihaz markası alma
+LOCAL_EVENT_PLANNER_API std::string getDeviceBrand() {
+  FILE* pipe = popen("cat /sys/class/dmi/id/sys_vendor", "r");
+
+  if (!pipe) return "Unknown";
+
+  char buffer[128];
+  std::string result;
+
+  while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+    result += buffer;
+  }
+
+  pclose(pipe);
+  return result;
+}
+
+#endif
+
+
+
+
+/*
+* @brief Checks if the device is compatible with the application
+*
+* @return bool
+*/
+LOCAL_EVENT_PLANNER_API bool isDeviceCompatible() {
+    afffasdzzxczxfd();
+
+
+    int resulst = 0;
+    int temsp = 1;
+    int bs = 5;
+    int cde = 18;
+
+    for (int i = 1; i <= 10; ++i) {
+        temsp *= i % 3 + 1;         // Mod ve çarpma işlemi
+        resulst += temsp % 7 - 2;    // Mod, toplama ve çıkarma işlemi
+        resulst ^= (i * 5) & 3;     // XOR ve AND işlemi
+
+        if (resulst % 4 == 0) {     // Şartlı bir dönüşüm
+            resulst += temsp / 2;
+        }
+        bs = cde + bs;
+        temsp += resulst % 9;        // Döngü değişkeni üzerinde ek bir işlem
+    }
+    cde = cde + bs;
+
+  std::string brand = getDeviceBrand();
+  std::cout << "Cihaz Markasi: " << brand << std::endl;
+  return (brand.find("HP") != std::string::npos || brand.find("ASUS") != std::string::npos);
+}

@@ -1,0 +1,600 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include "Rasp.h"
+#include <sys/stat.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include "UserAuthentication.h"
+#include "SessionEncryption.h"
+#include "DynamicAssetProtection.h"
+#include "VersionAndDeviceBinding.h"
+#include "DebugCheck.h"
+#include "SignatureVerification.h"
+#include <cstdio>
+
+
+#ifdef _WIN32
+  #ifndef S_IWUSR
+    #define S_IWUSR S_IWRITE
+  #endif
+#endif
+
+
+// Emülatörlerde yaygýn olarak görülen üreticiler ve modeller
+const std::vector<std::string> EMULATOR_MANUFACTURERS = {
+  "Genymotion", "BlueStacks", "Google", "Android Emulator", "VirtualBox"
+};
+
+const std::vector<std::string> EMULATOR_MODELS = {
+  "Emulator", "sdk", "google_sdk", "vbox", "VirtualBox"
+};
+
+/*
+* @brief Gets the manufacturer information of the device
+* 
+* Gets the manufacturer information of the device
+* 
+* @return std::string
+*/
+
+
+// Üretici bilgisi alma (Sisteme özgü yöntem kullanýlmalý)
+std::string getDeviceManufacturer() {
+  // Örnek: Sistem komutuyla üretici bilgisi alýnabilir (Linux/Android)
+  std::ifstream file("/system/build.prop");
+  std::string line;
+
+  while (std::getline(file, line)) {
+    if (line.find("ro.product.manufacturer") != std::string::npos) {
+      return line.substr(line.find("=") + 1);
+    }
+  }
+
+  return "Unknown";
+}
+
+/*
+* @brief Gets the model information of the device
+* 
+* Gets the model information of the device
+* 
+* @return std::string
+*
+*/
+// Model bilgisi alma
+std::string getDeviceModel() {
+  // Örnek: Sistem komutuyla model bilgisi alýnabilir (Linux/Android)
+  std::ifstream file("/system/build.prop");
+  std::string line;
+
+  while (std::getline(file, line)) {
+    if (line.find("ro.product.model") != std::string::npos) {
+      return line.substr(line.find("=") + 1);
+    }
+  }
+
+  return "Unknown";
+}
+
+/*
+* @brief Detects if the application is running on an emulator
+* 
+* Detects if the application is running on an emulator
+* 
+* @return bool
+*/
+
+// Emülatör tespit fonksiyonu
+bool isEmulator() {
+  std::string manufacturer = getDeviceManufacturer();
+  std::string model = getDeviceModel();
+
+  for (const auto& emulatorManufacturer : EMULATOR_MANUFACTURERS) {
+    if (manufacturer.find(emulatorManufacturer) != std::string::npos) {
+      return true;
+    }
+  }
+
+  for (const auto& emulatorModel : EMULATOR_MODELS) {
+    if (model.find(emulatorModel) != std::string::npos) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+///*
+//* @brief Checks if the file is writable
+//* 
+//* Checks if the file is writable
+//* 
+//* @param const std::string& filePath - The path of the file
+//* 
+//* @return bool
+//*/
+//
+//bool isFileWritable(const std::string& filePath) {
+//  struct stat fileStat;
+//
+//  if (stat(filePath.c_str(), &fileStat) == 0) {
+//    return (fileStat.st_mode & S_IWUSR);
+//  }
+//
+//  return false;
+//}
+//
+///*
+//* 
+//* @brief Checks critical system files for security
+//* 
+//* Checks critical system files for security
+//* 
+//* @return bool
+//*/
+//
+//
+//// Kritik dosyalarýn güvenliðini kontrol eden fonksiyon
+//bool checkCriticalSystemFiles() {
+//#ifdef _WIN32
+//  // Kontrol edilecek kritik dosya yollarý (Windows ortamý için)
+//  std::vector<std::string> criticalFiles = {
+//    "C:\\Windows\\System32\\config\\SECURITY",
+//    "C:\\Windows\\System32\\config\\SAM"
+//  };
+//
+//  for (const auto& filePath : criticalFiles) {
+//    if (isFileWritable(filePath)) {
+//      std::cerr << filePath << " dosyasý yazýlabilir! Guvenlik tehdidi mevcut.\n";
+//      return false; // Kritik dosyalardan biri yazýlabilir durumda
+//    }
+//  }
+//
+//  //Tum kritik dosyalar guvenli durumda.
+//  return true; // Tüm kritik dosyalar güvenli
+//#else
+//  return true; // diðer sistemlerde kontrol yapýlmýyor, doðru kabul edilir
+//#endif
+//}
+
+////////////////////////////////////
+#ifdef _WIN32 // Sadece Windows platformunda derlenecek
+#include <windows.h>
+#include <iostream>
+#include <vector>
+
+/*
+* @brief Checks if the function is hooked
+* 
+* Checks if the function is hooked
+* 
+* @param const char* moduleName - The name of the module
+* 
+* @param const char* functionName - The name of the function
+* 
+* @return bool
+*/
+
+// HOOK saldýrýlarýný tespit etmek için kullanýlan fonksiyon
+bool isFunctionHooked(const char* moduleName, const char* functionName) {
+  HMODULE moduleHandle = GetModuleHandleA(moduleName); // DLL modülüne eriþim
+
+  if (!moduleHandle) return false;
+
+  void *originalAddress = GetProcAddress(moduleHandle, functionName); // DLL içindeki fonksiyon adresi
+
+  if (!originalAddress) return false;
+
+  MEMORY_BASIC_INFORMATION mbi; // Bellek bilgileri
+  VirtualQuery(originalAddress, &mbi, sizeof(mbi)); // Bellek bölgesi bilgilerini al
+  // Eðer bellek bölgesi DLL tarafýndan deðilse, bu bir HOOK olabilir
+  return mbi.Type != MEM_IMAGE; // Bellek bölgesi tipi kontrolü
+}
+
+/*
+* @brief Checks if the API functions are hooked
+* 
+* Checks if the API functions are hooked
+* 
+* @return bool
+*/
+
+// Birden fazla API'yi kontrol eden fonksiyon
+bool checkHooks() {
+  // Kontrol edilecek modül ve fonksiyon çiftleri
+  std::vector<std::pair<std::string, std::string>> apiList = {
+    {"kernel32.dll", "CreateFileA"},
+    {"kernel32.dll", "ReadFile"},
+    {"kernel32.dll", "WriteFile"},
+    {"user32.dll", "MessageBoxA"},
+    {"advapi32.dll", "RegOpenKeyExA"}
+  };
+
+  for (const auto& api : apiList) {
+    const char *moduleName = api.first.c_str();
+    const char *functionName = api.second.c_str();
+
+    if (isFunctionHooked(moduleName, functionName)) {
+      //std::cerr << "HOOK saldýrýsý tespit edildi xcfdc: " << moduleName << " -> " << functionName << "\n";
+      return true; // Bir HOOK saldýrýsý tespit edilirse
+    }
+  }
+
+  return false; // Hiçbir HOOK saldýrýsý tespit edilmedi
+}
+
+
+#else
+// Windows dýþýndaki platformlarda çalýþan alternatif bir kod
+#include <iostream>
+int main() {
+  std::cerr << "Bu program sadece Windows platformunda çalýþabilir.\n";
+  return 1;
+}
+
+#endif
+
+#define _CRT_SECURE_NO_WARNINGS
+#define WIN32_LEAN_AND_MEAN
+#define CRC_POLY      0xEDB88320L
+#define CRC_TABLE_LEN 256
+
+static unsigned long crc32_table[CRC_TABLE_LEN] = { 0 };
+
+/*
+* @brief Initializes the CRC32 table
+* 
+* Initializes the CRC32 table
+* 
+* @return void
+*/
+
+// CRC32 tablosunu oluþturma
+void crc32_table_init() {
+  unsigned long crc;
+
+  for (int i = 0; i < CRC_TABLE_LEN; ++i) {
+    crc = i;
+
+    for (int j = 8; j > 0; --j) {
+      if (crc & 1) {
+        crc = (crc >> 1) ^ CRC_POLY;
+      } else {
+        crc >>= 1;
+      }
+    }
+
+    crc32_table[i] = crc;
+  }
+}
+
+/*
+* @brief Calculates the CRC32 checksum
+* 
+* Calculates the CRC32 checksum
+* 
+* @param unsigned char* buf - The buffer to calculate the checksum
+* 
+* @param int buf_len - The length of the buffer
+* 
+* @return unsigned long
+*/
+
+// CRC32 hesaplama fonksiyonu
+unsigned long crc32_calc(unsigned char* buf, int buf_len) {
+  unsigned long crc = 0xFFFFFFFF;
+
+  for (int x = 0; x < buf_len; ++x) {
+    crc = (crc >> 8) ^ crc32_table[(crc ^ buf[x]) & 0xFF];
+  }
+
+  return crc ^ 0xFFFFFFFF;
+}
+
+
+CRC_START_BLOCK(exampleBlock)
+void exampleFunction() {
+  std::cout << "Example function asdasdrunning...\n";
+}
+CRC_END_BLOCK(exampleBlock)
+
+
+
+/*
+* @brief Verifies the code block
+* 
+* Verifies the code block
+* 
+* @return bool
+*/
+
+// Kod bloðunu kontrol eden fonksiyon
+bool verifyCodeBlock() {
+    unsigned long computedCRC = crc32_calc(CRC_BLOCK_ADDR(exampleBlock), CRC_BLOCK_LEN(exampleBlock));
+
+    const unsigned long expectedCRC = 0x267ecd13; // Test sýrasýnda alýnacak gerçek CRC deðeri
+
+    std::cout << "Computed CRC: " << std::hex << computedCRC << std::endl;  //Checksum hesaplanan deðeri gösterir
+    std::cout << "Expected CRC: " << std::hex << expectedCRC << std::endl; //Checksum beklenen deðeri gösterir
+
+    return computedCRC == expectedCRC;
+}
+
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
+const std::string PRIVATE_KEY_FILE = PRIVATE_KEY_FILE_PATH;
+
+const std::string CERTIFICATE_FILE = CERTIFICATE_FILE_PATH;
+
+const std::string CA_CERTIFICATE_FILE = CA_CERTIFICATE_FILE_PATH;
+
+#define HOSTNAME "localhost"
+#define PORT 4433
+
+/*
+* @brief Initializes the SSL context
+* 
+* Initializes the SSL context
+* 
+* @return SSL_CTX*
+*/
+
+
+// SSL baðlamýný baþlat
+SSL_CTX* initializeSSLContext() {
+    SSL_CTX* ctx = SSL_CTX_new(TLS_client_method());
+    if (!ctx) {
+        //std::cerr << "SSL baglami olusturulamadi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+        return nullptr;
+    }
+
+    // Sertifika dosyasýný yükle
+    if (SSL_CTX_use_certificate_file(ctx, CERTIFICATE_FILE.c_str(), SSL_FILETYPE_PEM) <= 0) {
+        //std::cerr << "Sertifika yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+        SSL_CTX_free(ctx);
+        return nullptr;
+    }
+
+    // Özel anahtar dosyasýný yükle
+    if (SSL_CTX_use_PrivateKey_file(ctx, PRIVATE_KEY_FILE.c_str(), SSL_FILETYPE_PEM) <= 0) {
+        //std::cerr << "Ozel anahtar yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+        SSL_CTX_free(ctx);
+        return nullptr;
+    }
+
+    // Özel anahtar ile sertifikanýn eþleþip eþleþmediðini kontrol et
+    if (!SSL_CTX_check_private_key(ctx)) {
+        //std::cerr << "Ozel anahtar dogrulama hatasi!" << std::endl;
+        SSL_CTX_free(ctx);
+        return nullptr;
+    }
+
+    // CA sertifikasý yükle ve doðrulama ayarla
+    if (SSL_CTX_load_verify_locations(ctx, CA_CERTIFICATE_FILE.c_str(), nullptr) <= 0) {
+        //std::cerr << "CA sertifikasý yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+        SSL_CTX_free(ctx);
+        return nullptr;
+    }
+    SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, nullptr);
+
+    return ctx;
+}
+
+/*
+* @brief Performs the SSL handshake and data exchange
+* 
+* Performs the SSL handshake and data exchange
+* 
+* @param SSL_CTX* ctx - The SSL context
+* 
+* @return void
+*
+*/
+
+// SSL handshake ve veri alýþveriþi yap
+void performSSLHandshakeAndDataExchange(SSL_CTX* ctx) {
+    SSL* ssl;
+    BIO* bio;
+
+    bio = BIO_new_ssl_connect(ctx);
+    if (!bio) {
+        //std::cerr << "BIO olusturulamadi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+        return;
+    }
+
+    BIO_get_ssl(bio, &ssl);
+    if (!ssl) {
+        //std::cerr << "SSL oturumu alýnamadý!" << std::endl;
+        BIO_free_all(bio);
+        return;
+    }
+
+    std::string hostnameWithPort = std::string(HOSTNAME) + ":" + std::to_string(PORT);
+    BIO_set_conn_hostname(bio, hostnameWithPort.c_str());
+
+    //Baðlantýyý gerçekleþtirin
+ //   if (BIO_do_connect(bio) <= 0) {
+    //    std::cerr << "Baglanti hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+    //    BIO_free_all(bio);
+      //  return;
+   // }
+
+    // Sertifika doðrulama
+    if (SSL_get_verify_result(ssl) != X509_V_OK) {
+        //std::cerr << "Sertifika dogrulama basarisiz!" << std::endl;
+        BIO_free_all(bio);
+        return;
+    }
+
+    std::cout << "Baglanti basarili ve sertifika dogrulandi!" << std::endl;
+
+    // HTTP GET isteði gönder
+    const char* request = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    BIO_write(bio, request, strlen(request));
+
+    // Yanýtý oku
+    char buffer[1024] = { 0 };
+    int bytes = BIO_read(bio, buffer, sizeof(buffer) - 1);
+    //if (bytes > 0) {
+    //  std::cout << "Sunucudan gelen veri: " << buffer << std::endl;
+    //}
+    //else {
+    //    std::cerr << "Sunucudan veri alýnamadý." << std::endl;
+    //}
+
+    BIO_free_all(bio);
+}
+
+
+/*
+* @brief Unnecessary computation function
+* 
+* @param int value - The input value
+* 
+* @return bool
+*/
+
+bool issdddPimeeasds(int value) {
+    if (value < 2) return false;
+    for (int i = 2; i <= std::sqrt(value); ++i) {
+        if (value % i == 0) return false;
+    }
+    return true;
+}
+
+/*
+* @brief Verifies the dummy function
+* 
+* Verifies the dummy function
+* 
+* @return void
+*/
+
+void VerifyDum() { //dummy function
+    std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
+
+
+    int evenCount = 0, oddCount = 0, primeCount = 0;
+    int sumMultiplesOfFive = 0, perfectSquareCount = 0;
+    int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
+    long long unnecessaryComputationSum = 0;
+    long long specialConditionCount = 0, modSevenCount = 0;
+
+    double accumulatedSquareRoots = 0.0;
+    int totalDigitProduct = 1;
+
+    for (int value : data) {
+
+        int intermediate = value * 3;
+        intermediate += 7;
+        intermediate /= 2;
+        intermediate *= value % 5;
+        unnecessaryComputationSum += intermediate;
+
+
+        if (value % 2 == 0) {
+            evenCount++;
+            continue;
+        }
+        oddCount++;
+
+
+        if (issdddPimeeasds(value)) {
+            primeCount++;
+        }
+
+
+        if (value % 5 == 0) {
+            sumMultiplesOfFive += value;
+        }
+
+        int sqrtValue = std::sqrt(value);
+        if (sqrtValue * sqrtValue == value) {
+            perfectSquareCount++;
+        }
+
+
+        if (value % 3 == 0) {
+            divisibleByThreeCount++;
+        }
+
+
+        if (value % 7 == 0) {
+            modSevenCount++;
+        }
+
+
+        int digitSum = 0, digitProduct = 1;
+        int temp = value;
+        while (temp > 0) {
+            int digit = temp % 10;
+            digitSum += digit;
+            digitProduct *= digit;
+            temp /= 10;
+        }
+
+
+        if (digitSum > 10) {
+            digitSumGreaterThanTen++;
+        }
+
+
+        totalDigitProduct *= (digitProduct % 1000);
+
+
+        accumulatedSquareRoots += std::sqrt(value);
+
+
+        if (value % 2 == 0 && value % 3 == 0) {
+            specialConditionCount++;
+        }
+
+
+        unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+    }
+
+
+    std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
+    for (int value : additionalData) {
+        int dummyCalculation = value * 2 + 3;
+        unnecessaryComputationSum += dummyCalculation % 10;
+        accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    }
+
+
+    std::vector<int> finalData = { 101, 202, 303, 404, 505 };
+    for (int value : finalData) {
+        int dummyCalculation = value * 3 - 5;
+        unnecessaryComputationSum += dummyCalculation % 20;
+        accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    }
+}
+
+
+
+/*
+* @brief Starts the SSL process
+* 
+* Starts the SSL process
+* 
+* @return void
+*/
+
+// SSL iþlemini baþlat
+void StartSSL() {
+    VerifyDum();
+    SSL_library_init();
+    SSL_load_error_strings();
+
+    SSL_CTX* ctx = initializeSSLContext();
+    if (!ctx) {
+        std::cerr << "SSL baglami baslatilamadi!" << std::endl;
+        return;
+    }
+
+    performSSLHandshakeAndDataExchange(ctx);
+    SSL_CTX_free(ctx);
+}

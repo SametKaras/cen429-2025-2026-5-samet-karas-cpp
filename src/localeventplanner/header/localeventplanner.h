@@ -1,62 +1,35 @@
-/**
- * @file calculator.h
- * 
- * @brief Provides functions for math. utilities
- */
-
-#ifndef CALCULATOR_H
-#define CALCULATOR_H
-
-#include "../../utility/header/commonTypes.h"
-
-namespace Coruh
-{
-    namespace Calculator
-    {
-        /**
-            @class Calculator
-            @brief Provides Basic functions for various operations.
-        */
-        class Calculator
-        {
-        public:
-            /**
-             * Adds two numbers.
-             * @param a First operand.
-             * @param b Second operand.
-             * @return The sum of a and b.
-             */
-            static double add(double a, double b);
-
-            /**
-             * Subtracts the second number from the first.
-             * @param a Minuend.
-             * @param b Subtrahend.
-             * @return The result of a - b.
-             */
-            static double subtract(double a, double b);
-
-            /**
-             * Multiplies two numbers.
-             * @param a First operand.
-             * @param b Second operand.
-             * @return The product of a and b.
-             */
-            static double multiply(double a, double b);
-
-            /**
-             * Divides the first number by the second.
-             * Throws std::invalid_argument if the second number is zero.
-             * @param a Dividend.
-             * @param b Divisor.
-             * @return The result of a / b.
-             * @throws std::invalid_argument If b is zero.
-             */
-            static double divide(double a, double b);
-
-
-        };
-    }
-}
-
-#endif // CALCULATOR_H
+//#ifndef LOCAL_EVENT_PLANNER_H
+//#define LOCAL_EVENT_PLANNER_H
+//
+//#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+//  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
+//#else
+//  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
+//#endif
+//
+//#include <string>
+//
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
+//
+//LOCAL_EVENT_PLANNER_API void displayMainMenu();
+//LOCAL_EVENT_PLANNER_API void userAuthentication();
+//LOCAL_EVENT_PLANNER_API void eventDetails();
+//LOCAL_EVENT_PLANNER_API void createEvent();
+//LOCAL_EVENT_PLANNER_API void manageEvents();
+//LOCAL_EVENT_PLANNER_API void attendeeManagement();
+//LOCAL_EVENT_PLANNER_API void registerAttendees();
+//LOCAL_EVENT_PLANNER_API void trackAttendees();
+//LOCAL_EVENT_PLANNER_API void scheduleOrganizer();
+//LOCAL_EVENT_PLANNER_API void planTimelines();
+//LOCAL_EVENT_PLANNER_API void organizeActivities();
+//LOCAL_EVENT_PLANNER_API void feedbackCollection();
+//LOCAL_EVENT_PLANNER_API void gatherFeedback();
+//
+//#ifdef __cplusplus
+//}
+//
+//#endif
+//
+//#endif

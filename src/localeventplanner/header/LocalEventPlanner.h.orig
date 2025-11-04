@@ -1,0 +1,24 @@
+#ifndef LOCAL_EVENT_PLANNER_H
+#define LOCAL_EVENT_PLANNER_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+#define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
+#else
+#define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    LOCAL_EVENT_PLANNER_API void displayMainMenu();
+    LOCAL_EVENT_PLANNER_API void userAuthentication();
+    LOCAL_EVENT_PLANNER_API void eventDetails();
+    LOCAL_EVENT_PLANNER_API void attendeeManagement();
+    LOCAL_EVENT_PLANNER_API void scheduleOrganizer();
+    LOCAL_EVENT_PLANNER_API void feedbackCollection();
+#ifdef __cplusplus
+}
+#endif
+
+#endif // LOCAL_EVENT_PLANNER_H

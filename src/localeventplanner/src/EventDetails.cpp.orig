@@ -1,0 +1,43 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include "LocalEventPlanner.h"
+#include "sqlite3.h"
+
+LOCAL_EVENT_PLANNER_API void eventDetails() {
+    int choice;
+
+    do {
+        std::cout << "Event Details:\n";
+        std::cout << "1. Create Event\n";
+        std::cout << "2. Manage Events\n";
+        std::cout << "0. Exit\n";
+        std::cout << "Bir secenek secin: ";
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            createEvent();
+            break;
+
+        case 2:
+            manageEvents();
+            break;
+
+        case 0:
+            std::cout << "Cikis yapiliyor...\n";
+            break;
+
+        default:
+            std::cout << "Gecersiz secim. Lutfen tekrar deneyin.\n";
+        }
+    } while (choice != 0);
+}
+
+LOCAL_EVENT_PLANNER_API void createEvent() {
+    std::cout << "Creating Event...\n";
+}
+
+LOCAL_EVENT_PLANNER_API void manageEvents() {
+    std::cout << "Managing Events...\n";
+}
