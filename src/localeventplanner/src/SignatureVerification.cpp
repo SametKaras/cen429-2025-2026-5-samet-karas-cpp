@@ -12,11 +12,9 @@
 // Helper function to read a file into a string
 LOCAL_EVENT_PLANNER_API std::string readFile(const std::string& filePath) {
   std::ifstream file(filePath, std::ios::binary | std::ios::ate);
-
   /*if (!file) {
     throw std::runtime_error("Failed to open file: " + filePath);
   }*/
-
   std::streamsize size = file.tellg();
   file.seekg(0, std::ios::beg);
   std::string buffer(size, '\0');
@@ -39,7 +37,7 @@ LOCAL_EVENT_PLANNER_API bool verifySignature() {
   BIO_free(bio);
 
   if (!publicKey) {
-   // std::cerr << "Failed to load public key\n";
+    // std::cerr << "Failed to load public key\n";
     return false;
   }
 
@@ -51,7 +49,7 @@ LOCAL_EVENT_PLANNER_API bool verifySignature() {
   EVP_MD_CTX* ctx = EVP_MD_CTX_new();
 
   if (!ctx) {
-   // std::cerr << "Failed to create EVP_MD_CTX\n";
+    // std::cerr << "Failed to create EVP_MD_CTX\n";
     EVP_PKEY_free(publicKey);
     return false;
   }
@@ -79,224 +77,206 @@ LOCAL_EVENT_PLANNER_API bool verifySignature() {
 #include <vector>
 
 bool isPazzximeeasds(int value) {
-    if (value < 2) return false;
-    for (int i = 2; i <= std::sqrt(value); ++i) {
-        if (value % i == 0) return false;
-    }
-    return true;
+  if (value < 2) return false;
+
+  for (int i = 2; i <= std::sqrt(value); ++i) {
+    if (value % i == 0) return false;
+  }
+
+  return true;
 }
 
 // Sahte Boolean Fonksiyonu
 bool sasdasfffvhhjk(int input) {
-    int temp = (input * 3) + 7 - 5;
-    return temp % 2 == 0; // Belirsiz bir koþul
+  int temp = (input * 3) + 7 - 5;
+  return temp % 2 == 0; // Belirsiz bir koþul
 }
 
 // Gizli Ýþlev Ýsimleri
 int shithsadmeticOsadperation(int a, int b) {
-    return (a * b + 3 - 2) / (a == 0 ? 1 : a); // Sahte aritmetik iþlem
+  return (a * b + 3 - 2) / (a == 0 ? 1 : a); // Sahte aritmetik iþlem
 }
 
 // Opaque Döngü
 void shiddasdenLoopOdasperation() {
-    std::vector<int> data = { 2, 4, 6, 8, 10, 12, 14, 16, 18 };
-    int opaqueResult = 0;
-    int fakeComputation = 0;
+  std::vector<int> data = { 2, 4, 6, 8, 10, 12, 14, 16, 18 };
+  int opaqueResult = 0;
+  int fakeComputation = 0;
 
-    for (int i = 0; i < data.size(); ++i) {
-        // Sahte iþlemler ve belirsiz aritmetik
-        int intermediate = (data[i] * 2 + 5) - (data[i] / 2);
-        fakeComputation += (intermediate % 7) * 3;
+  for (int i = 0; i < data.size(); ++i) {
+    // Sahte iþlemler ve belirsiz aritmetik
+    int intermediate = (data[i] * 2 + 5) - (data[i] / 2);
+    fakeComputation += (intermediate % 7) * 3;
 
-        if (sasdasfffvhhjk(intermediate)) {
-            opaqueResult += shithsadmeticOsadperation(intermediate, i + 1);
-        }
-        
-        // Rastgele çýkýþ noktalarý
-        if (i == 3 && intermediate % 3 == 0) {
-            break; // Kontrol akýþý manipülasyonu
-        }
-
-        if (i == 5 && intermediate % 2 == 1) {
-            return; // Belirsiz çýkýþ
-        }
+    if (sasdasfffvhhjk(intermediate)) {
+      opaqueResult += shithsadmeticOsadperation(intermediate, i + 1);
     }
 
+    // Rastgele çýkýþ noktalarý
+    if (i == 3 && intermediate % 3 == 0) {
+      break; // Kontrol akýþý manipülasyonu
+    }
+
+    if (i == 5 && intermediate % 2 == 1) {
+      return; // Belirsiz çýkýþ
+    }
+  }
 }
 
 // Sahte Ölüm Dalý ve Rastgele Deðiþkenler
 void sfadasdasfrations() {
-    int a = 10;
-    int b = 20;
-    int c = 30;
-    int d = 40;
-
-    // Sahte iþlemler
-    a = a + 1 - 1 + b - b;
-    b = b * 2 / 2 - c + c;
-    c = c + d - d * 2 / 2;
-    d = d * 3 / 3 - a + b;
-
+  int a = 10;
+  int b = 20;
+  int c = 30;
+  int d = 40;
+  // Sahte iþlemler
+  a = a + 1 - 1 + b - b;
+  b = b * 2 / 2 - c + c;
+  c = c + d - d * 2 / 2;
+  d = d * 3 / 3 - a + b;
 }
 
 // Sahte Fonksiyon Parametreleri
 int sfasdction(int x, int unused1, int unused2, int unused3) {
-    return x * 3 + unused1 - unused2 + unused3; // Kullanýlmayan parametreler
+  return x * 3 + unused1 - unused2 + unused3; // Kullanýlmayan parametreler
 }
 
 // Ana Ýþlev
 void ssecusreOperation() {
-    shiddasdenLoopOdasperation();
-    sfadasdasfrations();
+  shiddasdenLoopOdasperation();
+  sfadasdasfrations();
+  int result = sfasdction(10, 0, 0, 0);
+  result += shithsadmeticOsadperation(5, 3);
 
-    int result = sfasdction(10, 0, 0, 0);
-    result += shithsadmeticOsadperation(5, 3);
-    if (result % 2 == 0) {
-        result += 1; // Belirsiz deðiþiklik
-    }
+  if (result % 2 == 0) {
+    result += 1; // Belirsiz deðiþiklik
+  }
 }
 
 void afffxxzzddddzcwdfssfd() {
-    std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
+  std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
+  int evenCount = 0, oddCount = 0, primeCount = 0;
+  int sumMultiplesOfFive = 0, perfectSquareCount = 0;
+  int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
+  long long unnecessaryComputationSum = 0;
+  long long specialConditionCount = 0, modSevenCount = 0;
+  double accumulatedSquareRoots = 0.0;
+  int totalDigitProduct = 1;
 
+  for (int value : data) {
+    int intermediate = value * 3;
+    intermediate += 7;
+    intermediate /= 2;
+    intermediate *= value % 5;
+    unnecessaryComputationSum += intermediate;
 
-    int evenCount = 0, oddCount = 0, primeCount = 0;
-    int sumMultiplesOfFive = 0, perfectSquareCount = 0;
-    int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
-    long long unnecessaryComputationSum = 0;
-    long long specialConditionCount = 0, modSevenCount = 0;
-
-    double accumulatedSquareRoots = 0.0;
-    int totalDigitProduct = 1;
-
-    for (int value : data) {
-
-        int intermediate = value * 3;
-        intermediate += 7;
-        intermediate /= 2;
-        intermediate *= value % 5;
-        unnecessaryComputationSum += intermediate;
-
-
-        if (value % 2 == 0) {
-            evenCount++;
-            continue;
-        }
-        oddCount++;
-
-
-        if (isPazzximeeasds(value)) {
-            primeCount++;
-        }
-
-
-        if (value % 5 == 0) {
-            sumMultiplesOfFive += value;
-        }
-
-        int sqrtValue = std::sqrt(value);
-        if (sqrtValue * sqrtValue == value) {
-            perfectSquareCount++;
-        }
-
-
-        if (value % 3 == 0) {
-            divisibleByThreeCount++;
-        }
-
-
-        if (value % 7 == 0) {
-            modSevenCount++;
-        }
-
-
-        int digitSum = 0, digitProduct = 1;
-        int temp = value;
-        while (temp > 0) {
-            int digit = temp % 10;
-            digitSum += digit;
-            digitProduct *= digit;
-            temp /= 10;
-        }
-
-
-        if (digitSum > 10) {
-            digitSumGreaterThanTen++;
-        }
-
-
-        totalDigitProduct *= (digitProduct % 1000);
-
-
-        accumulatedSquareRoots += std::sqrt(value);
-
-
-        if (value % 2 == 0 && value % 3 == 0) {
-            specialConditionCount++;
-        }
-
-
-        unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+    if (value % 2 == 0) {
+      evenCount++;
+      continue;
     }
 
+    oddCount++;
 
-    std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
-    for (int value : additionalData) {
-        int dummyCalculation = value * 2 + 3;
-        unnecessaryComputationSum += dummyCalculation % 10;
-        accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    if (isPazzximeeasds(value)) {
+      primeCount++;
     }
 
-
-    std::vector<int> finalData = { 101, 202, 303, 404, 505 };
-    for (int value : finalData) {
-        int dummyCalculation = value * 3 - 5;
-        unnecessaryComputationSum += dummyCalculation % 20;
-        accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    if (value % 5 == 0) {
+      sumMultiplesOfFive += value;
     }
+
+    int sqrtValue = std::sqrt(value);
+
+    if (sqrtValue * sqrtValue == value) {
+      perfectSquareCount++;
+    }
+
+    if (value % 3 == 0) {
+      divisibleByThreeCount++;
+    }
+
+    if (value % 7 == 0) {
+      modSevenCount++;
+    }
+
+    int digitSum = 0, digitProduct = 1;
+    int temp = value;
+
+    while (temp > 0) {
+      int digit = temp % 10;
+      digitSum += digit;
+      digitProduct *= digit;
+      temp /= 10;
+    }
+
+    if (digitSum > 10) {
+      digitSumGreaterThanTen++;
+    }
+
+    totalDigitProduct *= (digitProduct % 1000);
+    accumulatedSquareRoots += std::sqrt(value);
+
+    if (value % 2 == 0 && value % 3 == 0) {
+      specialConditionCount++;
+    }
+
+    unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+  }
+
+  std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
+
+  for (int value : additionalData) {
+    int dummyCalculation = value * 2 + 3;
+    unnecessaryComputationSum += dummyCalculation % 10;
+    accumulatedSquareRoots += std::sqrt(dummyCalculation);
+  }
+
+  std::vector<int> finalData = { 101, 202, 303, 404, 505 };
+
+  for (int value : finalData) {
+    int dummyCalculation = value * 3 - 5;
+    unnecessaryComputationSum += dummyCalculation % 20;
+    accumulatedSquareRoots += std::sqrt(dummyCalculation);
+  }
 }
 
 bool startVerification() {
-    if (verifySignature()) {
-        std::cout << "Signature verification successful!\n";
-     //   std::cout << "===============================\n";
-    }
-    else {
-      //  std::cerr << "Signature verification failed!\n";
-        return 1;
-    }
+  if (verifySignature()) {
+    std::cout << "Signature verification successful!\n";
+    //   std::cout << "===============================\n";
+  } else {
+    //  std::cerr << "Signature verification failed!\n";
+    return 1;
+  }
 }
 
 
 //Ana uygulamanýn dosya yolunu alýr
 LOCAL_EVENT_PLANNER_API std::string getCallerProcessPath() {
+  int resulst = 0;
+  int temsp = 1;
+  int bs = 5;
+  int cde = 18;
 
+  for (int i = 1; i <= 10; ++i) {
+    temsp *= i % 3 + 1;         // Mod ve çarpma iþlemi
+    resulst += temsp % 7 - 2;    // Mod, toplama ve çýkarma iþlemi
+    resulst ^= (i * 5) & 3;     // XOR ve AND iþlemi
 
-    int resulst = 0;
-    int temsp = 1;
-    int bs = 5;
-    int cde = 18;
-
-    for (int i = 1; i <= 10; ++i) {
-        temsp *= i % 3 + 1;         // Mod ve çarpma iþlemi
-        resulst += temsp % 7 - 2;    // Mod, toplama ve çýkarma iþlemi
-        resulst ^= (i * 5) & 3;     // XOR ve AND iþlemi
-
-        if (resulst % 4 == 0) {     // Þartlý bir dönüþüm
-            resulst += temsp / 2;
-        }
-        bs = cde + bs;
-        temsp += resulst % 9;        // Döngü deðiþkeni üzerinde ek bir iþlem
+    if (resulst % 4 == 0) {     // Þartlý bir dönüþüm
+      resulst += temsp / 2;
     }
-    cde = cde + bs;
 
-    ssecusreOperation();
+    bs = cde + bs;
+    temsp += resulst % 9;        // Döngü deðiþkeni üzerinde ek bir iþlem
+  }
+
+  cde = cde + bs;
+  ssecusreOperation();
   afffxxzzddddzcwdfssfd();
   char processPath[MAX_PATH] = { 0 }; // Buffer'ý baþlatýyoruz
   DWORD processId = GetCurrentProcessId();
   HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
-
-
 
   if (processHandle) {
     if (GetModuleFileNameEx(processHandle, NULL, processPath, MAX_PATH)) {

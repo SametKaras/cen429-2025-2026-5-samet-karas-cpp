@@ -12,15 +12,15 @@
 
 
 
-	LOCAL_EVENT_PLANNER_API std::vector<int> createWhiteBoxTable();
-	LOCAL_EVENT_PLANNER_API std::vector<int> whiteBoxAesEncrypt(const std::string& plaintext, const std::string& key);
-	LOCAL_EVENT_PLANNER_API std::string whiteBoxAesDecrypt(const std::vector<int>& ciphertext, const std::string& key);
-	LOCAL_EVENT_PLANNER_API std::string vectorToString(const std::vector<int>& vec);
-	LOCAL_EVENT_PLANNER_API std::vector<int> stringToVector(const std::string& str);
-	LOCAL_EVENT_PLANNER_API std::vector<int> deriveKeyFromSBox(size_t keyLength, unsigned char seed);
-	LOCAL_EVENT_PLANNER_API extern unsigned char seed;
-	LOCAL_EVENT_PLANNER_API extern size_t keyLength;
-	LOCAL_EVENT_PLANNER_API extern const std::vector<int> S_BOX;
+LOCAL_EVENT_PLANNER_API std::vector<int> createWhiteBoxTable();
+LOCAL_EVENT_PLANNER_API std::vector<int> whiteBoxAesEncrypt(const std::string& plaintext, const std::string& key);
+LOCAL_EVENT_PLANNER_API std::string whiteBoxAesDecrypt(const std::vector<int> &ciphertext, const std::string& key);
+LOCAL_EVENT_PLANNER_API std::string vectorToString(const std::vector<int> &vec);
+LOCAL_EVENT_PLANNER_API std::vector<int> stringToVector(const std::string& str);
+LOCAL_EVENT_PLANNER_API std::vector<int> deriveKeyFromSBox(size_t keyLength, unsigned char seed);
+LOCAL_EVENT_PLANNER_API extern unsigned char seed;
+LOCAL_EVENT_PLANNER_API extern size_t keyLength;
+LOCAL_EVENT_PLANNER_API extern const std::vector<int> S_BOX;
 
 
 

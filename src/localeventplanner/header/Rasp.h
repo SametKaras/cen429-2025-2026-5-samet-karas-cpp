@@ -2,9 +2,9 @@
 #define RASP_H
 
 #ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
-#define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
 #else
-#define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
 #endif
 
 #include <string>
@@ -17,56 +17,57 @@
 extern "C" {
 #endif
 
-	// Emülatör üreticileri listesi
-	LOCAL_EVENT_PLANNER_API extern const std::vector<std::string> EMULATOR_MANUFACTURERS;
+// Emülatör üreticileri listesi
+LOCAL_EVENT_PLANNER_API extern const std::vector<std::string> EMULATOR_MANUFACTURERS;
 
-	// Emülatör modelleri listesi
-	LOCAL_EVENT_PLANNER_API extern const std::vector<std::string> EMULATOR_MODELS;
+// Emülatör modelleri listesi
+LOCAL_EVENT_PLANNER_API extern const std::vector<std::string> EMULATOR_MODELS;
 
-	// Cihazýn üreticisini alma
-	LOCAL_EVENT_PLANNER_API std::string getDeviceManufacturer();
+// Cihazýn üreticisini alma
+LOCAL_EVENT_PLANNER_API std::string getDeviceManufacturer();
 
-	// Cihazýn modelini alma
-	LOCAL_EVENT_PLANNER_API std::string getDeviceModel();
+// Cihazýn modelini alma
+LOCAL_EVENT_PLANNER_API std::string getDeviceModel();
 
-	// Emülatör tespiti
-	LOCAL_EVENT_PLANNER_API bool isEmulator();
+// Emülatör tespiti
+LOCAL_EVENT_PLANNER_API bool isEmulator();
 
-	//Dosyanýn yazýlabilir olup olmadýðýný kontrol etme
-	LOCAL_EVENT_PLANNER_API bool isFileWritable(const std::string& filePath);
+//Dosyanýn yazýlabilir olup olmadýðýný kontrol etme
+LOCAL_EVENT_PLANNER_API bool isFileWritable(const std::string& filePath);
 
-	LOCAL_EVENT_PLANNER_API bool checkCriticalSystemFiles();
+LOCAL_EVENT_PLANNER_API bool checkCriticalSystemFiles();
 
-	LOCAL_EVENT_PLANNER_API bool isFunctionHooked(const char* moduleName, const char* functionName);
+LOCAL_EVENT_PLANNER_API bool isFunctionHooked(const char* moduleName, const char* functionName);
 
-	LOCAL_EVENT_PLANNER_API bool checkHooks();
+LOCAL_EVENT_PLANNER_API bool checkHooks();
 
-	// CRC32 tablosunu baþlatan fonksiyon
-	LOCAL_EVENT_PLANNER_API void crc32_table_init();
+// CRC32 tablosunu baþlatan fonksiyon
+LOCAL_EVENT_PLANNER_API void crc32_table_init();
 
-	// CRC32 hesaplama fonksiyonu
-	LOCAL_EVENT_PLANNER_API unsigned long crc32_calc(unsigned char* buf, int buf_len);
+// CRC32 hesaplama fonksiyonu
+LOCAL_EVENT_PLANNER_API unsigned long crc32_calc(unsigned char* buf, int buf_len);
 
-	// Kod bloðunu doðrulama fonksiyonu
-	LOCAL_EVENT_PLANNER_API bool verifyCodeBlock();
+// Kod bloðunu doðrulama fonksiyonu
+LOCAL_EVENT_PLANNER_API bool verifyCodeBlock();
 
-	LOCAL_EVENT_PLANNER_API void StartSSL();
+LOCAL_EVENT_PLANNER_API void StartSSL();
 
-	LOCAL_EVENT_PLANNER_API SSL_CTX* initializeSSLContext();
+LOCAL_EVENT_PLANNER_API SSL_CTX *initializeSSLContext();
 
-	LOCAL_EVENT_PLANNER_API void performSSLHandshakeAndDataExchange(SSL_CTX* ctx);
-	LOCAL_EVENT_PLANNER_API int startApp();
+LOCAL_EVENT_PLANNER_API void performSSLHandshakeAndDataExchange(SSL_CTX* ctx);
+LOCAL_EVENT_PLANNER_API int startApp();
 
-	// Makrolar
-	#define CRC_START_BLOCK(label) void label(void) { }
-	#define CRC_END_BLOCK(label) void _##label(void) { }
-	#define CRC_BLOCK_LEN(label) (int)_##label - (int)label
-	#define CRC_BLOCK_ADDR(label) (unsigned char *)label
+// Makrolar
+#define CRC_START_BLOCK(label) void label(void) { }
+#define CRC_END_BLOCK(label) void _##label(void) { }
+#define CRC_BLOCK_LEN(label) (int)_##label - (int)label
+#define CRC_BLOCK_ADDR(label) (unsigned char *)label
 
 
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif // RASP_H

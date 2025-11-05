@@ -17,7 +17,7 @@
 #include "SaltAndHMAC.h"
 
 #include "gtest/gtest.h"
-#include "sqlite3.h" 
+#include "sqlite3.h"
 #include <iostream>
 #include "Rasp.h"
 #include <Windows.h>
@@ -46,42 +46,39 @@
 #include "VersionAndDeviceBinding.h"
 
 
- //Veritaban� a�ma fonksiyonunun testi
+//Veritaban� a�ma fonksiyonunun testi
 TEST(AttendeeManagementTest, OpenAttendeeDatabaseTest) {
-    sqlite3* db = openAttendeeDatabase(); // Veritaban�n� a�
-    ASSERT_NE(db, nullptr) << "Veritaban� a��lamad�."; // Veritaban� ba�lant�s� bo� olmamal�
-
+  sqlite3* db = openAttendeeDatabase(); // Veritaban�n� a�
+  ASSERT_NE(db, nullptr) << "Veritaban� a��lamad�."; // Veritaban� ba�lant�s� bo� olmamal�
 }
 
 TEST(EventDetailsTest, OpenEventDatabaseTest) {
-    sqlite3* db = openEventDatabase(); // Veritaban�n� a�
-    ASSERT_NE(db, nullptr) << "Veritaban� a��lamad�."; // Veritaban� ba�lant�s� bo� olmamal�
-
+  sqlite3* db = openEventDatabase(); // Veritaban�n� a�
+  ASSERT_NE(db, nullptr) << "Veritaban� a��lamad�."; // Veritaban� ba�lant�s� bo� olmamal�
 }
 
 TEST(UserAuthenticationTest, OpenUserDatabaseTest) {
-    sqlite3* db = openUserDatabase(); // Veritaban�n� a�
-    ASSERT_NE(db, nullptr) << "Veritaban� a��lamad�."; // Veritaban� ba�lant�s� bo� olmamal�
-
+  sqlite3* db = openUserDatabase(); // Veritaban�n� a�
+  ASSERT_NE(db, nullptr) << "Veritaban� a��lamad�."; // Veritaban� ba�lant�s� bo� olmamal�
 }
 
 //signature verification test
 TEST(SignatureVerificationTest, SignatureVerificationTest) {
-    bool result = verifySignature();
-    ASSERT_TRUE(result) << "�mza do�rulama ba�ar�s�z.";
+  bool result = verifySignature();
+  ASSERT_TRUE(result) << "�mza do�rulama ba�ar�s�z.";
 }
 
 
 
 TEST(DebugCheckTest, CheckExecutionTimeTest) {
-    checkExecutionTime();
-    ASSERT_TRUE(true) << "Zaman kontrol� ba�ar�s�z.";
+  checkExecutionTime();
+  ASSERT_TRUE(true) << "Zaman kontrol� ba�ar�s�z.";
 }
 
 // checkMemory test
 TEST(DebugCheckTest, CheckMemoryTest) {
-    checkMemory();
-    ASSERT_TRUE(true) << "Bellek kontrol� ba�ar�s�z.";
+  checkMemory();
+  ASSERT_TRUE(true) << "Bellek kontrol� ba�ar�s�z.";
 }
 
 
@@ -90,101 +87,82 @@ TEST(DebugCheckTest, CheckMemoryTest) {
 /////////////////////////
 
 TEST(AttendeeManagementTest, DatabaseOpenFailure) {
-    sqlite3* db;
-    int result = sqlite3_open("/invalid/path/attendees.db", &db);
-    ASSERT_NE(result, SQLITE_OK) << "Hatal  yol i in veritaban  ba ar yla a  lmamal yd .";
+  sqlite3* db;
+  int result = sqlite3_open("/invalid/path/attendees.db", &db);
+  ASSERT_NE(result, SQLITE_OK) << "Hatal  yol i in veritaban  ba ar yla a  lmamal yd .";
 }
 
 
 
 
 TEST(AttendeeManagementTest, TableCreationSuccess) {
-    // SQLite'i yeniden ba�lat ve yap�land�r
-    sqlite3_shutdown();
-    sqlite3_initialize();
-    sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
+  // SQLite'i yeniden ba�lat ve yap�land�r
+  sqlite3_shutdown();
+  sqlite3_initialize();
+  sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
+  sqlite3* db = nullptr;
+  // Veritaban�n� a�
+  int openResult = sqlite3_open("attendees.db", &db);
+  ASSERT_EQ(openResult, SQLITE_OK) << "Veritabani acilamadi: " << sqlite3_errmsg(db);
+  // Tablo kontrol sorgusu
+  const char *checkTableSQL = "SELECT name FROM sqlite_master WHERE type='table' AND name='attendees';";
+  sqlite3_stmt* stmt = nullptr;
+  // Sorguyu haz�rla
+  int prepareResult = sqlite3_prepare_v2(db, checkTableSQL, -1, &stmt, nullptr);
+  ASSERT_EQ(prepareResult, SQLITE_OK) << "Sorgu haz�rlanamad�: " << sqlite3_errmsg(db);
+  // Sorguyu �al��t�r
+  int stepResult = sqlite3_step(stmt);
+  ASSERT_EQ(stepResult, SQLITE_ROW) << "Attendees tablosu olusturulmadi.";
 
-    sqlite3* db = nullptr;
+  // Kaynaklar� serbest b�rak
+  if (stmt) sqlite3_finalize(stmt);
 
-    // Veritaban�n� a�
-    int openResult = sqlite3_open("attendees.db", &db);
-    ASSERT_EQ(openResult, SQLITE_OK) << "Veritabani acilamadi: " << sqlite3_errmsg(db);
+  if (db) sqlite3_close(db);
 
-    // Tablo kontrol sorgusu
-    const char* checkTableSQL = "SELECT name FROM sqlite_master WHERE type='table' AND name='attendees';";
-    sqlite3_stmt* stmt = nullptr;
-
-    // Sorguyu haz�rla
-    int prepareResult = sqlite3_prepare_v2(db, checkTableSQL, -1, &stmt, nullptr);
-    ASSERT_EQ(prepareResult, SQLITE_OK) << "Sorgu haz�rlanamad�: " << sqlite3_errmsg(db);
-
-    // Sorguyu �al��t�r
-    int stepResult = sqlite3_step(stmt);
-    ASSERT_EQ(stepResult, SQLITE_ROW) << "Attendees tablosu olusturulmadi.";
-
-    // Kaynaklar� serbest b�rak
-    if (stmt) sqlite3_finalize(stmt);
-    if (db) sqlite3_close(db);
-
-    // SQLite'i kapat
-    sqlite3_shutdown();
+  // SQLite'i kapat
+  sqlite3_shutdown();
 }
 
 TEST(AttendeeManagementTest, RegisterAttendeeSuccess) {
-    sqlite3* db = nullptr;
-
-    // Veritaban�n� a�
-    int openResult = sqlite3_open("attendees.db", &db);
-    ASSERT_EQ(openResult, SQLITE_OK) << "Veritaban� a��lamad�!";
-
-    // Kat�l�mc� ekleme sorgusu
-    const char* insertSql = "INSERT INTO attendees (name, email, phone) VALUES ('Test User', 'test@example.com', '1234567890');";
-    int result;
-
-    // Mutex ile i�lem yap
-    sqlite3_mutex* dbMutex = sqlite3_db_mutex(db);
-    sqlite3_mutex_enter(dbMutex);
-
-    result = sqlite3_exec(db, insertSql, nullptr, nullptr, nullptr);
-
-    // Mutex'i serbest b�rak
-    sqlite3_mutex_leave(dbMutex);
-
-    ASSERT_EQ(result, SQLITE_OK) << "Kat�l�mc� kayd� ba�ar�s�z oldu.";
-
-    sqlite3_close(db);
+  sqlite3* db = nullptr;
+  // Veritaban�n� a�
+  int openResult = sqlite3_open("attendees.db", &db);
+  ASSERT_EQ(openResult, SQLITE_OK) << "Veritaban� a��lamad�!";
+  // Kat�l�mc� ekleme sorgusu
+  const char *insertSql = "INSERT INTO attendees (name, email, phone) VALUES ('Test User', 'test@example.com', '1234567890');";
+  int result;
+  // Mutex ile i�lem yap
+  sqlite3_mutex* dbMutex = sqlite3_db_mutex(db);
+  sqlite3_mutex_enter(dbMutex);
+  result = sqlite3_exec(db, insertSql, nullptr, nullptr, nullptr);
+  // Mutex'i serbest b�rak
+  sqlite3_mutex_leave(dbMutex);
+  ASSERT_EQ(result, SQLITE_OK) << "Kat�l�mc� kayd� ba�ar�s�z oldu.";
+  sqlite3_close(db);
 }
 
 
 TEST(AttendeeManagementTest, ListAttendees) {
-    sqlite3* db = nullptr;
-
-    // Veritaban�n� a�
-    int openResult = sqlite3_open("attendees.db", &db);
-    ASSERT_EQ(openResult, SQLITE_OK) << "Veritaban� a��lamad�!";
-
-    const char* listSql = "SELECT COUNT(*) FROM attendees;";
-    sqlite3_stmt* stmt = nullptr;
-    int result;
-
-    // Mutex ile i�lem yap
-    sqlite3_mutex* dbMutex = sqlite3_db_mutex(db);
-    sqlite3_mutex_enter(dbMutex);
-
-    result = sqlite3_prepare_v2(db, listSql, -1, &stmt, nullptr);
-    ASSERT_EQ(result, SQLITE_OK) << "Listeleme sorgusu haz�rlanamad�.";
-
-    result = sqlite3_step(stmt);
-    ASSERT_EQ(result, SQLITE_ROW) << "Kat�l�mc�lar al�namad�.";
-
-    int count = sqlite3_column_int(stmt, 0);
-    std::cout << "Kat�l�mc� say�s�: " << count << std::endl;
-
-    // Mutex'i serbest b�rak
-    sqlite3_mutex_leave(dbMutex);
-
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
+  sqlite3* db = nullptr;
+  // Veritaban�n� a�
+  int openResult = sqlite3_open("attendees.db", &db);
+  ASSERT_EQ(openResult, SQLITE_OK) << "Veritaban� a��lamad�!";
+  const char *listSql = "SELECT COUNT(*) FROM attendees;";
+  sqlite3_stmt* stmt = nullptr;
+  int result;
+  // Mutex ile i�lem yap
+  sqlite3_mutex* dbMutex = sqlite3_db_mutex(db);
+  sqlite3_mutex_enter(dbMutex);
+  result = sqlite3_prepare_v2(db, listSql, -1, &stmt, nullptr);
+  ASSERT_EQ(result, SQLITE_OK) << "Listeleme sorgusu haz�rlanamad�.";
+  result = sqlite3_step(stmt);
+  ASSERT_EQ(result, SQLITE_ROW) << "Kat�l�mc�lar al�namad�.";
+  int count = sqlite3_column_int(stmt, 0);
+  std::cout << "Kat�l�mc� say�s�: " << count << std::endl;
+  // Mutex'i serbest b�rak
+  sqlite3_mutex_leave(dbMutex);
+  sqlite3_finalize(stmt);
+  sqlite3_close(db);
 }
 
 
@@ -194,36 +172,30 @@ TEST(AttendeeManagementTest, ListAttendees) {
 
 
 TEST(AttendeeManagementTest, ErrorMessageCheck) {
-    sqlite3* db = nullptr;
+  sqlite3* db = nullptr;
+  // Veritaban�n� a�
+  int openResult = sqlite3_open("attendees.db", &db);
+  ASSERT_EQ(openResult, SQLITE_OK) << "Veritaban� a��lamad�!";
+  const char *invalidSql = "INVALID SQL;";
+  char *errorMessage = nullptr;
+  int execResult;
+  // Mutex ile i�lem yap
+  sqlite3_mutex* dbMutex = sqlite3_db_mutex(db);
+  sqlite3_mutex_enter(dbMutex);
+  execResult = sqlite3_exec(db, invalidSql, nullptr, nullptr, &errorMessage);
+  // Hatal� SQL komutunun hata �retmesi gerekti�ini do�rula
+  ASSERT_NE(execResult, SQLITE_OK) << "Ge�ersiz SQL komutu hata vermeliydi.";
+  ASSERT_NE(errorMessage, nullptr) << "Hata mesaj� NULL olmamal�yd�.";
+  // Mutex'i serbest b�rak
+  sqlite3_mutex_leave(dbMutex);
 
-    // Veritaban�n� a�
-    int openResult = sqlite3_open("attendees.db", &db);
-    ASSERT_EQ(openResult, SQLITE_OK) << "Veritaban� a��lamad�!";
+  // Hata mesaj�n� serbest b�rak
+  if (errorMessage) {
+    sqlite3_free(errorMessage);
+  }
 
-    const char* invalidSql = "INVALID SQL;";
-    char* errorMessage = nullptr;
-    int execResult;
-
-    // Mutex ile i�lem yap
-    sqlite3_mutex* dbMutex = sqlite3_db_mutex(db);
-    sqlite3_mutex_enter(dbMutex);
-
-    execResult = sqlite3_exec(db, invalidSql, nullptr, nullptr, &errorMessage);
-
-    // Hatal� SQL komutunun hata �retmesi gerekti�ini do�rula
-    ASSERT_NE(execResult, SQLITE_OK) << "Ge�ersiz SQL komutu hata vermeliydi.";
-    ASSERT_NE(errorMessage, nullptr) << "Hata mesaj� NULL olmamal�yd�.";
-
-    // Mutex'i serbest b�rak
-    sqlite3_mutex_leave(dbMutex);
-
-    // Hata mesaj�n� serbest b�rak
-    if (errorMessage) {
-        sqlite3_free(errorMessage);
-    }
-
-    // Veritaban�n� kapat
-    sqlite3_close(db);
+  // Veritaban�n� kapat
+  sqlite3_close(db);
 }
 
 
@@ -237,8 +209,8 @@ TEST(AttendeeManagementTest, ErrorMessageCheck) {
 
 
 TEST(SessionEncryptionTest, SetupSessionEncryptionTest2) {
-    bool result = setupSessionEncryption();
-    ASSERT_TRUE(result) << "Oturum  ifreleme ayarlar  yap lamad .";
+  bool result = setupSessionEncryption();
+  ASSERT_TRUE(result) << "Oturum  ifreleme ayarlar  yap lamad .";
 }
 
 // Oturum Anahtar   ifreleme ve Ayarlama Testi
@@ -246,32 +218,24 @@ TEST(SessionEncryptionTest, SetupSessionEncryptionTest2) {
 
 
 TEST(SessionEncryptionTest, CollectAndEncryptSessionDataTest) {
-    // SQLite'i yeniden ba�lat ve yap�land�r
-    sqlite3_shutdown();
-    sqlite3_initialize();
-    sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
-
-    sqlite3* db = nullptr;
-
-    // Bellek i�inde bir SQLite veritaban� olu�tur
-    int openResult = sqlite3_open(":memory:", &db);
-    ASSERT_EQ(openResult, SQLITE_OK) << "Bellek i�indeki veritaban� a��lamad�!";
-
-    const char* createTableSQL = "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, username TEXT)";
-    char* errorMessage = nullptr;
-
-
-    // Tabloyu sorgula
-    sqlite3_stmt* stmt = nullptr;
-
-
-    // �ifreleme i�levini test et
-    bool result = collectAndEncryptSessionData(stmt);
-    ASSERT_TRUE(result) << "Oturum verileri �ifrelenemedi.";
-
-    // Kaynaklar� serbest b�rak
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
+  // SQLite'i yeniden ba�lat ve yap�land�r
+  sqlite3_shutdown();
+  sqlite3_initialize();
+  sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
+  sqlite3* db = nullptr;
+  // Bellek i�inde bir SQLite veritaban� olu�tur
+  int openResult = sqlite3_open(":memory:", &db);
+  ASSERT_EQ(openResult, SQLITE_OK) << "Bellek i�indeki veritaban� a��lamad�!";
+  const char *createTableSQL = "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, username TEXT)";
+  char *errorMessage = nullptr;
+  // Tabloyu sorgula
+  sqlite3_stmt* stmt = nullptr;
+  // �ifreleme i�levini test et
+  bool result = collectAndEncryptSessionData(stmt);
+  ASSERT_TRUE(result) << "Oturum verileri �ifrelenemedi.";
+  // Kaynaklar� serbest b�rak
+  sqlite3_finalize(stmt);
+  sqlite3_close(db);
 }
 
 
@@ -280,9 +244,7 @@ TEST(SessionEncryptionTest, CollectAndEncryptSessionDataTest) {
 
 
 TEST(DeviceTest, EmulatorDetectionTest) {
-
-
-    ASSERT_FALSE(isEmulator()) << "Ger ek cihaz em lat r olarak alg land !";
+  ASSERT_FALSE(isEmulator()) << "Ger ek cihaz em lat r olarak alg land !";
 }
 
 //TEST(SystemFileTest, CriticalSystemFilesSecurityTest) {
@@ -291,95 +253,84 @@ TEST(DeviceTest, EmulatorDetectionTest) {
 //}
 
 TEST(HookDetectionTest, CheckFunctionHooks) {
-    bool result = checkHooks();
-    ASSERT_FALSE(result) << "HOOK sald r s  tespit edildi!";
+  bool result = checkHooks();
+  ASSERT_FALSE(result) << "HOOK sald r s  tespit edildi!";
 }
 
 TEST(CRCTest, VerifyCodeBlockCRC) {
-    bool isVerified = verifyCodeBlock();
-    ASSERT_FALSE(isVerified) << "Kod blo u checksum do rulamas  ba ar s z!";
+  bool isVerified = verifyCodeBlock();
+  ASSERT_FALSE(isVerified) << "Kod blo u checksum do rulamas  ba ar s z!";
 }
 
 TEST(SSLTest, InitializeSSLContextTest) {
-    SSL_CTX* ctx = initializeSSLContext();
-    ASSERT_NE(ctx, nullptr) << "SSL ba lam  ba lat lamad !";
-    SSL_CTX_free(ctx); // Test sonras nda ba lam  serbest b rak
+  SSL_CTX* ctx = initializeSSLContext();
+  ASSERT_NE(ctx, nullptr) << "SSL ba lam  ba lat lamad !";
+  SSL_CTX_free(ctx); // Test sonras nda ba lam  serbest b rak
 }
 
 
 TEST(SSLTest, SSLConnectionFailureTest) {
-    SSL_CTX* ctx = initializeSSLContext();
-    ASSERT_NE(ctx, nullptr) << "SSL ba lam  ba lat lamad !";
-
-    // Hatal  hostname veya port ile ba lant  hatas n  sim le edin
-    const std::string invalidHostname = "invalid.localhost";
-    const int invalidPort = 9999;
-
-    // SSL ba lam  ile BIO olu turun
-    SSL* ssl;
-    BIO* bio = BIO_new_ssl_connect(ctx);
-    ASSERT_NE(bio, nullptr) << "BIO olu turulamad !";
-
-    BIO_get_ssl(bio, &ssl);
-    ASSERT_NE(ssl, nullptr) << "SSL oturumu al namad !";
-
-    std::string hostnameWithPort = invalidHostname + ":" + std::to_string(invalidPort);
-    BIO_set_conn_hostname(bio, hostnameWithPort.c_str());
-
-    // Ba lant y  ger ekle tirin ve ba ar s z oldu unu do rulay n
-    int connectionResult = BIO_do_connect(bio);
-    ASSERT_LE(connectionResult, 0) << "Ba lant  ba ar l  oldu, ancak ba ar s z olmas  gerekiyordu!";
-
-    // Hata mesaj n  do rulay n (iste e ba l )
-    long sslError = ERR_get_error();
-    ASSERT_NE(sslError, 0) << "Hata bekleniyordu, ancak al namad !";
-    std::cerr << "Hata mesaj : " << ERR_reason_error_string(sslError) << std::endl;
-
-    // Kaynaklar  serbest b rak
-    BIO_free_all(bio);
-    SSL_CTX_free(ctx);
+  SSL_CTX* ctx = initializeSSLContext();
+  ASSERT_NE(ctx, nullptr) << "SSL ba lam  ba lat lamad !";
+  // Hatal  hostname veya port ile ba lant  hatas n  sim le edin
+  const std::string invalidHostname = "invalid.localhost";
+  const int invalidPort = 9999;
+  // SSL ba lam  ile BIO olu turun
+  SSL* ssl;
+  BIO* bio = BIO_new_ssl_connect(ctx);
+  ASSERT_NE(bio, nullptr) << "BIO olu turulamad !";
+  BIO_get_ssl(bio, &ssl);
+  ASSERT_NE(ssl, nullptr) << "SSL oturumu al namad !";
+  std::string hostnameWithPort = invalidHostname + ":" + std::to_string(invalidPort);
+  BIO_set_conn_hostname(bio, hostnameWithPort.c_str());
+  // Ba lant y  ger ekle tirin ve ba ar s z oldu unu do rulay n
+  int connectionResult = BIO_do_connect(bio);
+  ASSERT_LE(connectionResult, 0) << "Ba lant  ba ar l  oldu, ancak ba ar s z olmas  gerekiyordu!";
+  // Hata mesaj n  do rulay n (iste e ba l )
+  long sslError = ERR_get_error();
+  ASSERT_NE(sslError, 0) << "Hata bekleniyordu, ancak al namad !";
+  std::cerr << "Hata mesaj : " << ERR_reason_error_string(sslError) << std::endl;
+  // Kaynaklar  serbest b rak
+  BIO_free_all(bio);
+  SSL_CTX_free(ctx);
 }
 
 
 TEST(CRCTest, CRC32TableInitTest) {
-    ASSERT_NO_THROW(crc32_table_init()) << "CRC32 tablosu ba lat lamad !";
+  ASSERT_NO_THROW(crc32_table_init()) << "CRC32 tablosu ba lat lamad !";
 }
 
 TEST(CRCTest, CRC32CalculationTest) {
-    unsigned char data[] = "Test data for CRC";
-    crc32_table_init();
-    unsigned long crc = crc32_calc(data, sizeof(data) - 1);
-
-    ASSERT_NE(crc, 0) << "CRC hesaplamas  ba ar s z!";
+  unsigned char data[] = "Test data for CRC";
+  crc32_table_init();
+  unsigned long crc = crc32_calc(data, sizeof(data) - 1);
+  ASSERT_NE(crc, 0) << "CRC hesaplamas  ba ar s z!";
 }
 
 
 
 // Oturum �ifreleme Ayarlar� Testi
 TEST(SessionEncryptionTest, SetupSessionEncryptionTest23) {
-    bool result = setupSessionEncryption();
-    ASSERT_TRUE(result) << "Oturum �ifreleme ayarlar� yap�lamad�.";
+  bool result = setupSessionEncryption();
+  ASSERT_TRUE(result) << "Oturum �ifreleme ayarlar� yap�lamad�.";
 }
 
 // CollectAndEncryptSessionData Testi
 TEST(SessionEncryptionTest, CollectAndEncryptSessionDataTest2) {
-    // Sahte bir SQLite sonu� yap�s� olu�turun.
-    sqlite3_stmt* stmt = nullptr;
-
-   
-
-    bool result = collectAndEncryptSessionData(stmt);
-    ASSERT_TRUE(result) << "Oturum verileri �ifrelenemedi.";
-
+  // Sahte bir SQLite sonu� yap�s� olu�turun.
+  sqlite3_stmt* stmt = nullptr;
+  bool result = collectAndEncryptSessionData(stmt);
+  ASSERT_TRUE(result) << "Oturum verileri �ifrelenemedi.";
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 TEST(AttendeeManagementTest, DatabaseOpenFailure09) {
-    sqlite3* db;
-    int result = sqlite3_open("/invalid/path/attendees.db", &db);
-    ASSERT_NE(result, SQLITE_OK) << "Hatal� yol i�in veritaban� ba�ar�yla a��lmamal�yd�.";
+  sqlite3* db;
+  int result = sqlite3_open("/invalid/path/attendees.db", &db);
+  ASSERT_NE(result, SQLITE_OK) << "Hatal� yol i�in veritaban� ba�ar�yla a��lmamal�yd�.";
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////
@@ -387,58 +338,49 @@ TEST(AttendeeManagementTest, DatabaseOpenFailure09) {
 
 
 TEST(SSLTest, InitializeSSLContextTest33) {
-    SSL_CTX* ctx = initializeSSLContext();
-    ASSERT_NE(ctx, nullptr) << "SSL ba�lam� olu�turulamad�.";
-
-    SSL_CTX_free(ctx);
+  SSL_CTX* ctx = initializeSSLContext();
+  ASSERT_NE(ctx, nullptr) << "SSL ba�lam� olu�turulamad�.";
+  SSL_CTX_free(ctx);
 }
 
 
 
 TEST(SSLTest, InvalidCertificateTest) {
-    const std::string invalidCert = "invalid_cert.pem";
-    const std::string invalidKey = "invalid_key.pem";
-
-    SSL_CTX* ctx = SSL_CTX_new(TLS_client_method());
-    ASSERT_NE(ctx, nullptr) << "SSL ba�lam� ba�lat�lamad�.";
-
-    int certResult = SSL_CTX_use_certificate_file(ctx, invalidCert.c_str(), SSL_FILETYPE_PEM);
-    ASSERT_EQ(certResult, 0) << "Ge�ersiz sertifika dosyas� kabul edildi.";
-
-    int keyResult = SSL_CTX_use_PrivateKey_file(ctx, invalidKey.c_str(), SSL_FILETYPE_PEM);
-    ASSERT_EQ(keyResult, 0) << "Ge�ersiz �zel anahtar dosyas� kabul edildi.";
-
-    SSL_CTX_free(ctx);
+  const std::string invalidCert = "invalid_cert.pem";
+  const std::string invalidKey = "invalid_key.pem";
+  SSL_CTX* ctx = SSL_CTX_new(TLS_client_method());
+  ASSERT_NE(ctx, nullptr) << "SSL ba�lam� ba�lat�lamad�.";
+  int certResult = SSL_CTX_use_certificate_file(ctx, invalidCert.c_str(), SSL_FILETYPE_PEM);
+  ASSERT_EQ(certResult, 0) << "Ge�ersiz sertifika dosyas� kabul edildi.";
+  int keyResult = SSL_CTX_use_PrivateKey_file(ctx, invalidKey.c_str(), SSL_FILETYPE_PEM);
+  ASSERT_EQ(keyResult, 0) << "Ge�ersiz �zel anahtar dosyas� kabul edildi.";
+  SSL_CTX_free(ctx);
 }
 
 TEST(SSLTest, MemoryLeakTest) {
-    SSL_CTX* ctx = initializeSSLContext();
-    ASSERT_NE(ctx, nullptr) << "SSL ba�lam� ba�lat�lamad�.";
-
-    BIO* bio = BIO_new_ssl_connect(ctx);
-    ASSERT_NE(bio, nullptr) << "BIO nesnesi olu�turulamad�.";
-
-    BIO_free_all(bio);
-    SSL_CTX_free(ctx);
-
-    SUCCEED() << "Bellek s�z�nt�s� olmadan t�m kaynaklar serbest b�rak�ld�.";
+  SSL_CTX* ctx = initializeSSLContext();
+  ASSERT_NE(ctx, nullptr) << "SSL ba�lam� ba�lat�lamad�.";
+  BIO* bio = BIO_new_ssl_connect(ctx);
+  ASSERT_NE(bio, nullptr) << "BIO nesnesi olu�turulamad�.";
+  BIO_free_all(bio);
+  SSL_CTX_free(ctx);
+  SUCCEED() << "Bellek s�z�nt�s� olmadan t�m kaynaklar serbest b�rak�ld�.";
 }
 
 
 
 
 TEST(UserAuthenticationTest, OpenDatabaseFailureTest) {
-    sqlite3* db = nullptr;
-    std::string invalidPath = "/invalid_path/users.db";
+  sqlite3* db = nullptr;
+  std::string invalidPath = "/invalid_path/users.db";
+  // Veritaban�n� yanl�� bir yolla a�maya �al��
+  int result = sqlite3_open(invalidPath.c_str(), &db);
+  // Hata durumunu kontrol et
+  ASSERT_NE(result, SQLITE_OK) << "Veritaban� beklenildi�i gibi a��lamad�.";
 
-    // Veritaban�n� yanl�� bir yolla a�maya �al��
-    int result = sqlite3_open(invalidPath.c_str(), &db);
-
-    // Hata durumunu kontrol et
-    ASSERT_NE(result, SQLITE_OK) << "Veritaban� beklenildi�i gibi a��lamad�.";
-    if (db) {
-        sqlite3_close(db); // E�er a��k kald�ysa kapat
-    }
+  if (db) {
+    sqlite3_close(db); // E�er a��k kald�ysa kapat
+  }
 }
 
 
@@ -447,15 +389,15 @@ TEST(UserAuthenticationTest, OpenDatabaseFailureTest) {
 
 // 1. Test: S�r�m uyumlulu�unu kontrol et
 TEST(VersionAndDeviceBindingTest, VersionCompatibilityMatch) {
-    std::string currentVersion = "1.2.0";
-    std::string requiredVersion = "1.2.0";
-    ASSERT_TRUE(isVersionCompatible(currentVersion, requiredVersion)) << "S�r�m uyumlulu�u ba�ar�s�z.";
+  std::string currentVersion = "1.2.0";
+  std::string requiredVersion = "1.2.0";
+  ASSERT_TRUE(isVersionCompatible(currentVersion, requiredVersion)) << "S�r�m uyumlulu�u ba�ar�s�z.";
 }
 
 
 // 3. Test: Ortam uyumlulu�unu kontrol et
 TEST(VersionAndDeviceBindingTest, EnvironmentCompatibility) {
-    ASSERT_TRUE(isEnvironmentCompatible()) << "Ortam uyumlulu�u ba�ar�s�z.";
+  ASSERT_TRUE(isEnvironmentCompatible()) << "Ortam uyumlulu�u ba�ar�s�z.";
 }
 
 
@@ -463,10 +405,10 @@ TEST(VersionAndDeviceBindingTest, EnvironmentCompatibility) {
 
 // 7. Test: Cihaz uyumlulu�u ba�ar�s�z kontrol
 TEST(VersionAndDeviceBindingTest, DeviceCompatibilityMismatch) {
-    // Uyumsuz bir marka testi i�in sim�lasyon
-    std::string incompatibleBrand = "UnknownBrand";
-    ASSERT_FALSE(incompatibleBrand.find("HP") != std::string::npos || incompatibleBrand.find("ASUS") != std::string::npos)
-        << "Uyumsuz cihaz yanl��l�kla uyumlu olarak i�aretlendi.";
+  // Uyumsuz bir marka testi i�in sim�lasyon
+  std::string incompatibleBrand = "UnknownBrand";
+  ASSERT_FALSE(incompatibleBrand.find("HP") != std::string::npos || incompatibleBrand.find("ASUS") != std::string::npos)
+      << "Uyumsuz cihaz yanl��l�kla uyumlu olarak i�aretlendi.";
 }
 
 
@@ -479,9 +421,8 @@ TEST(VersionAndDeviceBindingTest, DeviceCompatibilityMismatch) {
 
 // Veritaban� a��lma testi
 TEST(EventDetailsTest, OpenDatabaseSuccess) {
-    sqlite3* db = openEventDatabase();
-    ASSERT_NE(db, nullptr) << "Etkinlik veritaban� a��lamad�.";
-
+  sqlite3* db = openEventDatabase();
+  ASSERT_NE(db, nullptr) << "Etkinlik veritaban� a��lamad�.";
 }
 
 
@@ -493,30 +434,28 @@ TEST(EventDetailsTest, OpenDatabaseSuccess) {
 #include <iostream>
 
 // Kullan�c� giri�ini sim�le etmek i�in global de�i�kenler
-std::streambuf* cinBackup;
-std::streambuf* coutBackup;
+std::streambuf *cinBackup;
+std::streambuf *coutBackup;
 
 // Konsol ��kt�s�n� yakalamak i�in yard�mc� i�lev
-std::string captureOutput(const std::function<void()>& func) {
-    std::ostringstream output;
-    coutBackup = std::cout.rdbuf();  // Orijinal std::cout'u yedekle
-    std::cout.rdbuf(output.rdbuf()); // ��kt�y� yakala
-
-    func(); // Test edilen i�lemi �al��t�r
-
-    std::cout.rdbuf(coutBackup); // Orijinal std::cout'u geri y�kle
-    return output.str();
+std::string captureOutput(const std::function<void()> &func) {
+  std::ostringstream output;
+  coutBackup = std::cout.rdbuf();  // Orijinal std::cout'u yedekle
+  std::cout.rdbuf(output.rdbuf()); // ��kt�y� yakala
+  func(); // Test edilen i�lemi �al��t�r
+  std::cout.rdbuf(coutBackup); // Orijinal std::cout'u geri y�kle
+  return output.str();
 }
 
 class DisplayMainMenuTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        cinBackup = std::cin.rdbuf();  // Orijinal std::cin'i yedekle
-    }
+ protected:
+  void SetUp() override {
+    cinBackup = std::cin.rdbuf();  // Orijinal std::cin'i yedekle
+  }
 
-    void TearDown() override {
-        std::cin.rdbuf(cinBackup);  // Orijinal std::cin'i geri y�kle
-    }
+  void TearDown() override {
+    std::cin.rdbuf(cinBackup);  // Orijinal std::cin'i geri y�kle
+  }
 };
 
 
@@ -544,89 +483,87 @@ const std::vector<int> S_BOX = {
 };
 
 TEST(WBAESTest, createWhiteBoxTable) {
-    std::vector<int> table = createWhiteBoxTable();
-    ASSERT_EQ(table.size(), 256);
+  std::vector<int> table = createWhiteBoxTable();
+  ASSERT_EQ(table.size(), 256);
 
-    // S-Box'tan do�ru de�erlerin kopyaland���n� kontrol et
-    for (int i = 0; i < 256; ++i) {
-        ASSERT_EQ(table[i], S_BOX[i % S_BOX.size()]);
-    }
+  // S-Box'tan do�ru de�erlerin kopyaland���n� kontrol et
+  for (int i = 0; i < 256; ++i) {
+    ASSERT_EQ(table[i], S_BOX[i % S_BOX.size()]);
+  }
 }
 
 TEST(WBAESTest, deriveKeyFromSBox) {
-    size_t keyLength = 4;
-    unsigned char seed = 0x42;
-    std::vector<int> key = deriveKeyFromSBox(keyLength, seed);
-    ASSERT_EQ(key.size(), keyLength);
+  size_t keyLength = 4;
+  unsigned char seed = 0x42;
+  std::vector<int> key = deriveKeyFromSBox(keyLength, seed);
+  ASSERT_EQ(key.size(), keyLength);
 
-    // S-Box'tan do�ru de�erlerin t�retildi�ini kontrol et
-    for (size_t i = 0; i < keyLength; ++i) {
-        ASSERT_EQ(key[i], S_BOX[(seed + i) % 256]);
-    }
+  // S-Box'tan do�ru de�erlerin t�retildi�ini kontrol et
+  for (size_t i = 0; i < keyLength; ++i) {
+    ASSERT_EQ(key[i], S_BOX[(seed + i) % 256]);
+  }
 }
 
 TEST(WBAESTest, deriveKeyFromSBox_ZeroKeyLength_AssertThrow) {
-    size_t keyLength = 4;
-    unsigned char seed = 0x42;
-    ASSERT_THROW({ deriveKeyFromSBox(0, seed); }, std::invalid_argument);
-
-    std::vector<int> key = deriveKeyFromSBox(keyLength, seed);
-    ASSERT_EQ(key.size(), 4);
+  size_t keyLength = 4;
+  unsigned char seed = 0x42;
+  ASSERT_THROW({ deriveKeyFromSBox(0, seed); }, std::invalid_argument);
+  std::vector<int> key = deriveKeyFromSBox(keyLength, seed);
+  ASSERT_EQ(key.size(), 4);
 }
 
 TEST(WBAESTest, whiteBoxAesEncrypt) {
-    std::string plaintext = "test";
-    std::string key = "anahtar";
-    std::vector<int> encrypted = whiteBoxAesEncrypt(plaintext, key);
-    ASSERT_EQ(encrypted.size(), plaintext.size());
+  std::string plaintext = "test";
+  std::string key = "anahtar";
+  std::vector<int> encrypted = whiteBoxAesEncrypt(plaintext, key);
+  ASSERT_EQ(encrypted.size(), plaintext.size());
 }
 
 TEST(WBAESTest, whiteBoxAesEncrypt_EmptyKey) {
-    std::string plaintext = "test";
-    std::string key = "";
-    ASSERT_THROW({ whiteBoxAesEncrypt(plaintext, key); }, std::invalid_argument);
+  std::string plaintext = "test";
+  std::string key = "";
+  ASSERT_THROW({ whiteBoxAesEncrypt(plaintext, key); }, std::invalid_argument);
 }
 
 TEST(WBAESTest, whiteBoxAesDecrypt_Success) {
-    std::string plaintext = "test";
-    std::string key = "key";
-    std::vector<int> encrypted = whiteBoxAesEncrypt(plaintext, key);
-    std::string decrypted;
-    try {
-        decrypted = whiteBoxAesDecrypt(encrypted, key);
-    }
-    catch (const std::runtime_error& e) {
-        FAIL() << "Beklenmeyen bir istisna f�rlat�ld�: " << e.what();
-    }
-    ASSERT_NO_THROW({ whiteBoxAesEncrypt(plaintext, key); }, std::invalid_argument);
-    ASSERT_EQ(decrypted, plaintext);
+  std::string plaintext = "test";
+  std::string key = "key";
+  std::vector<int> encrypted = whiteBoxAesEncrypt(plaintext, key);
+  std::string decrypted;
+
+  try {
+    decrypted = whiteBoxAesDecrypt(encrypted, key);
+  } catch (const std::runtime_error& e) {
+    FAIL() << "Beklenmeyen bir istisna f�rlat�ld�: " << e.what();
+  }
+
+  ASSERT_NO_THROW({ whiteBoxAesEncrypt(plaintext, key); }, std::invalid_argument);
+  ASSERT_EQ(decrypted, plaintext);
 }
 
 
 
 TEST(WBAESTest, vectorToString) {
-    std::vector<int> vec = { 97, 98, 99 }; // a, b, c
-    std::string str = vectorToString(vec);
-    ASSERT_EQ(str, "abc");
-
-    // Bo� vekt�r i�in test
-    vec.clear();
-    str = vectorToString(vec);
-    ASSERT_EQ(str, "");
+  std::vector<int> vec = { 97, 98, 99 }; // a, b, c
+  std::string str = vectorToString(vec);
+  ASSERT_EQ(str, "abc");
+  // Bo� vekt�r i�in test
+  vec.clear();
+  str = vectorToString(vec);
+  ASSERT_EQ(str, "");
 }
 
 TEST(WBAESTest, stringToVector) {
-    std::string str = "abc";
-    std::vector<int> vec = stringToVector(str);
-    ASSERT_EQ(vec.size(), 3);
-    ASSERT_EQ(vec[0], 97);
-    ASSERT_EQ(vec[1], 98);
-    ASSERT_EQ(vec[2], 99);
-
-    // Bo� string i�in test
-    str = "";
-    vec = stringToVector(str);
-    ASSERT_TRUE(vec.empty());
+  std::string str = "abc";
+  std::vector<int> vec = stringToVector(str);
+  ASSERT_EQ(vec.size(), 3);
+  ASSERT_EQ(vec[0], 97);
+  ASSERT_EQ(vec[1], 98);
+  ASSERT_EQ(vec[2], 99);
+  // Bo� string i�in test
+  str = "";
+  vec = stringToVector(str);
+  ASSERT_TRUE(vec.empty());
 }
 
 
@@ -640,18 +577,19 @@ TEST(WBAESTest, stringToVector) {
 
 #ifdef _WIN32
 TEST(VersionAndDeviceBindingTest, GetDeviceBrandWindows) {
-    std::string deviceBrand = getDeviceBrand();
-    ASSERT_FALSE(deviceBrand.empty()) << "Cihaz markas� al�namad� (Windows).";
+  std::string deviceBrand = getDeviceBrand();
+  ASSERT_FALSE(deviceBrand.empty()) << "Cihaz markas� al�namad� (Windows).";
 }
+
 #endif
 
 
 
 // 2. Test: S�r�m uyumlulu�u ba�ar�s�z kontrol
 TEST(VersionAndDeviceBindingTest, VersionCompatibilityMismatch) {
-    std::string currentVersion = "1.1.0";
-    std::string requiredVersion = "1.2.0";
-    ASSERT_FALSE(isVersionCompatible(currentVersion, requiredVersion)) << "S�r�m uyumlulu�u yanl�� e�le�ti.";
+  std::string currentVersion = "1.1.0";
+  std::string requiredVersion = "1.2.0";
+  ASSERT_FALSE(isVersionCompatible(currentVersion, requiredVersion)) << "S�r�m uyumlulu�u yanl�� e�le�ti.";
 }
 
 
@@ -666,12 +604,13 @@ TEST(VersionAndDeviceBindingTest, VersionCompatibilityMismatch) {
 
 
 TEST(UserAuthenticationTest, SaltGenerationTest13) {
-    std::string salt = generateFixedSalt("testSeed");
-    ASSERT_FALSE(salt.empty()) << "Salt olu�turulamad�.";
+  std::string salt = generateFixedSalt("testSeed");
+  ASSERT_FALSE(salt.empty()) << "Salt olu�turulamad�.";
 }
+
 TEST(UserAuthenticationTest, DeviceFingerprintTest15) {
-    std::string fingerprint = getEncryptedDeviceFingerprint();
-    ASSERT_FALSE(fingerprint.empty()) << "Cihaz parmak izi olu�turulamad�.";
+  std::string fingerprint = getEncryptedDeviceFingerprint();
+  ASSERT_FALSE(fingerprint.empty()) << "Cihaz parmak izi olu�turulamad�.";
 }
 
 
@@ -683,51 +622,42 @@ TEST(UserAuthenticationTest, DeviceFingerprintTest15) {
 
 
 TEST(SessionEncryptionTest, SessionKeyAndIVRandomnessTest2) {
-    ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z.";
-
-    std::string key1 = getEncryptedSessionKey();
-    std::string iv1 = getEncryptedSessionIV();
-
-    ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z (tekrar).";
-
-    std::string key2 = getEncryptedSessionKey();
-    std::string iv2 = getEncryptedSessionIV();
-
-    ASSERT_EQ(key1, key2) << "Oturum anahtarlar� ayn�, rastgelelik ba�ar�s�z.";
-    ASSERT_EQ(iv1, iv2) << "Oturum IV'leri ayn�, rastgelelik ba�ar�s�z.";
+  ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z.";
+  std::string key1 = getEncryptedSessionKey();
+  std::string iv1 = getEncryptedSessionIV();
+  ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z (tekrar).";
+  std::string key2 = getEncryptedSessionKey();
+  std::string iv2 = getEncryptedSessionIV();
+  ASSERT_EQ(key1, key2) << "Oturum anahtarlar� ayn�, rastgelelik ba�ar�s�z.";
+  ASSERT_EQ(iv1, iv2) << "Oturum IV'leri ayn�, rastgelelik ba�ar�s�z.";
 }
 
 
 
 TEST(SessionEncryptionTest, SessionKeyEncryptionTest4) {
-    ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z.";
-
-    std::string encryptedKey = getEncryptedSessionKey();
-    ASSERT_FALSE(encryptedKey.empty()) << "Oturum anahtar� �ifrelenemedi.";
-
-    bool result = setSessionKey(encryptedKey);
-    ASSERT_TRUE(result) << "�ifrelenmi� oturum anahtar� ayarlanamad�.";
+  ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z.";
+  std::string encryptedKey = getEncryptedSessionKey();
+  ASSERT_FALSE(encryptedKey.empty()) << "Oturum anahtar� �ifrelenemedi.";
+  bool result = setSessionKey(encryptedKey);
+  ASSERT_TRUE(result) << "�ifrelenmi� oturum anahtar� ayarlanamad�.";
 }
 
 TEST(SessionEncryptionTest, SessionIVEncryptionTest2) {
-    ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z.";
-
-    std::string encryptedIV = getEncryptedSessionIV();
-    ASSERT_FALSE(encryptedIV.empty()) << "Oturum IV �ifrelenemedi.";
-
-    bool result = setSessionIV(encryptedIV);
-    ASSERT_TRUE(result) << "�ifrelenmi� oturum IV ayarlanamad�.";
+  ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z.";
+  std::string encryptedIV = getEncryptedSessionIV();
+  ASSERT_FALSE(encryptedIV.empty()) << "Oturum IV �ifrelenemedi.";
+  bool result = setSessionIV(encryptedIV);
+  ASSERT_TRUE(result) << "�ifrelenmi� oturum IV ayarlanamad�.";
 }
-                                                                         ////      0
+
+////      0
 TEST(SessionEncryptionTest, SessionDataEncryptionDecryptionTest2) {
-    ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z.";
-
-    std::string testData = "Bu bir test verisidir.";
-    std::string encryptedData = encryptSessionData(testData);
-    ASSERT_FALSE(encryptedData.empty()) << "Oturum verisi �ifrelenemedi.";
-
-    std::string decryptedData = decryptSessionData(encryptedData);
-    ASSERT_EQ(testData, decryptedData) << "�ifrelenmi� ve ��z�lm�� veriler e�le�miyor.";
+  ASSERT_TRUE(setupSessionEncryption()) << "Oturum �ifreleme kurulumu ba�ar�s�z.";
+  std::string testData = "Bu bir test verisidir.";
+  std::string encryptedData = encryptSessionData(testData);
+  ASSERT_FALSE(encryptedData.empty()) << "Oturum verisi �ifrelenemedi.";
+  std::string decryptedData = decryptSessionData(encryptedData);
+  ASSERT_EQ(testData, decryptedData) << "�ifrelenmi� ve ��z�lm�� veriler e�le�miyor.";
 }
 
 
@@ -740,33 +670,29 @@ TEST(SessionEncryptionTest, SessionDataEncryptionDecryptionTest2) {
 
 // Base64 Kodlama ve ��zme Testi
 TEST(SessionEncryptionTest, Base64EncodingDecodingTest2) {
-    std::string testData = "Base64 Test Verisi";
-    std::string encodedData = base64Encode(reinterpret_cast<const unsigned char*>(testData.c_str()), testData.size());
-    ASSERT_FALSE(encodedData.empty()) << "Base64 kodlama ba�ar�s�z.";
-
-    std::vector<unsigned char> decodedData = base64Decode(encodedData);
-    ASSERT_EQ(testData, std::string(decodedData.begin(), decodedData.end())) << "Base64 ��z�mlemesi ba�ar�s�z.";
+  std::string testData = "Base64 Test Verisi";
+  std::string encodedData = base64Encode(reinterpret_cast<const unsigned char*>(testData.c_str()), testData.size());
+  ASSERT_FALSE(encodedData.empty()) << "Base64 kodlama ba�ar�s�z.";
+  std::vector<unsigned char> decodedData = base64Decode(encodedData);
+  ASSERT_EQ(testData, std::string(decodedData.begin(), decodedData.end())) << "Base64 ��z�mlemesi ba�ar�s�z.";
 }
 
 TEST(SessionEncryptionTest, SessionDataEncryptionDecryptionTest) {
-    ASSERT_TRUE(setupSessionEncryption()) << "Oturum  ifreleme kurulumu ba ar s z.";
-
-    std::string testData = "Bu bir test verisidir.";
-    std::string encryptedData = encryptSessionData(testData);
-    ASSERT_FALSE(encryptedData.empty()) << "Oturum verisi  ifrelenemedi.";
-
-    std::string decryptedData = decryptSessionData(encryptedData);
-    ASSERT_EQ(testData, decryptedData) << " ifrelenmi  ve   z lm   veriler e le miyor.";
+  ASSERT_TRUE(setupSessionEncryption()) << "Oturum  ifreleme kurulumu ba ar s z.";
+  std::string testData = "Bu bir test verisidir.";
+  std::string encryptedData = encryptSessionData(testData);
+  ASSERT_FALSE(encryptedData.empty()) << "Oturum verisi  ifrelenemedi.";
+  std::string decryptedData = decryptSessionData(encryptedData);
+  ASSERT_EQ(testData, decryptedData) << " ifrelenmi  ve   z lm   veriler e le miyor.";
 }
 
 
 TEST(SessionEncryptionTest, Base64EncodingDecodingTest) {
-    std::string testData = "Base64 Test Verisi";
-    std::string encodedData = base64Encode(reinterpret_cast<const unsigned char*>(testData.c_str()), testData.size());
-    ASSERT_FALSE(encodedData.empty()) << "Base64 kodlama ba ar s z.";
-
-    std::vector<unsigned char> decodedData = base64Decode(encodedData);
-    ASSERT_EQ(testData, std::string(decodedData.begin(), decodedData.end())) << "Base64   z mlemesi ba ar s z.";
+  std::string testData = "Base64 Test Verisi";
+  std::string encodedData = base64Encode(reinterpret_cast<const unsigned char*>(testData.c_str()), testData.size());
+  ASSERT_FALSE(encodedData.empty()) << "Base64 kodlama ba ar s z.";
+  std::vector<unsigned char> decodedData = base64Decode(encodedData);
+  ASSERT_EQ(testData, std::string(decodedData.begin(), decodedData.end())) << "Base64   z mlemesi ba ar s z.";
 }
 
 
@@ -777,11 +703,10 @@ TEST(SessionEncryptionTest, Base64EncodingDecodingTest) {
 const std::string EXPECTED_SALT_FOR_TEST = "9f86d081884c7d659a2feaa0c55ad015";
 
 TEST(GenerateFixedSaltTest, CorrectSaltGeneration) {
-    std::string seed = "test";  // Test i�in kullan�lan seed
-    std::string salt = generateFixedSalt(seed);  // generateFixedSalt fonksiyonunu �a��r�n
-
-    // Salt'�n do�ru olup olmad���n� kontrol et
-    EXPECT_EQ(salt, EXPECTED_SALT_FOR_TEST);
+  std::string seed = "test";  // Test i�in kullan�lan seed
+  std::string salt = generateFixedSalt(seed);  // generateFixedSalt fonksiyonunu �a��r�n
+  // Salt'�n do�ru olup olmad���n� kontrol et
+  EXPECT_EQ(salt, EXPECTED_SALT_FOR_TEST);
 }
 
 
@@ -789,21 +714,19 @@ TEST(GenerateFixedSaltTest, CorrectSaltGeneration) {
 
 // Test case 5: B�y�k ve k���k harf duyarl�l���n� kontrol et
 TEST(HashPasswordWithHMACTest, CaseSensitivity) {
-    std::string password = "Password";  // B�y�k harf ile �ifre
-    std::string salt = "salt";  // Ayn� salt
-    std::string hash1 = hashPasswordWithHMAC(password, salt);  // Fonksiyonu �a��r
-
-    password = "password";  // K���k harf ile �ifre
-    std::string hash2 = hashPasswordWithHMAC(password, salt);  // Fonksiyonu �a��r
-
-    // B�y�k ve k���k harf duyarl�l��� nedeniyle hash'ler farkl� olmal�
-    EXPECT_NE(hash1, hash2);
+  std::string password = "Password";  // B�y�k harf ile �ifre
+  std::string salt = "salt";  // Ayn� salt
+  std::string hash1 = hashPasswordWithHMAC(password, salt);  // Fonksiyonu �a��r
+  password = "password";  // K���k harf ile �ifre
+  std::string hash2 = hashPasswordWithHMAC(password, salt);  // Fonksiyonu �a��r
+  // B�y�k ve k���k harf duyarl�l��� nedeniyle hash'ler farkl� olmal�
+  EXPECT_NE(hash1, hash2);
 }
 
 // getcallerprocesspath test - ignore
 TEST(SignatureVerificationTest, GetCallerProcessPathTest) {
-    std::string result = getCallerProcessPath();
-    ASSERT_FALSE(result.empty()) << "�a��r�c� i�lem yolu bo�.";
+  std::string result = getCallerProcessPath();
+  ASSERT_FALSE(result.empty()) << "�a��r�c� i�lem yolu bo�.";
 }
 
 
@@ -813,82 +736,73 @@ TEST(SignatureVerificationTest, GetCallerProcessPathTest) {
 ///////////////////////////////olop////////////////////
 
 TEST(SSLTest, StartSSL) {
-	StartSSL();
-	ASSERT_TRUE(true) << "SSL baslatilmadi!";
+  StartSSL();
+  ASSERT_TRUE(true) << "SSL baslatilmadi!";
 }
 
 
 TEST(PasswordStrengthTest1, ValidPasswords163) {
-    EXPECT_TRUE(isPasswordStrong("Str0ng!Pass")); // Güçlü şifre
-    EXPECT_TRUE(isPasswordStrong("An0ther$Pass1")); // Güçlü şifre
+  EXPECT_TRUE(isPasswordStrong("Str0ng!Pass")); // Güçlü şifre
+  EXPECT_TRUE(isPasswordStrong("An0ther$Pass1")); // Güçlü şifre
 }
 
 TEST(RegisterAttendeesTest, ValidInputTest) {
-    // Katılımcı bilgilerini kayıt et ve başarılı olduğundan emin ol
-    std::string input = "John Doe\njohn.doe@example.com\n1234567890\n";
-    std::istringstream input_stream(input);
-    std::cin.rdbuf(input_stream.rdbuf()); // Test için std::cin'i yönlendir
-
-    testing::internal::CaptureStdout();
-    registerAttendees();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    // Beklenen çıktıyı kontrol et
-    EXPECT_NE(output.find("Katilimci basariyla kaydedildi."), std::string::npos);
+  // Katılımcı bilgilerini kayıt et ve başarılı olduğundan emin ol
+  std::string input = "John Doe\njohn.doe@example.com\n1234567890\n";
+  std::istringstream input_stream(input);
+  std::cin.rdbuf(input_stream.rdbuf()); // Test için std::cin'i yönlendir
+  testing::internal::CaptureStdout();
+  registerAttendees();
+  std::string output = testing::internal::GetCapturedStdout();
+  // Beklenen çıktıyı kontrol et
+  EXPECT_NE(output.find("Katilimci basariyla kaydedildi."), std::string::npos);
 }
 
 
 TEST(TrackAttendeesTest, ListAttendees) {
-    testing::internal::CaptureStdout();
-    trackAttendees();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    EXPECT_EQ(output.find("decrypted_key"), std::string::npos);
-   // EXPECT_NE(output.find("ID: 1"), std::string::npos);
-    //EXPECT_NE(output.find("ID: 2"), std::string::npos);
+  testing::internal::CaptureStdout();
+  trackAttendees();
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output.find("decrypted_key"), std::string::npos);
+  // EXPECT_NE(output.find("ID: 1"), std::string::npos);
+  //EXPECT_NE(output.find("ID: 2"), std::string::npos);
 }
 
 
 
 TEST(CreateEventTest, ValidEventCreation) {
-    // Kullanıcı girişlerini simüle et
-    std::string input = "Team Meeting\n2025-01-15\nOffice Room 1\nDiscuss project updates\n";
-    std::istringstream input_stream(input);
-    std::cin.rdbuf(input_stream.rdbuf());
-
-    testing::internal::CaptureStdout(); // Çıktıyı yakala
-    createEvent();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    // Beklenen çıktıyı kontrol et
-    EXPECT_NE(output.find("Etkinlik basariyla olusturuldu."), std::string::npos);
-
+  // Kullanıcı girişlerini simüle et
+  std::string input = "Team Meeting\n2025-01-15\nOffice Room 1\nDiscuss project updates\n";
+  std::istringstream input_stream(input);
+  std::cin.rdbuf(input_stream.rdbuf());
+  testing::internal::CaptureStdout(); // Çıktıyı yakala
+  createEvent();
+  std::string output = testing::internal::GetCapturedStdout();
+  // Beklenen çıktıyı kontrol et
+  EXPECT_NE(output.find("Etkinlik basariyla olusturuldu."), std::string::npos);
 }
 
 
 
 //ER----------------------------------------------------------------------
 TEST(GuestModeTest, GetGuestModeTest) {
-    // Varsay�lan olarak misafir modunda oldu�unu kontrol ediyoruz
-    setGuestMode(true);
-    ASSERT_TRUE(getGuestMode());
-    setGuestMode(false);
-    ASSERT_FALSE(getGuestMode());
+  // Varsay�lan olarak misafir modunda oldu�unu kontrol ediyoruz
+  setGuestMode(true);
+  ASSERT_TRUE(getGuestMode());
+  setGuestMode(false);
+  ASSERT_FALSE(getGuestMode());
 }
 
 
 TEST(GuestModeTest, SetGuestModeTest) {
-    // Misafir modunu kapat�yoruz
-    setGuestMode(false);
-
-    // Misafir modunun ger�ekten kapand���n� kontrol ediyoruz
-    ASSERT_FALSE(getGuestMode());
-
-    // Misafir modunu tekrar a��yoruz
-    setGuestMode(true);
-
-    // Misafir modunun ger�ekten a��ld���n� kontrol ediyoruz
-    ASSERT_TRUE(getGuestMode());
+  // Misafir modunu kapat�yoruz
+  setGuestMode(false);
+  // Misafir modunun ger�ekten kapand���n� kontrol ediyoruz
+  ASSERT_FALSE(getGuestMode());
+  // Misafir modunu tekrar a��yoruz
+  setGuestMode(true);
+  // Misafir modunun ger�ekten a��ld���n� kontrol ediyoruz
+  ASSERT_TRUE(getGuestMode());
 }
 
 // ============================================================================
@@ -897,34 +811,37 @@ TEST(GuestModeTest, SetGuestModeTest) {
 #ifdef _WIN32
 
 namespace {
-    // Helper function to flush console input buffer and inject keyboard events
-    void InjectConsoleInput(const std::vector<INPUT_RECORD>& events) {
-        HANDLE hStdIn = GetStdHandle(STD_INPUT_HANDLE);
-        if (hStdIn == INVALID_HANDLE_VALUE) {
-            return;
-        }
-        FlushConsoleInputBuffer(hStdIn);
-        DWORD written = 0;
-        WriteConsoleInputW(hStdIn, events.data(), static_cast<DWORD>(events.size()), &written);
-    }
+// Helper function to flush console input buffer and inject keyboard events
+void InjectConsoleInput(const std::vector<INPUT_RECORD> &events) {
+  HANDLE hStdIn = GetStdHandle(STD_INPUT_HANDLE);
 
-    // Helper function to create a keyboard event record
-    INPUT_RECORD CreateKeyEvent(wchar_t character, WORD virtualKeyCode) {
-        INPUT_RECORD record = {};
-        record.EventType = KEY_EVENT;
-        record.Event.KeyEvent.bKeyDown = TRUE;
-        record.Event.KeyEvent.wRepeatCount = 1;
-        record.Event.KeyEvent.wVirtualKeyCode = virtualKeyCode;
-        record.Event.KeyEvent.wVirtualScanCode = 0;
-        record.Event.KeyEvent.uChar.UnicodeChar = character;
-        record.Event.KeyEvent.dwControlKeyState = 0;
-        return record;
-    }
+  if (hStdIn == INVALID_HANDLE_VALUE) {
+    return;
+  }
+
+  FlushConsoleInputBuffer(hStdIn);
+  DWORD written = 0;
+  WriteConsoleInputW(hStdIn, events.data(), static_cast<DWORD>(events.size()), &written);
 }
+
+// Helper function to create a keyboard event record
+INPUT_RECORD CreateKeyEvent(wchar_t character, WORD virtualKeyCode) {
+  INPUT_RECORD record = {};
+  record.EventType = KEY_EVENT;
+  record.Event.KeyEvent.bKeyDown = TRUE;
+  record.Event.KeyEvent.wRepeatCount = 1;
+  record.Event.KeyEvent.wVirtualKeyCode = virtualKeyCode;
+  record.Event.KeyEvent.wVirtualScanCode = 0;
+  record.Event.KeyEvent.uChar.UnicodeChar = character;
+  record.Event.KeyEvent.dwControlKeyState = 0;
+  return record;
+}
+}
+
 #endif // _WIN32
 
- //Testlerin ba�lang�� noktas�
+//Testlerin ba�lang�� noktas�
 int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

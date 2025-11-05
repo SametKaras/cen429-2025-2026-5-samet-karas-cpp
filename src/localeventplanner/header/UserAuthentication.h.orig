@@ -9,7 +9,6 @@
 
 #include <string>
 #include "sqlite3.h" 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,6 +22,7 @@ LOCAL_EVENT_PLANNER_API void setGuestMode(bool mode);
 LOCAL_EVENT_PLANNER_API void secureErase(std::string& str);
 LOCAL_EVENT_PLANNER_API sqlite3* openUserDatabase();
 LOCAL_EVENT_PLANNER_API bool isPasswordStrong(const std::string& password);
+LOCAL_EVENT_PLANNER_API std::string getPasswordInput();
 #ifdef __cplusplus
 }
 

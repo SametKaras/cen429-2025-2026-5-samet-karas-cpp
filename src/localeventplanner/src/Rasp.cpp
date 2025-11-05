@@ -33,9 +33,9 @@ const std::vector<std::string> EMULATOR_MODELS = {
 
 /*
 * @brief Gets the manufacturer information of the device
-* 
+*
 * Gets the manufacturer information of the device
-* 
+*
 * @return std::string
 */
 
@@ -57,9 +57,9 @@ std::string getDeviceManufacturer() {
 
 /*
 * @brief Gets the model information of the device
-* 
+*
 * Gets the model information of the device
-* 
+*
 * @return std::string
 *
 */
@@ -80,9 +80,9 @@ std::string getDeviceModel() {
 
 /*
 * @brief Detects if the application is running on an emulator
-* 
+*
 * Detects if the application is running on an emulator
-* 
+*
 * @return bool
 */
 
@@ -108,11 +108,11 @@ bool isEmulator() {
 
 ///*
 //* @brief Checks if the file is writable
-//* 
+//*
 //* Checks if the file is writable
-//* 
+//*
 //* @param const std::string& filePath - The path of the file
-//* 
+//*
 //* @return bool
 //*/
 //
@@ -127,11 +127,11 @@ bool isEmulator() {
 //}
 //
 ///*
-//* 
+//*
 //* @brief Checks critical system files for security
-//* 
+//*
 //* Checks critical system files for security
-//* 
+//*
 //* @return bool
 //*/
 //
@@ -167,13 +167,13 @@ bool isEmulator() {
 
 /*
 * @brief Checks if the function is hooked
-* 
+*
 * Checks if the function is hooked
-* 
+*
 * @param const char* moduleName - The name of the module
-* 
+*
 * @param const char* functionName - The name of the function
-* 
+*
 * @return bool
 */
 
@@ -195,9 +195,9 @@ bool isFunctionHooked(const char* moduleName, const char* functionName) {
 
 /*
 * @brief Checks if the API functions are hooked
-* 
+*
 * Checks if the API functions are hooked
-* 
+*
 * @return bool
 */
 
@@ -245,9 +245,9 @@ static unsigned long crc32_table[CRC_TABLE_LEN] = { 0 };
 
 /*
 * @brief Initializes the CRC32 table
-* 
+*
 * Initializes the CRC32 table
-* 
+*
 * @return void
 */
 
@@ -272,13 +272,13 @@ void crc32_table_init() {
 
 /*
 * @brief Calculates the CRC32 checksum
-* 
+*
 * Calculates the CRC32 checksum
-* 
+*
 * @param unsigned char* buf - The buffer to calculate the checksum
-* 
+*
 * @param int buf_len - The length of the buffer
-* 
+*
 * @return unsigned long
 */
 
@@ -298,28 +298,26 @@ CRC_START_BLOCK(exampleBlock)
 void exampleFunction() {
   std::cout << "Example function asdasdrunning...\n";
 }
+
 CRC_END_BLOCK(exampleBlock)
 
 
 
 /*
 * @brief Verifies the code block
-* 
+*
 * Verifies the code block
-* 
+*
 * @return bool
 */
 
 // Kod bloðunu kontrol eden fonksiyon
 bool verifyCodeBlock() {
-    unsigned long computedCRC = crc32_calc(CRC_BLOCK_ADDR(exampleBlock), CRC_BLOCK_LEN(exampleBlock));
-
-    const unsigned long expectedCRC = 0x267ecd13; // Test sýrasýnda alýnacak gerçek CRC deðeri
-
-    std::cout << "Computed CRC: " << std::hex << computedCRC << std::endl;  //Checksum hesaplanan deðeri gösterir
-    std::cout << "Expected CRC: " << std::hex << expectedCRC << std::endl; //Checksum beklenen deðeri gösterir
-
-    return computedCRC == expectedCRC;
+  unsigned long computedCRC = crc32_calc(CRC_BLOCK_ADDR(exampleBlock), CRC_BLOCK_LEN(exampleBlock));
+  const unsigned long expectedCRC = 0x267ecd13; // Test sýrasýnda alýnacak gerçek CRC deðeri
+  std::cout << "Computed CRC: " << std::hex << computedCRC << std::endl;  //Checksum hesaplanan deðeri gösterir
+  std::cout << "Expected CRC: " << std::hex << expectedCRC << std::endl; //Checksum beklenen deðeri gösterir
+  return computedCRC == expectedCRC;
 }
 
 #define STRINGIFY(x) #x
@@ -336,265 +334,253 @@ const std::string CA_CERTIFICATE_FILE = CA_CERTIFICATE_FILE_PATH;
 
 /*
 * @brief Initializes the SSL context
-* 
+*
 * Initializes the SSL context
-* 
+*
 * @return SSL_CTX*
 */
 
 
 // SSL baðlamýný baþlat
-SSL_CTX* initializeSSLContext() {
-    SSL_CTX* ctx = SSL_CTX_new(TLS_client_method());
-    if (!ctx) {
-        //std::cerr << "SSL baglami olusturulamadi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
-        return nullptr;
-    }
+SSL_CTX *initializeSSLContext() {
+  SSL_CTX* ctx = SSL_CTX_new(TLS_client_method());
 
-    // Sertifika dosyasýný yükle
-    if (SSL_CTX_use_certificate_file(ctx, CERTIFICATE_FILE.c_str(), SSL_FILETYPE_PEM) <= 0) {
-        //std::cerr << "Sertifika yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
-        SSL_CTX_free(ctx);
-        return nullptr;
-    }
+  if (!ctx) {
+    //std::cerr << "SSL baglami olusturulamadi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+    return nullptr;
+  }
 
-    // Özel anahtar dosyasýný yükle
-    if (SSL_CTX_use_PrivateKey_file(ctx, PRIVATE_KEY_FILE.c_str(), SSL_FILETYPE_PEM) <= 0) {
-        //std::cerr << "Ozel anahtar yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
-        SSL_CTX_free(ctx);
-        return nullptr;
-    }
+  // Sertifika dosyasýný yükle
+  if (SSL_CTX_use_certificate_file(ctx, CERTIFICATE_FILE.c_str(), SSL_FILETYPE_PEM) <= 0) {
+    //std::cerr << "Sertifika yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+    SSL_CTX_free(ctx);
+    return nullptr;
+  }
 
-    // Özel anahtar ile sertifikanýn eþleþip eþleþmediðini kontrol et
-    if (!SSL_CTX_check_private_key(ctx)) {
-        //std::cerr << "Ozel anahtar dogrulama hatasi!" << std::endl;
-        SSL_CTX_free(ctx);
-        return nullptr;
-    }
+  // Özel anahtar dosyasýný yükle
+  if (SSL_CTX_use_PrivateKey_file(ctx, PRIVATE_KEY_FILE.c_str(), SSL_FILETYPE_PEM) <= 0) {
+    //std::cerr << "Ozel anahtar yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+    SSL_CTX_free(ctx);
+    return nullptr;
+  }
 
-    // CA sertifikasý yükle ve doðrulama ayarla
-    if (SSL_CTX_load_verify_locations(ctx, CA_CERTIFICATE_FILE.c_str(), nullptr) <= 0) {
-        //std::cerr << "CA sertifikasý yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
-        SSL_CTX_free(ctx);
-        return nullptr;
-    }
-    SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, nullptr);
+  // Özel anahtar ile sertifikanýn eþleþip eþleþmediðini kontrol et
+  if (!SSL_CTX_check_private_key(ctx)) {
+    //std::cerr << "Ozel anahtar dogrulama hatasi!" << std::endl;
+    SSL_CTX_free(ctx);
+    return nullptr;
+  }
 
-    return ctx;
+  // CA sertifikasý yükle ve doðrulama ayarla
+  if (SSL_CTX_load_verify_locations(ctx, CA_CERTIFICATE_FILE.c_str(), nullptr) <= 0) {
+    //std::cerr << "CA sertifikasý yukleme hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+    SSL_CTX_free(ctx);
+    return nullptr;
+  }
+
+  SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, nullptr);
+  return ctx;
 }
 
 /*
 * @brief Performs the SSL handshake and data exchange
-* 
+*
 * Performs the SSL handshake and data exchange
-* 
+*
 * @param SSL_CTX* ctx - The SSL context
-* 
+*
 * @return void
 *
 */
 
 // SSL handshake ve veri alýþveriþi yap
 void performSSLHandshakeAndDataExchange(SSL_CTX* ctx) {
-    SSL* ssl;
-    BIO* bio;
+  SSL* ssl;
+  BIO* bio;
+  bio = BIO_new_ssl_connect(ctx);
 
-    bio = BIO_new_ssl_connect(ctx);
-    if (!bio) {
-        //std::cerr << "BIO olusturulamadi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
-        return;
-    }
+  if (!bio) {
+    //std::cerr << "BIO olusturulamadi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+    return;
+  }
 
-    BIO_get_ssl(bio, &ssl);
-    if (!ssl) {
-        //std::cerr << "SSL oturumu alýnamadý!" << std::endl;
-        BIO_free_all(bio);
-        return;
-    }
+  BIO_get_ssl(bio, &ssl);
 
-    std::string hostnameWithPort = std::string(HOSTNAME) + ":" + std::to_string(PORT);
-    BIO_set_conn_hostname(bio, hostnameWithPort.c_str());
-
-    //Baðlantýyý gerçekleþtirin
- //   if (BIO_do_connect(bio) <= 0) {
-    //    std::cerr << "Baglanti hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
-    //    BIO_free_all(bio);
-      //  return;
-   // }
-
-    // Sertifika doðrulama
-    if (SSL_get_verify_result(ssl) != X509_V_OK) {
-        //std::cerr << "Sertifika dogrulama basarisiz!" << std::endl;
-        BIO_free_all(bio);
-        return;
-    }
-
-    std::cout << "Baglanti basarili ve sertifika dogrulandi!" << std::endl;
-
-    // HTTP GET isteði gönder
-    const char* request = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-    BIO_write(bio, request, strlen(request));
-
-    // Yanýtý oku
-    char buffer[1024] = { 0 };
-    int bytes = BIO_read(bio, buffer, sizeof(buffer) - 1);
-    //if (bytes > 0) {
-    //  std::cout << "Sunucudan gelen veri: " << buffer << std::endl;
-    //}
-    //else {
-    //    std::cerr << "Sunucudan veri alýnamadý." << std::endl;
-    //}
-
+  if (!ssl) {
+    //std::cerr << "SSL oturumu alýnamadý!" << std::endl;
     BIO_free_all(bio);
+    return;
+  }
+
+  std::string hostnameWithPort = std::string(HOSTNAME) + ":" + std::to_string(PORT);
+  BIO_set_conn_hostname(bio, hostnameWithPort.c_str());
+
+  //Baðlantýyý gerçekleþtirin
+  //   if (BIO_do_connect(bio) <= 0) {
+  //    std::cerr << "Baglanti hatasi: " << ERR_reason_error_string(ERR_get_error()) << std::endl;
+  //    BIO_free_all(bio);
+  //  return;
+  // }
+
+  // Sertifika doðrulama
+  if (SSL_get_verify_result(ssl) != X509_V_OK) {
+    //std::cerr << "Sertifika dogrulama basarisiz!" << std::endl;
+    BIO_free_all(bio);
+    return;
+  }
+
+  std::cout << "Baglanti basarili ve sertifika dogrulandi!" << std::endl;
+  // HTTP GET isteði gönder
+  const char *request = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+  BIO_write(bio, request, strlen(request));
+  // Yanýtý oku
+  char buffer[1024] = { 0 };
+  int bytes = BIO_read(bio, buffer, sizeof(buffer) - 1);
+  //if (bytes > 0) {
+  //  std::cout << "Sunucudan gelen veri: " << buffer << std::endl;
+  //}
+  //else {
+  //    std::cerr << "Sunucudan veri alýnamadý." << std::endl;
+  //}
+  BIO_free_all(bio);
 }
 
 
 /*
 * @brief Unnecessary computation function
-* 
+*
 * @param int value - The input value
-* 
+*
 * @return bool
 */
 
 bool issdddPimeeasds(int value) {
-    if (value < 2) return false;
-    for (int i = 2; i <= std::sqrt(value); ++i) {
-        if (value % i == 0) return false;
-    }
-    return true;
+  if (value < 2) return false;
+
+  for (int i = 2; i <= std::sqrt(value); ++i) {
+    if (value % i == 0) return false;
+  }
+
+  return true;
 }
 
 /*
 * @brief Verifies the dummy function
-* 
+*
 * Verifies the dummy function
-* 
+*
 * @return void
 */
 
 void VerifyDum() { //dummy function
-    std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
+  std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
+  int evenCount = 0, oddCount = 0, primeCount = 0;
+  int sumMultiplesOfFive = 0, perfectSquareCount = 0;
+  int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
+  long long unnecessaryComputationSum = 0;
+  long long specialConditionCount = 0, modSevenCount = 0;
+  double accumulatedSquareRoots = 0.0;
+  int totalDigitProduct = 1;
 
+  for (int value : data) {
+    int intermediate = value * 3;
+    intermediate += 7;
+    intermediate /= 2;
+    intermediate *= value % 5;
+    unnecessaryComputationSum += intermediate;
 
-    int evenCount = 0, oddCount = 0, primeCount = 0;
-    int sumMultiplesOfFive = 0, perfectSquareCount = 0;
-    int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
-    long long unnecessaryComputationSum = 0;
-    long long specialConditionCount = 0, modSevenCount = 0;
-
-    double accumulatedSquareRoots = 0.0;
-    int totalDigitProduct = 1;
-
-    for (int value : data) {
-
-        int intermediate = value * 3;
-        intermediate += 7;
-        intermediate /= 2;
-        intermediate *= value % 5;
-        unnecessaryComputationSum += intermediate;
-
-
-        if (value % 2 == 0) {
-            evenCount++;
-            continue;
-        }
-        oddCount++;
-
-
-        if (issdddPimeeasds(value)) {
-            primeCount++;
-        }
-
-
-        if (value % 5 == 0) {
-            sumMultiplesOfFive += value;
-        }
-
-        int sqrtValue = std::sqrt(value);
-        if (sqrtValue * sqrtValue == value) {
-            perfectSquareCount++;
-        }
-
-
-        if (value % 3 == 0) {
-            divisibleByThreeCount++;
-        }
-
-
-        if (value % 7 == 0) {
-            modSevenCount++;
-        }
-
-
-        int digitSum = 0, digitProduct = 1;
-        int temp = value;
-        while (temp > 0) {
-            int digit = temp % 10;
-            digitSum += digit;
-            digitProduct *= digit;
-            temp /= 10;
-        }
-
-
-        if (digitSum > 10) {
-            digitSumGreaterThanTen++;
-        }
-
-
-        totalDigitProduct *= (digitProduct % 1000);
-
-
-        accumulatedSquareRoots += std::sqrt(value);
-
-
-        if (value % 2 == 0 && value % 3 == 0) {
-            specialConditionCount++;
-        }
-
-
-        unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+    if (value % 2 == 0) {
+      evenCount++;
+      continue;
     }
 
+    oddCount++;
 
-    std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
-    for (int value : additionalData) {
-        int dummyCalculation = value * 2 + 3;
-        unnecessaryComputationSum += dummyCalculation % 10;
-        accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    if (issdddPimeeasds(value)) {
+      primeCount++;
     }
 
-
-    std::vector<int> finalData = { 101, 202, 303, 404, 505 };
-    for (int value : finalData) {
-        int dummyCalculation = value * 3 - 5;
-        unnecessaryComputationSum += dummyCalculation % 20;
-        accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    if (value % 5 == 0) {
+      sumMultiplesOfFive += value;
     }
+
+    int sqrtValue = std::sqrt(value);
+
+    if (sqrtValue * sqrtValue == value) {
+      perfectSquareCount++;
+    }
+
+    if (value % 3 == 0) {
+      divisibleByThreeCount++;
+    }
+
+    if (value % 7 == 0) {
+      modSevenCount++;
+    }
+
+    int digitSum = 0, digitProduct = 1;
+    int temp = value;
+
+    while (temp > 0) {
+      int digit = temp % 10;
+      digitSum += digit;
+      digitProduct *= digit;
+      temp /= 10;
+    }
+
+    if (digitSum > 10) {
+      digitSumGreaterThanTen++;
+    }
+
+    totalDigitProduct *= (digitProduct % 1000);
+    accumulatedSquareRoots += std::sqrt(value);
+
+    if (value % 2 == 0 && value % 3 == 0) {
+      specialConditionCount++;
+    }
+
+    unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+  }
+
+  std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
+
+  for (int value : additionalData) {
+    int dummyCalculation = value * 2 + 3;
+    unnecessaryComputationSum += dummyCalculation % 10;
+    accumulatedSquareRoots += std::sqrt(dummyCalculation);
+  }
+
+  std::vector<int> finalData = { 101, 202, 303, 404, 505 };
+
+  for (int value : finalData) {
+    int dummyCalculation = value * 3 - 5;
+    unnecessaryComputationSum += dummyCalculation % 20;
+    accumulatedSquareRoots += std::sqrt(dummyCalculation);
+  }
 }
 
 
 
 /*
 * @brief Starts the SSL process
-* 
+*
 * Starts the SSL process
-* 
+*
 * @return void
 */
 
 // SSL iþlemini baþlat
 void StartSSL() {
-    VerifyDum();
-    SSL_library_init();
-    SSL_load_error_strings();
+  VerifyDum();
+  SSL_library_init();
+  SSL_load_error_strings();
+  SSL_CTX* ctx = initializeSSLContext();
 
-    SSL_CTX* ctx = initializeSSLContext();
-    if (!ctx) {
-        std::cerr << "SSL baglami baslatilamadi!" << std::endl;
-        return;
-    }
+  if (!ctx) {
+    std::cerr << "SSL baglami baslatilamadi!" << std::endl;
+    return;
+  }
 
-    performSSLHandshakeAndDataExchange(ctx);
-    SSL_CTX_free(ctx);
+  performSSLHandshakeAndDataExchange(ctx);
+  SSL_CTX_free(ctx);
 }

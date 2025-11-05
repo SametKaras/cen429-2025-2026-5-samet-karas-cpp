@@ -208,5 +208,3 @@ LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMAC(const std::string& pass
     }
     return ss.str();
 }
-
-
