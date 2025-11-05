@@ -9,7 +9,6 @@
 
 #include <string>
 #include "sqlite3.h" 
-
 #ifdef __cplusplus
 extern "C" {
 #endif

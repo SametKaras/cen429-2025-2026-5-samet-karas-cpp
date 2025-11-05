@@ -1,68 +1,126 @@
-# Calculator Project Library Generation and Testing Template
+## LocalEventPlanner (C++ Konsol Uygulaması)
 
-## Overview
+### Genel Bakış
 
-This project provides a suite of modules aimed to show how Cmake used with Ctest. Also combines doxygen documentation and test coverage reports
+Yerel etkinliklerinizi planlamanızı sağlayan, C++ ile geliştirilmiş modüler bir konsol uygulaması. Kullanıcı kimlik doğrulama, katılımcı yönetimi, etkinlik oluşturma/listeleme, zamanlama, geri bildirim toplama gibi işlevlerin yanında; oturum şifreleme, imza doğrulama, sürüm/cihaz bağlama ve anti-debug gibi güvenlik mekanizmaları içerir. Veriler SQLite üzerinde saklanır.
 
-## Requirements
+### Temel Özellikler
+
+- Kullanıcı girişi / kayıt ve misafir modu
+- Etkinlik oluşturma, yönetme ve listeleme
+- Katılımcı kaydı ve takibi
+- Zamanlama (takvim) düzenleyici
+- Geri bildirim toplama
+- Oturum şifreleme (AES/HMAC), dinamik varlık koruma
+- Sürüm ve cihaz uyumluluğu kontrolü, imza doğrulama, anti-debug kontrolleri
+- SQLite tabanlı kalıcı saklama
+
+## Gereksinimler
 
 - CMake >= 3.12
-- C++ Standard >= 11
-- GoogleTest (for testing modules)
-- Visual Studio Communit Edition for Windows Generator
-- Ninja for WSL/Linux
+- C++ standardı >= 11
+- OpenSSL (SSL/TLS, HMAC vb. için)
+- SQLite3 (proje, gömülü `sqlite3.c` ile birlikte derlenir)
+- GoogleTest (testler için)
+- Windows: Visual Studio Community (MSVC) veya Ninja
+- WSL/Linux: build-essential, Ninja (script kurar)
 
-## Setup Development Environment
+## Ortam Kurulumu
 
-### Step-1 (Run on Windows, Can Effect on WSL)
+### Windows
 
-Run 1-configure-pre-commit.bat file to copy 1-pre-commit script to .git/hooks that checkes. README.md, gitignore and doxygenfiles. Also format code with astyle tool
+1. `1-configure-git-hooks.bat`: Git hook'larını kopyalar, astyle ile kod formatlar.
+2. `2-create-git-ignore.bat`: `.gitignore` oluşturur (gerekiyorsa).
+3. `3-install-package-manager.bat`: Paket yöneticilerini kurar (choco, scoop).
+4. `4-install-windows-enviroment.bat`: Gerekli araç ve kütüphaneleri kurar (CMake, Ninja, OpenSSL vb.).
 
-### Step-2 (Run on Windows, Can Effect on WSL)
+Not: OpenSSL eksik ise CMake yapılandırması sırasında anahtar üretimi aşamasında hata alırsınız.
 
-If gitignore missing then you can create gitignore with 2-create-git-ignore.bat file run this file.
+### WSL/Linux
 
-### Step-3 (Only Windows)
+PowerShell'i yönetici olarak açın, WSL'ye geçin, proje klasörüne gidin ve:
 
-Install package managers that we will use to install applications. Run 3-install-package-manager.bat to install choco and scoop package managers
+```
+./4-install-wsl-environment.sh
+```
 
-### Step-4 (Only Windows)
+Gerekli paketleri kurar ve ortamı hazırlar.
 
-Run 4-install-windows-enviroment.bat to install required applications. 
+## Hızlı Başlangıç
 
-### Step-5 (Only WSL)
+### Windows'ta Visual Studio projesi üretimi
 
-Open powershell as admin and enter WSL then goto project folder and run 4-install-wsl-environment.sh to setup WSL environment
+```
+./9-clean-configure-app-windows.bat
+```
 
+Visual Studio çözümünü oluşturur (MSVC ile Debug/Release yapılandırmaları).
 
+### Windows'ta derle, test et, paketle
 
-## Generate Development Environment
+```
+./7-build-app-windows.bat
+```
 
-You can run 9-clean-configure-app-windows.bat to generate Visual Studio Communit Edition Project of this file. Or You can use Cmake project development with Visual Studio Community Edition
+- Temizleme, yapı klasörlerini hazırlama
+- Doxygen dokümantasyonu ve dokümantasyon kapsam raporu
+- Projenin Debug/Release derlenmesi
+- Testlerin çalıştırılması ve kapsam raporlarının üretilmesi
+- MkDocs ile web sayfası üretimi
+- Çıktıların `release` klasörüne paketlenmesi
 
+Yalnızca dokümantasyon: `7-build-doc-windows.bat`
 
+Yalnızca testler: `8-build-test-windows.bat`
 
-## Build, Test and Package Application on Windows
+### WSL/Linux'ta derle, test et, paketle
 
-Run 7-build-app-windows.bat to build, test and generate packed binaries for your application on windows.
+```
+./7-build-app-linux.sh
+```
 
+Windows ile benzer adımları çalıştırır, rapor ve kütüphaneleri `release` klasöründe toplar.
 
+## Uygulamayı Çalıştırma
 
-Also you can run 7-build-doc-windows.bat to only generate documentation and 8-build-test-windows.bat to only test application. 
+Derleme sonrası yürütülebilir dosya adı: `LocalEventPlannerapp`
 
-## Build, Test and Package Application on WSL
+- Windows: `build/Debug/LocalEventPlannerapp.exe` veya `build/Release/LocalEventPlannerapp.exe`
+- Linux/WSL: `build/LocalEventPlannerapp`
 
-Run 7-build-app-linux.sh to build, test and generate packed binaries for your application on WSL environment.
+Uygulama başlatıldığında ana menüden Giriş Yap, Kayıt Ol veya Misafir Modu seçenekleri ile ilerleyebilirsiniz. Misafir modunda bazı işlemler (ör. etkinlik/katılımcı oluşturma) kısıtlıdır.
 
+## Proje Yapısı
 
+- `src/localeventplanner`: Çekirdek kütüphane (güvenlik, şifreleme, iş kuralları, SQLite entegrasyonu)
+- `src/localeventplannerapp`: Konsol uygulaması (ana akış ve menüler)
+- `src/utility`: Ortak yardımcılar ve gömülü `sqlite3.c/.h`
+- `src/tests`: GoogleTest birim testleri ve yardımcı script'ler
+- `assets`: Rozetler, görseller
+- `report_*` klasörleri: Test ve dokümantasyon kapsam geçmişleri
+- `Doxyfile*`: Doxygen yapılandırmaları (Windows/Linux, kütüphane/test)
+- `mkdocs.yml`: Web dokümantasyonu yapılandırması
 
-## Clean Project
+## Anahtarlar ve Güvenlik
 
-You can run 9-clean-project.bat to clean project outputs. 
+Kütüphane yapılandırma aşamasında OpenSSL ile RSA anahtarları üretilir ve derleme sırasında ilgili yollar derleyici tanımlarına geçilir. OpenSSL kurulu değilse yapılandırma başarısız olur.
 
+Başlıca güvenlik kontrolleri:
 
+- İmza doğrulama ve kod bütünlüğü kontrolleri
+- Anti-debug ve hook tespiti
+- Sürüm/cihaz uyumluluğu kontrolü
+- Oturum şifreleme (AES) ve HMAC tabanlı doğrulama
 
-## Supported Platforms
+## Temizlik
+
+```
+./9-clean-project.bat
+```
+
+Proje çıktılarını temizler.
+
+## Desteklenen Platformlar
 
 ![Ubuntu badge](assets/badge-ubuntu.svg)
 
@@ -70,88 +128,34 @@ You can run 9-clean-project.bat to clean project outputs.
 
 ![Windows badge](assets/badge-windows.svg)
 
-### Test Coverage Ratios
+### Test Kapsamı Rozetleri
 
-> **Note** : There is a known bug on doxygen following badges are in different folder but has same name for this reason in doxygen html report use same image for all content [Images with same name overwrite each other in output directory · Issue #8362 · doxygen/doxygen · GitHub](https://github.com/doxygen/doxygen/issues/8362). README.md and WebPage show correct badges.
+> Not: Doxygen'de aynı isimli görsellerin çıktıda çakışması ile ilgili bilinen bir hata vardır; README ve web sayfasındaki rozetler doğrudur. Ayrıntı: `https://github.com/doxygen/doxygen/issues/8362`.
 
 | Coverage Type | Windows OS                                                             | Linux OS (WSL-Ubuntu 20.04)                                              |
 | ------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | Line Based    | ![Line Coverage](assets/codecoveragelibwin/badge_linecoverage.svg)     | ![Line Coverage](assets/codecoverageliblinux/badge_linecoverage.svg)     |
 | Branch Based  | ![Branch Coverage](assets/codecoveragelibwin/badge_branchcoverage.svg) | ![Branch Coverage](assets/codecoverageliblinux/badge_branchcoverage.svg) |
-| Method Based  | ![Method Coverage](assets/codecoveragelibwin/badge_methodcoverage.svg) | ![Method Coverage](assets/codecoverageliblinux/badge_methodcoverage.svg) |
+| Method Based  | ![Method Coverage](assets/codecoveragelibwin/badge_methodcoverage.svg) | ![Method Coverage](assets/codecoverageliblinux/badge_methodcoverage.svg)  |
 
-### Documentation Coverage Ratios
+### Dokümantasyon Kapsamı
 
 |                    | Windows OS                                                        | Linux OS (WSL-Ubuntu 20.04)                                         |
 | ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Coverage Ratio** | ![Line Coverage](assets/doccoveragelibwin/badge_linecoverage.svg) | ![Line Coverage](assets/doccoverageliblinux/badge_linecoverage.svg) |
+| Coverage Ratio     | ![Line Coverage](assets/doccoveragelibwin/badge_linecoverage.svg) | ![Line Coverage](assets/doccoverageliblinux/badge_linecoverage.svg) |
 
+## Test Sonuçlarını HTML'e Çevirme (Opsiyonel)
 
+JUnit XML test sonuçlarını HTML rapora çevirmek için aşağıdaki aracı kullanabilirsiniz:
 
-#### Install Test Results to HTML Converter
+`https://github.com/inorton/junit2html`
 
-We are using [GitHub - inorton/junit2html: Turn Junit XML reports into self contained HTML reports](https://github.com/inorton/junit2html) to convert junit xml formatted test results to HTML page for reporting also we store logs during test. Use following commands to install this module with pip
-
-```bash
+```
 pip install junit2html
 ```
 
-### Github Actions
+> İpucu: Windows ve Linux script'leri kapsamlı bir şekilde yapı/test/dokümantasyon adımlarını otomatikleştirir. Eksik adım veya kurulum problemi yaşarsanız ilgili `.bat`/`.sh` script'lerini sırasıyla çalıştırmanız genellikle yeterlidir.
 
-This project also compiled and tested with Github Actions. If there is a missing setup or problem follow github action script for both Windows and WSL under
-
-`.github/workflows/cpp.yml`
-
-Github actions take too much time more than 1 hour take to complete build for Windows, MacOS and Linux. Also its paid operation for this reason we use offline batch scripts easy to use. 
-
-### Build App on Windows
-
-We have already configured script for build operations. `7-build-app-windows.bat` have complete all required tasks and copy outputs to release folder.  
-
-**Operation Completed in 11-15 minutes.**
-
-- Clean project outputs
-
-- Create required folders
-
-- Run doxygen for documentation
-
-- Run coverxygen for document coverage report
-
-- Run Report Generator for Documentation Coverage Report
-
-- Configure project for Visual Studio Community Edition
-
-- Build Project Debug and Release
-
-- Install/Copy Required Library and Headers
-
-- Run Tests 
-
-- Run OpeCppCoverage for Coverage Data Collection
-
-- Run Reportgenerator for Test Coverage Report
-
-- Copy output report to webpage folder
-
-- Run mkdocs to build webpage
-
-- Compress outputs to release folder, everything is ready for deployment. 
-
-### Build App on WSL/Linux
-
-We are running WSL on Windows 10 and solve our virtual machine problem. We make cross-platform development. After development before commit we run and test app on Windows and WSL with this scripts. To run on WSL you need to install WSL first. 
-
-you can use our public notes
-
-- https://github.com/coruhtech/vs-docker-wsl-cpp-development
-
-- [GitHub - ucoruh/ns3-wsl-win10-setup: ns3 windows 10 WSL2 setup and usage](https://github.com/ucoruh/ns3-wsl-win10-setup)
-
-After WSL installation, right click and open WSL bash and run `7-build-app-linux.sh` this will provide similart task with windows and will generate report and libraries on release folder. 
-
-
-
-----
+---
 
 $End-Of-File$

@@ -10,9 +10,7 @@
 #include <vector>
 #include "DisplayMainMenu.h"
 #include "EventDetails.h"
-#include "FeedbackCollection.h"
 #include "AttendeeManagement.h"
-#include "ScheduleOrganizer.h"
 #include "UserAuthentication.h"
 #include "sqlite3.h"
 

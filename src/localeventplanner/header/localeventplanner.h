@@ -2,9 +2,9 @@
 //#define LOCAL_EVENT_PLANNER_H
 //
 //#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
-//  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
+//  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluï¿½turulurken dï¿½ï¿½a aktarï¿½m
 //#else
-//  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
+//  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanï¿½lï¿½rken iï¿½e aktarï¿½m
 //#endif
 //
 //#include <string>
@@ -21,12 +21,8 @@
 //LOCAL_EVENT_PLANNER_API void attendeeManagement();
 //LOCAL_EVENT_PLANNER_API void registerAttendees();
 //LOCAL_EVENT_PLANNER_API void trackAttendees();
-//LOCAL_EVENT_PLANNER_API void scheduleOrganizer();
 //LOCAL_EVENT_PLANNER_API void planTimelines();
 //LOCAL_EVENT_PLANNER_API void organizeActivities();
-//LOCAL_EVENT_PLANNER_API void feedbackCollection();
-//LOCAL_EVENT_PLANNER_API void gatherFeedback();
-//
 //#ifdef __cplusplus
 //}
 //
