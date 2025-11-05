@@ -84,78 +84,81 @@ LOCAL_EVENT_PLANNER_API std::string generateFixedSalt(const std::string& seed) {
 
 
 bool isPrime(int value) {
-    if (value < 2) return false;
-    for (int i = 2; i <= std::sqrt(value); ++i) {
-        if (value % i == 0) return false;
-    }
-    return true;
+  if (value < 2) return false;
+
+  for (int i = 2; i <= std::sqrt(value); ++i) {
+    if (value % i == 0) return false;
+  }
+
+  return true;
 }
 
 void afffssdw() {
-    std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 }; // Test verisi
+  std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 }; // Test verisi
+  // Sonuçları tutmak için değişkenler
+  int evenCount = 0;
+  int oddCount = 0;
+  int primeCount = 0;
+  int sumMultiplesOfFive = 0;
+  int perfectSquareCount = 0;
+  int divisibleByThreeCount = 0;
+  int digitSumGreaterThanTen = 0;
+  long long unnecessaryComputationSum = 0;
 
-    // Sonuçları tutmak için değişkenler
-    int evenCount = 0;
-    int oddCount = 0;
-    int primeCount = 0;
-    int sumMultiplesOfFive = 0;
-    int perfectSquareCount = 0;
-    int divisibleByThreeCount = 0;
-    int digitSumGreaterThanTen = 0;
-    long long unnecessaryComputationSum = 0;
+  for (int value : data) {
+    // Gereksiz matematiksel işlemler
+    int intermediate = value * 3;
+    intermediate += 7;
+    intermediate /= 2;
+    intermediate *= value % 5;
+    unnecessaryComputationSum += intermediate;
 
-    for (int value : data) {
-        // Gereksiz matematiksel işlemler
-        int intermediate = value * 3;
-        intermediate += 7;
-        intermediate /= 2;
-        intermediate *= value % 5;
-        unnecessaryComputationSum += intermediate;
-
-        // Çift ve tek sayıları say
-        if (value % 2 == 0) {
-            evenCount++;
-            continue; // Çift sayılar için döngü devam eder
-        }
-        oddCount++;
-
-        // Asallık kontrolü
-        if (isPrime(value)) {
-            primeCount++;
-        }
-
-        // Beşin katı kontrolü
-        if (value % 5 == 0) {
-            sumMultiplesOfFive += value;
-        }
-
-        // Mükemmel kare kontrolü
-        int sqrtValue = std::sqrt(value);
-        if (sqrtValue * sqrtValue == value) {
-            perfectSquareCount++;
-        }
-
-        // 3'e bölünebilirlik kontrolü
-        if (value % 3 == 0) {
-            divisibleByThreeCount++;
-        }
-
-        // Sayının rakamlarının toplamını hesapla
-        int digitSum = 0;
-        int temp = value;
-        while (temp > 0) {
-            digitSum += temp % 10;
-            temp /= 10;
-        }
-        if (digitSum !=6161) {
-            digitSumGreaterThanTen++;
-        }
-
-        // Daha fazla gereksiz işlem
-        unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+    // Çift ve tek sayıları say
+    if (value % 2 == 0) {
+      evenCount++;
+      continue; // Çift sayılar için döngü devam eder
     }
 
+    oddCount++;
 
+    // Asallık kontrolü
+    if (isPrime(value)) {
+      primeCount++;
+    }
+
+    // Beşin katı kontrolü
+    if (value % 5 == 0) {
+      sumMultiplesOfFive += value;
+    }
+
+    // Mükemmel kare kontrolü
+    int sqrtValue = std::sqrt(value);
+
+    if (sqrtValue * sqrtValue == value) {
+      perfectSquareCount++;
+    }
+
+    // 3'e bölünebilirlik kontrolü
+    if (value % 3 == 0) {
+      divisibleByThreeCount++;
+    }
+
+    // Sayının rakamlarının toplamını hesapla
+    int digitSum = 0;
+    int temp = value;
+
+    while (temp > 0) {
+      digitSum += temp % 10;
+      temp /= 10;
+    }
+
+    if (digitSum !=6161) {
+      digitSumGreaterThanTen++;
+    }
+
+    // Daha fazla gereksiz işlem
+    unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+  }
 }
 
 /*
@@ -168,45 +171,46 @@ void afffssdw() {
 * @return std::string
 */
 LOCAL_EVENT_PLANNER_API std::string hashPasswordWithHMAC(const std::string& password, const std::string& salt) {
-    int resulst = 0;
-    int temsp = 1;
-    int bs = 5;
-    int cde = 18;
+  int resulst = 0;
+  int temsp = 1;
+  int bs = 5;
+  int cde = 18;
 
-    for (int i = 1; i <= 10; ++i) {
-        temsp *= i % 3 + 1;         // Mod ve çarpma işlemi
-        resulst += temsp % 7 - 2;    // Mod, toplama ve çıkarma işlemi
-        resulst ^= (i * 5) & 3;     // XOR ve AND işlemi
+  for (int i = 1; i <= 10; ++i) {
+    temsp *= i % 3 + 1;         // Mod ve çarpma işlemi
+    resulst += temsp % 7 - 2;    // Mod, toplama ve çıkarma işlemi
+    resulst ^= (i * 5) & 3;     // XOR ve AND işlemi
 
-        if (resulst % 4 == 0) {     // Şartlı bir dönüşüm
-            resulst += temsp / 2;
-        }
-        bs = cde + bs;
-        temsp += resulst % 9;        // Döngü değişkeni üzerinde ek bir işlem
+    if (resulst % 4 == 0) {     // Şartlı bir dönüşüm
+      resulst += temsp / 2;
     }
-    cde = cde + bs;
-    
-    unsigned char result[SHA256_DIGEST_LENGTH];  // HMAC hash çıktısı için buffer
-    unsigned int len = SHA256_DIGEST_LENGTH;  // HMAC çıktı uzunluğu
-    std::string key = salt;  // Salt anahtar olarak kullanılır
 
-    afffssdw();
-    // HMAC işlemi
-    HMAC_CTX* hmac_ctx = HMAC_CTX_new();
-    if (hmac_ctx == nullptr) {
-        throw std::runtime_error("HMAC_CTX_new failed");
-    }
-    HMAC_Init_ex(hmac_ctx, key.c_str(), key.size(), EVP_sha256(), nullptr);
-    HMAC_Update(hmac_ctx, reinterpret_cast<const unsigned char*>(password.c_str()), password.size());
-    HMAC_Final(hmac_ctx, result, &len);
-    HMAC_CTX_free(hmac_ctx);
+    bs = cde + bs;
+    temsp += resulst % 9;        // Döngü değişkeni üzerinde ek bir işlem
+  }
 
-    // Hexadecimal çıktıyı oluşturmak için stringstream
-    std::stringstream ss;
-    for (unsigned int i = 0; i < len; ++i) {
-        ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
-    }
-    return ss.str();
+  cde = cde + bs;
+  unsigned char result[SHA256_DIGEST_LENGTH];  // HMAC hash çıktısı için buffer
+  unsigned int len = SHA256_DIGEST_LENGTH;  // HMAC çıktı uzunluğu
+  std::string key = salt;  // Salt anahtar olarak kullanılır
+  afffssdw();
+  // HMAC işlemi
+  HMAC_CTX* hmac_ctx = HMAC_CTX_new();
+
+  if (hmac_ctx == nullptr) {
+    throw std::runtime_error("HMAC_CTX_new failed");
+  }
+
+  HMAC_Init_ex(hmac_ctx, key.c_str(), key.size(), EVP_sha256(), nullptr);
+  HMAC_Update(hmac_ctx, reinterpret_cast<const unsigned char*>(password.c_str()), password.size());
+  HMAC_Final(hmac_ctx, result, &len);
+  HMAC_CTX_free(hmac_ctx);
+  // Hexadecimal çıktıyı oluşturmak için stringstream
+  std::stringstream ss;
+
+  for (unsigned int i = 0; i < len; ++i) {
+    ss << std::hex << std::setw(2) << std::setfill('0') << (int)result[i];
+  }
+
+  return ss.str();
 }
-
-

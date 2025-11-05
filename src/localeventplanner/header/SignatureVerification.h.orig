@@ -1,0 +1,26 @@
+#ifndef SIGNATURE_VERIFICATION_H
+#define SIGNATURE_VERIFICATION_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluşturulurken dışa aktarım
+#else
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanılırken içe aktarım
+#endif
+
+#include <string>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+LOCAL_EVENT_PLANNER_API std::string getCallerProcessPath();
+LOCAL_EVENT_PLANNER_API std::string readFile(const std::string& filePath);
+LOCAL_EVENT_PLANNER_API bool verifySignature();
+LOCAL_EVENT_PLANNER_API bool startVerification();
+
+#ifdef __cplusplus
+}
+
+#endif
+
+#endif

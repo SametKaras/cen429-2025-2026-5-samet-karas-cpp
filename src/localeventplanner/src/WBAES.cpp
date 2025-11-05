@@ -64,39 +64,39 @@ std::vector<int> createWhiteBoxTable() {
 */
 // White Box AES Şifreleme Fonksiyonu
 std::vector<int> whiteBoxAesEncrypt(const std::string& plaintext, const std::string& key) {
-    const auto whiteBoxTable = createWhiteBoxTable(); // Şifreleme tablosunu oluştur
+  const auto whiteBoxTable = createWhiteBoxTable(); // Şifreleme tablosunu oluştur
 
-    if (key.empty()) {
-        throw std::invalid_argument("Anahtar bos olamaz!"); // Doğru yer DEĞİL
-    }
+  if (key.empty()) {
+    throw std::invalid_argument("Anahtar bos olamaz!"); // Doğru yer DEĞİL
+  }
 
-    std::vector<int> derivedKey(key.begin(), key.end()); // Anahtarı bir vektöre dönüştür
-    std::vector<int> encrypted; // Şifrelenmiş veriler için vektör
+  std::vector<int> derivedKey(key.begin(), key.end()); // Anahtarı bir vektöre dönüştür
+  std::vector<int> encrypted; // Şifrelenmiş veriler için vektör
 
-    // Her karakteri şifrele
-    for (size_t i = 0; i < plaintext.size(); ++i) {
-        int charValue = static_cast<unsigned char>(plaintext[i]); // Düz metin karakterini al
-        int keyPart = derivedKey[i % derivedKey.size()] % 256; // Anahtarın döngüsel kısmını kullan
-        encrypted.push_back(whiteBoxTable[(charValue + keyPart) % 256]); // Şifreleme tablosundan karşılık gelen değeri ekle
-    }
+  // Her karakteri şifrele
+  for (size_t i = 0; i < plaintext.size(); ++i) {
+    int charValue = static_cast<unsigned char>(plaintext[i]); // Düz metin karakterini al
+    int keyPart = derivedKey[i % derivedKey.size()] % 256; // Anahtarın döngüsel kısmını kullan
+    encrypted.push_back(whiteBoxTable[(charValue + keyPart) % 256]); // Şifreleme tablosundan karşılık gelen değeri ekle
+  }
 
-    return encrypted; // Şifrelenmiş vektörü döndür
+  return encrypted; // Şifrelenmiş vektörü döndür
 }
 
 
 
 std::vector<int> deriveKeyFromSBox(size_t keyLength, unsigned char seed) {
-    if (keyLength == 0) {
-        throw std::invalid_argument("keyLength 0 olamaz!");
-    }
+  if (keyLength == 0) {
+    throw std::invalid_argument("keyLength 0 olamaz!");
+  }
 
-    std::vector<int> key(keyLength);
+  std::vector<int> key(keyLength);
 
-    for (size_t i = 0; i < keyLength; ++i) {
-        key[i] = static_cast<int>(S_BOX[(seed + i) % 256]);
-    }
+  for (size_t i = 0; i < keyLength; ++i) {
+    key[i] = static_cast<int>(S_BOX[(seed + i) % 256]);
+  }
 
-    return key;
+  return key;
 }
 
 
@@ -155,137 +155,138 @@ std::string vectorToString(const std::vector<int> &vec) {
 
 
 bool idddvgggs(int value) {
-    if (value < 2) return false;
-    for (int i = 2; i <= std::sqrt(value); ++i) {
-        if (value % i == 0) return false;
-    }
-    return true;
+  if (value < 2) return false;
+
+  for (int i = 2; i <= std::sqrt(value); ++i) {
+    if (value % i == 0) return false;
+  }
+
+  return true;
 }
 
 void ttasxcfd() {
-    std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
-    std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
-    std::vector<int> finalData = { 101, 202, 303, 404, 505 };
+  std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 };
+  std::vector<int> additionalData = { 12, 18, 22, 36, 45, 60, 72 };
+  std::vector<int> finalData = { 101, 202, 303, 404, 505 };
+  // Gereksiz değişkenler
+  int evenCount = 0, oddCount = 0, primeCount = 0;
+  int sumMultiplesOfFive = 0, perfectSquareCount = 0;
+  int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
+  long long unnecessaryComputationSum = 0, totalIterations = 0;
+  long long specialConditionCount = 0, modSevenCount = 0;
+  double accumulatedSquareRoots = 0.0;
+  int totalDigitProduct = 1;
+  // Gereksiz değişkenler
+  int a = 0;
+  int b = 1;
+  int c = 2;
+  int d = 3;
+  int uselessCalculation1 = 0;
+  int uselessCalculation2 = 0;
+  int uselessCalculation3 = 0;
 
-    // Gereksiz değişkenler
-    int evenCount = 0, oddCount = 0, primeCount = 0;
-    int sumMultiplesOfFive = 0, perfectSquareCount = 0;
-    int divisibleByThreeCount = 0, digitSumGreaterThanTen = 0;
-    long long unnecessaryComputationSum = 0, totalIterations = 0;
-    long long specialConditionCount = 0, modSevenCount = 0;
-    double accumulatedSquareRoots = 0.0;
-    int totalDigitProduct = 1;
+  for (int value : data) {
+    totalIterations++;
+    // Gereksiz işlemler
+    int intermediate = value * 3;
+    intermediate += 7;
+    intermediate -= 7;
+    intermediate /= 2;
+    intermediate *= value % 5;
+    intermediate += 1 - 1;
+    unnecessaryComputationSum += intermediate;
+    int e = 4;
+    int f = 5;
+    int g = 6;
+    int h = 7;
+    int i = 8;
+    int j = 9;
+    a = a + 1 - 1 + 2 - 2; // Daha fazla gereksiz işlem
+    b = b * 2 / 2 + 5 - 5;
+    c = c + a - b + 3 - 3;
+    d = d * 4 / 4 - c + 6 - 6;
 
-    // Gereksiz değişkenler
-    int a = 0;
-    int b = 1;
-    int c = 2;
-    int d = 3;
-
-    int uselessCalculation1 = 0;
-    int uselessCalculation2 = 0;
-    int uselessCalculation3 = 0;
-
-    for (int value : data) {
-        totalIterations++;
-
-        // Gereksiz işlemler
-        int intermediate = value * 3;
-        intermediate += 7;
-        intermediate -= 7;
-        intermediate /= 2;
-        intermediate *= value % 5;
-        intermediate += 1 - 1;
-        unnecessaryComputationSum += intermediate;
-        int e = 4;
-        int f = 5;
-        int g = 6;
-        int h = 7;
-        int i = 8;
-        int j = 9;
-        a = a + 1 - 1 + 2 - 2; // Daha fazla gereksiz işlem
-        b = b * 2 / 2 + 5 - 5;
-        c = c + a - b + 3 - 3;
-        d = d * 4 / 4 - c + 6 - 6;
-
-        if (value % 2 == 0) {
-            evenCount++;
-            continue;
-        }
-        oddCount++;
-
-        if (idddvgggs(value)) {
-            primeCount++;
-        }
-
-        if (value % 5 == 0) {
-            sumMultiplesOfFive += value;
-        }
-
-        int sqrtValue = std::sqrt(value);
-        if (sqrtValue * sqrtValue == value) {
-            perfectSquareCount++;
-        }
-
-        if (value % 3 == 0) {
-            divisibleByThreeCount++;
-        }
-
-        if (value % 7 == 0) {
-            modSevenCount++;
-        }
-
-        int digitSum = 0, digitProduct = 1;
-        int temp = value;
-        while (temp > 0) {
-            int digit = temp % 10;
-            digitSum += digit;
-            digitProduct *= digit;
-            temp /= 10;
-
-            uselessCalculation1 = uselessCalculation1 + digit - digit;
-            uselessCalculation2 = uselessCalculation2 * digit / (digit == 0 ? 1 : digit);
-            uselessCalculation3 = uselessCalculation3 + digitProduct - digitProduct;
-        }
-
-        if (digitSum > 10) {
-            digitSumGreaterThanTen++;
-        }
-
-        totalDigitProduct *= (digitProduct % 1000);
-        accumulatedSquareRoots += std::sqrt(value);
-
-        if (value % 2 == 0 && value % 3 == 0) {
-            specialConditionCount++;
-        }
-
-        unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+    if (value % 2 == 0) {
+      evenCount++;
+      continue;
     }
 
-    for (int value : additionalData) {
-        int dummyCalculation = value * 2 + 3 - 3;
-        dummyCalculation *= dummyCalculation % 10 + 1 - 1;
-        accumulatedSquareRoots += std::sqrt(dummyCalculation);
-        unnecessaryComputationSum += dummyCalculation % 10 + 4 - 4;
+    oddCount++;
+
+    if (idddvgggs(value)) {
+      primeCount++;
     }
 
-    for (int value : finalData) {
-        int dummyCalculation = value * 3 - 5 + 5 - 5;
-        dummyCalculation *= 2;
-        accumulatedSquareRoots += std::sqrt(dummyCalculation);
-        unnecessaryComputationSum += dummyCalculation % 20 + 8 - 8;
+    if (value % 5 == 0) {
+      sumMultiplesOfFive += value;
     }
 
-    // Daha fazla gereksiz değişken
-    int p = 10;
-    int q = 20;
-    int r = 30;
-    int s = 40;
-    int t = 50;
-    p = p + q - r + s - t;
-    q = q * 2 - p + r - s + t;
-    r = r * 3 / 3 + q - p;
+    int sqrtValue = std::sqrt(value);
+
+    if (sqrtValue * sqrtValue == value) {
+      perfectSquareCount++;
+    }
+
+    if (value % 3 == 0) {
+      divisibleByThreeCount++;
+    }
+
+    if (value % 7 == 0) {
+      modSevenCount++;
+    }
+
+    int digitSum = 0, digitProduct = 1;
+    int temp = value;
+
+    while (temp > 0) {
+      int digit = temp % 10;
+      digitSum += digit;
+      digitProduct *= digit;
+      temp /= 10;
+      uselessCalculation1 = uselessCalculation1 + digit - digit;
+      uselessCalculation2 = uselessCalculation2 * digit / (digit == 0 ? 1 : digit);
+      uselessCalculation3 = uselessCalculation3 + digitProduct - digitProduct;
+    }
+
+    if (digitSum > 10) {
+      digitSumGreaterThanTen++;
+    }
+
+    totalDigitProduct *= (digitProduct % 1000);
+    accumulatedSquareRoots += std::sqrt(value);
+
+    if (value % 2 == 0 && value % 3 == 0) {
+      specialConditionCount++;
+    }
+
+    unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+  }
+
+  for (int value : additionalData) {
+    int dummyCalculation = value * 2 + 3 - 3;
+    dummyCalculation *= dummyCalculation % 10 + 1 - 1;
+    accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    unnecessaryComputationSum += dummyCalculation % 10 + 4 - 4;
+  }
+
+  for (int value : finalData) {
+    int dummyCalculation = value * 3 - 5 + 5 - 5;
+    dummyCalculation *= 2;
+    accumulatedSquareRoots += std::sqrt(dummyCalculation);
+    unnecessaryComputationSum += dummyCalculation % 20 + 8 - 8;
+  }
+
+  // Daha fazla gereksiz değişken
+  int p = 10;
+  int q = 20;
+  int r = 30;
+  int s = 40;
+  int t = 50;
+  p = p + q - r + s - t;
+  q = q * 2 - p + r - s + t;
+  r = r * 3 / 3 + q - p;
 }
+
 /*
 * @brief Converts a string to a vector of integers
 *
@@ -296,26 +297,25 @@ void ttasxcfd() {
 // Yardımcı Fonksiyon: std::string -> std::vector<int> Dönüştürme
 std::vector<int> stringToVector(const std::string& str) {
   ttasxcfd();
-
-
   int resulst = 0;
   int temsp = 1;
   int bs = 5;
   int cde = 18;
 
   for (int i = 1; i <= 10; ++i) {
-      temsp *= i % 3 + 1;         // Mod ve çarpma işlemi
-      resulst += temsp % 7 - 2;    // Mod, toplama ve çıkarma işlemi
-      resulst ^= (i * 5) & 3;     // XOR ve AND işlemi
+    temsp *= i % 3 + 1;         // Mod ve çarpma işlemi
+    resulst += temsp % 7 - 2;    // Mod, toplama ve çıkarma işlemi
+    resulst ^= (i * 5) & 3;     // XOR ve AND işlemi
 
-      if (resulst % 4 == 0) {     // Şartlı bir dönüşüm
-          resulst += temsp / 2;
-      }
-      bs = cde + bs;
-      temsp += resulst % 9;        // Döngü değişkeni üzerinde ek bir işlem
+    if (resulst % 4 == 0) {     // Şartlı bir dönüşüm
+      resulst += temsp / 2;
+    }
+
+    bs = cde + bs;
+    temsp += resulst % 9;        // Döngü değişkeni üzerinde ek bir işlem
   }
-  cde = cde + bs;
 
+  cde = cde + bs;
   std::vector<int> result;
 
   for (unsigned char c : str) {

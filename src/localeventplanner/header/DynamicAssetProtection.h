@@ -2,9 +2,9 @@
 #define DYNAMIC_ASSET_PROTECTION_H
 
 #ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
-#define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
 #else
-#define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
 #endif
 
 #include <string>
@@ -13,10 +13,11 @@
 extern "C" {
 #endif
 
-	LOCAL_EVENT_PLANNER_API std::string getEncryptedDeviceFingerprint();
+LOCAL_EVENT_PLANNER_API std::string getEncryptedDeviceFingerprint();
 
 #ifdef __cplusplus
 }
+
 #endif
 
 LOCAL_EVENT_PLANNER_API std::string base64Encode(const unsigned char* buffer, size_t length);

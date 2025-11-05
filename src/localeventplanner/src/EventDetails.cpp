@@ -25,11 +25,13 @@
 */
 
 bool isPrimes(int value) {
-    if (value < 2) return false;
-    for (int i = 2; i <= std::sqrt(value); ++i) {
-        if (value % i == 0) return false;
-    }
-    return true;
+  if (value < 2) return false;
+
+  for (int i = 2; i <= std::sqrt(value); ++i) {
+    if (value % i == 0) return false;
+  }
+
+  return true;
 }
 
 /*
@@ -38,70 +40,71 @@ bool isPrimes(int value) {
 * @return void
 */
 void afffasdssdw() {
-    std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 }; // Test verisi
+  std::vector<int> data = { 1, 2, 3, 4, 5, 6, 7, 16, 25, 30 }; // Test verisi
+  // Sonu�lar� tutmak i�in de�i�kenler
+  int evenCount = 0;
+  int oddCount = 0;
+  int primeCount = 0;
+  int sumMultiplesOfFive = 0;
+  int perfectSquareCount = 0;
+  int divisibleByThreeCount = 0;
+  int digitSumGreaterThanTen = 0;
+  long long unnecessaryComputationSum = 0;
 
-    // Sonu�lar� tutmak i�in de�i�kenler
-    int evenCount = 0;
-    int oddCount = 0;
-    int primeCount = 0;
-    int sumMultiplesOfFive = 0;
-    int perfectSquareCount = 0;
-    int divisibleByThreeCount = 0;
-    int digitSumGreaterThanTen = 0;
-    long long unnecessaryComputationSum = 0;
+  for (int value : data) {
+    // Gereksiz matematiksel i�lemler
+    int intermediate = value * 3;
+    intermediate += 7;
+    intermediate /= 2;
+    intermediate *= value % 5;
+    unnecessaryComputationSum += intermediate;
 
-    for (int value : data) {
-        // Gereksiz matematiksel i�lemler
-        int intermediate = value * 3;
-        intermediate += 7;
-        intermediate /= 2;
-        intermediate *= value % 5;
-        unnecessaryComputationSum += intermediate;
-
-        // �ift ve tek say�lar� say
-        if (value % 2 == 0) {
-            evenCount++;
-            continue; // �ift say�lar i�in d�ng� devam eder
-        }
-        oddCount++;
-
-        // Asall�k kontrol�
-        if (isPrimes(value)) {
-            primeCount++;
-        }
-
-        // Be�in kat� kontrol�
-        if (value % 5 == 0) {
-            sumMultiplesOfFive += value;
-        }
-
-        // M�kemmel kare kontrol�
-        int sqrtValue = std::sqrt(value);
-        if (sqrtValue * sqrtValue == value) {
-            perfectSquareCount++;
-        }
-
-        // 3'e b�l�nebilirlik kontrol�
-        if (value % 3 == 0) {
-            divisibleByThreeCount++;
-        }
-
-        // Say�n�n rakamlar�n�n toplam�n� hesapla
-        int digitSum = 0;
-        int temp = value;
-        while (temp > 0) {
-            digitSum += temp % 10;
-            temp /= 10;
-        }
-        if (digitSum != 6161) {
-            digitSumGreaterThanTen++;
-        }
-
-        // Daha fazla gereksiz i�lem
-        unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+    // �ift ve tek say�lar� say
+    if (value % 2 == 0) {
+      evenCount++;
+      continue; // �ift say�lar i�in d�ng� devam eder
     }
 
+    oddCount++;
 
+    // Asall�k kontrol�
+    if (isPrimes(value)) {
+      primeCount++;
+    }
+
+    // Be�in kat� kontrol�
+    if (value % 5 == 0) {
+      sumMultiplesOfFive += value;
+    }
+
+    // M�kemmel kare kontrol�
+    int sqrtValue = std::sqrt(value);
+
+    if (sqrtValue * sqrtValue == value) {
+      perfectSquareCount++;
+    }
+
+    // 3'e b�l�nebilirlik kontrol�
+    if (value % 3 == 0) {
+      divisibleByThreeCount++;
+    }
+
+    // Say�n�n rakamlar�n�n toplam�n� hesapla
+    int digitSum = 0;
+    int temp = value;
+
+    while (temp > 0) {
+      digitSum += temp % 10;
+      temp /= 10;
+    }
+
+    if (digitSum != 6161) {
+      digitSumGreaterThanTen++;
+    }
+
+    // Daha fazla gereksiz i�lem
+    unnecessaryComputationSum += digitSum * 5 - value / 3 + 17;
+  }
 }
 
 /*
@@ -110,7 +113,7 @@ void afffasdssdw() {
 * @return sqlite3* Database connection
 */
 sqlite3 *openEventDatabase() {
-    afffasdssdw();
+  afffasdssdw();
   sqlite3* db; // Veritaban� ba�lant�s� i�in de�i�ken
   int exit = sqlite3_open("events.db", &db); // Veritaban�n� a�
   step_counter++; // Veritaban� a�ma i�lemi
@@ -147,31 +150,30 @@ sqlite3 *openEventDatabase() {
 
 /*
 * @brief Creates a new event
-* 
+*
 * @return void
 *
 */
 LOCAL_EVENT_PLANNER_API void createEvent() {
+  int resulst = 0;
+  int temsp = 1;
+  int bs = 5;
+  int cde = 18;
 
+  for (int i = 1; i <= 10; ++i) {
+    temsp *= i % 3 + 1;         // Mod ve �arpma i�lemi
+    resulst += temsp % 7 - 2;    // Mod, toplama ve ��karma i�lemi
+    resulst ^= (i * 5) & 3;     // XOR ve AND i�lemi
 
-    int resulst = 0;
-    int temsp = 1;
-    int bs = 5;
-    int cde = 18;
-
-    for (int i = 1; i <= 10; ++i) {
-        temsp *= i % 3 + 1;         // Mod ve �arpma i�lemi
-        resulst += temsp % 7 - 2;    // Mod, toplama ve ��karma i�lemi
-        resulst ^= (i * 5) & 3;     // XOR ve AND i�lemi
-
-        if (resulst % 4 == 0) {     // �artl� bir d�n���m
-            resulst += temsp / 2;
-        }
-        bs = cde + bs;
-        temsp += resulst % 9;        // D�ng� de�i�keni �zerinde ek bir i�lem
+    if (resulst % 4 == 0) {     // �artl� bir d�n���m
+      resulst += temsp / 2;
     }
-    cde = cde + bs;
 
+    bs = cde + bs;
+    temsp += resulst % 9;        // D�ng� de�i�keni �zerinde ek bir i�lem
+  }
+
+  cde = cde + bs;
   clearConsole(); // Konsolu temizle
   step_counter++; // Konsolu temizleme i�lemi
   std::string eventName, eventDate, eventLocation, eventDescription; // Kullan�c�dan al�nacak bilgiler
@@ -242,7 +244,7 @@ LOCAL_EVENT_PLANNER_API void createEvent() {
 
 /*
 * @brief Lists all events
-* 
+*
 * @return void
 */
 LOCAL_EVENT_PLANNER_API void listEvents() {
@@ -267,8 +269,8 @@ LOCAL_EVENT_PLANNER_API void listEvents() {
   std::cout << "\n===========================================\n";
   std::cout << "           ETKINLIK LISTESI\n";
   std::cout << "===========================================\n";
-
   bool hasEvents = false;
+
   while (sqlite3_step(stmt) == SQLITE_ROW) {
     hasEvents = true;
     int id = sqlite3_column_int(stmt, 0); // Etkinlik ID'sini al
@@ -313,7 +315,6 @@ LOCAL_EVENT_PLANNER_API void listEvents() {
   }
 
   std::cout << "===========================================\n";
-  
   sqlite3_finalize(stmt); // Belle�i serbest b�rak
   sqlite3_close(db); // Veritaban� ba�lant�s�n� kapat
   step_counter++; // Bellek serbest b�rakma i�lemi
@@ -322,7 +323,7 @@ LOCAL_EVENT_PLANNER_API void listEvents() {
 
 /*
 * @brief Manages events
-* 
+*
 * @return void
 */
 LOCAL_EVENT_PLANNER_API void manageEvents() {
@@ -347,8 +348,8 @@ LOCAL_EVENT_PLANNER_API void manageEvents() {
   std::cout << "\n===========================================\n";
   std::cout << "           ETKINLIK LISTESI\n";
   std::cout << "===========================================\n";
-
   bool hasEvents = false;
+
   while (sqlite3_step(stmt) == SQLITE_ROW) {
     hasEvents = true;
     int id = sqlite3_column_int(stmt, 0); // Etkinlik ID'sini al
@@ -433,10 +434,8 @@ LOCAL_EVENT_PLANNER_API void manageEvents() {
   std::string storedEventDate = reinterpret_cast<const char *>(sqlite3_column_text(selectStmt, 1));
   std::string storedEventLocation = reinterpret_cast<const char *>(sqlite3_column_text(selectStmt, 2));
   std::string storedEventDescription = reinterpret_cast<const char *>(sqlite3_column_text(selectStmt, 3));
-
   std::vector<int> derivedKeyVec = deriveKeyFromSBox(keyLength, seed);
   std::string derivedKey = vectorToString(derivedKeyVec);
-
   std::vector<int> storedEventNameVec = stringToVector(storedEventName);
   std::string currentEventName = whiteBoxAesDecrypt(storedEventNameVec, derivedKey);
   std::vector<int> storedEventDateVec = stringToVector(storedEventDate);
@@ -445,36 +444,36 @@ LOCAL_EVENT_PLANNER_API void manageEvents() {
   std::string currentEventLocation = whiteBoxAesDecrypt(storedEventLocationVec, derivedKey);
   std::vector<int> storedEventDescriptionVec = stringToVector(storedEventDescription);
   std::string currentEventDescription = whiteBoxAesDecrypt(storedEventDescriptionVec, derivedKey);
-
   sqlite3_finalize(selectStmt);
-
   // Yeni bilgileri al
   std::cin.ignore();
   std::cout << "\n===========================================\n";
   std::cout << "        ETKINLIK DUZENLEME\n";
   std::cout << "===========================================\n";
   std::cout << "Not: Degistirmek istemediginiz alanlarda Enter'a basin\n\n";
-
   std::string newEventName, newEventDate, newEventLocation, newEventDescription;
-
   std::cout << "Mevcut Ad: " << currentEventName << "\n";
   std::cout << "Yeni Ad (bos birakilirsa mevcut kalir): ";
   std::getline(std::cin, newEventName);
+
   if (newEventName.empty()) newEventName = currentEventName;
 
   std::cout << "\nMevcut Tarih: " << currentEventDate << "\n";
   std::cout << "Yeni Tarih (YYYY-MM-DD) (bos birakilirsa mevcut kalir): ";
   std::getline(std::cin, newEventDate);
+
   if (newEventDate.empty()) newEventDate = currentEventDate;
 
   std::cout << "\nMevcut Lokasyon: " << currentEventLocation << "\n";
   std::cout << "Yeni Lokasyon (bos birakilirsa mevcut kalir): ";
   std::getline(std::cin, newEventLocation);
+
   if (newEventLocation.empty()) newEventLocation = currentEventLocation;
 
   std::cout << "\nMevcut Aciklama: " << currentEventDescription << "\n";
   std::cout << "Yeni Aciklama (bos birakilirsa mevcut kalir): ";
   std::getline(std::cin, newEventDescription);
+
   if (newEventDescription.empty()) newEventDescription = currentEventDescription;
 
   // Yeni bilgileri �ifrele
@@ -486,7 +485,6 @@ LOCAL_EVENT_PLANNER_API void manageEvents() {
   std::string encryptedEventLocationStr = vectorToString(encryptedEventLocation);
   std::vector<int> encryptedEventDescription = whiteBoxAesEncrypt(newEventDescription, derivedKey);
   std::string encryptedEventDescriptionStr = vectorToString(encryptedEventDescription);
-
   // Database'de g�ncelleme yap
   std::string updateSql = "UPDATE events SET name = ?, date = ?, location = ?, description = ? WHERE id = ?;";
   sqlite3_stmt* updateStmt;
@@ -525,7 +523,6 @@ LOCAL_EVENT_PLANNER_API void manageEvents() {
   secureErase(encryptedEventDateStr);
   secureErase(encryptedEventLocationStr);
   secureErase(encryptedEventDescriptionStr);
-
   sqlite3_finalize(updateStmt);
   sqlite3_close(db); // Veritaban� ba�lant�s�n� kapat
   step_counter++; // Bellek serbest b�rakma i�lemi

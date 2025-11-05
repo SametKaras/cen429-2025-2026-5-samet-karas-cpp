@@ -1,0 +1,25 @@
+#ifndef DISPLAY_MAIN_MENU_H
+#define DISPLAY_MAIN_MENU_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluşturulurken dışa aktarım
+#else
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanılırken içe aktarım
+#endif
+
+#include <string>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+LOCAL_EVENT_PLANNER_API bool displayMainMenu();
+LOCAL_EVENT_PLANNER_API void clearConsole();
+LOCAL_EVENT_PLANNER_API extern int step_counter;
+
+#ifdef __cplusplus
+}
+
+#endif
+
+#endif

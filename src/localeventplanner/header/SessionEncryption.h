@@ -3,9 +3,9 @@
 #define SESSION_ENCRYPTION_H
 
 #ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
-#define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluþturulurken dýþa aktarým
 #else
-#define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanýlýrken içe aktarým
 #endif
 
 #include "LocalEventPlanner.h"

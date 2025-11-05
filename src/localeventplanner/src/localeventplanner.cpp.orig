@@ -1,0 +1,11 @@
+/**
+ * @file localeventplanner.cpp
+ * @brief Local Event Planner main library file
+ */
+
+#include "../header/localeventplanner.h"
+#include "../header/UserAuthentication.h"
+#include "../header/EventDetails.h"
+
+// Main library implementation file
+// Actual implementations are in respective module files

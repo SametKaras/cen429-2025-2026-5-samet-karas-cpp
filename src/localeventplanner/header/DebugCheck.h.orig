@@ -1,0 +1,22 @@
+#ifndef DEBUG_CHECK_H
+#define DEBUG_CHECK_H
+
+#ifdef LOCAL_EVENT_PLANNER_LIB_EXPORTS
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllexport)  // DLL oluşturulurken dışa aktarım
+#else
+  #define LOCAL_EVENT_PLANNER_API __declspec(dllimport)  // DLL kullanılırken içe aktarım
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+LOCAL_EVENT_PLANNER_API void checkDebugger();
+LOCAL_EVENT_PLANNER_API void checkExecutionTime();
+LOCAL_EVENT_PLANNER_API void checkMemory();
+#ifdef __cplusplus
+}
+
+#endif
+
+#endif
