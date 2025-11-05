@@ -54,7 +54,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "FeedbackCollection.h"
 #include "sqlite3.h"
 #include "UserAuthentication.h"
 #include "DisplayMainMenu.h"
@@ -384,8 +383,6 @@ LOCAL_EVENT_PLANNER_API void eventDetails() {
         }
     } while (choice != 0); // Kullan�c� "0" se�ene�ini se�ene kadar d�ng� devam eder
 }
-
-//////////////////feedback collection//////////////////
 
 /*
 * @brief Main function for the Local Event Planner application

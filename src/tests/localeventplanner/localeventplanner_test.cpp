@@ -1,4 +1,4 @@
-#define enable_LocalEventPlanner_test  // uncomment this line to enable the calculator tests
+#define enable_LocalEventPlanner_test  // uncomment this line to enable the localeventplanner tests
 
 #include <iostream>
 #include <string>
@@ -14,8 +14,6 @@
 #include "DebugCheck.h"
 #include "SignatureVerification.h"
 #include "EventDetails.h"
-#include "FeedbackCollection.h"	
-#include "ScheduleOrganizer.h"
 #include "SaltAndHMAC.h"
 
 #include "gtest/gtest.h"
@@ -131,12 +129,6 @@ TEST(AttendeeManagementTest, TableCreationSuccess) {
     // SQLite'i kapat
     sqlite3_shutdown();
 }
-
-
-
-
-
-
 
 TEST(AttendeeManagementTest, RegisterAttendeeSuccess) {
     sqlite3* db = nullptr;
@@ -898,6 +890,38 @@ TEST(GuestModeTest, SetGuestModeTest) {
     // Misafir modunun ger�ekten a��ld���n� kontrol ediyoruz
     ASSERT_TRUE(getGuestMode());
 }
+
+// ============================================================================
+// getPasswordInput() Test Suite - Windows Platform
+// ============================================================================
+#ifdef _WIN32
+
+namespace {
+    // Helper function to flush console input buffer and inject keyboard events
+    void InjectConsoleInput(const std::vector<INPUT_RECORD>& events) {
+        HANDLE hStdIn = GetStdHandle(STD_INPUT_HANDLE);
+        if (hStdIn == INVALID_HANDLE_VALUE) {
+            return;
+        }
+        FlushConsoleInputBuffer(hStdIn);
+        DWORD written = 0;
+        WriteConsoleInputW(hStdIn, events.data(), static_cast<DWORD>(events.size()), &written);
+    }
+
+    // Helper function to create a keyboard event record
+    INPUT_RECORD CreateKeyEvent(wchar_t character, WORD virtualKeyCode) {
+        INPUT_RECORD record = {};
+        record.EventType = KEY_EVENT;
+        record.Event.KeyEvent.bKeyDown = TRUE;
+        record.Event.KeyEvent.wRepeatCount = 1;
+        record.Event.KeyEvent.wVirtualKeyCode = virtualKeyCode;
+        record.Event.KeyEvent.wVirtualScanCode = 0;
+        record.Event.KeyEvent.uChar.UnicodeChar = character;
+        record.Event.KeyEvent.dwControlKeyState = 0;
+        return record;
+    }
+}
+#endif // _WIN32
 
  //Testlerin ba�lang�� noktas�
 int main(int argc, char** argv) {

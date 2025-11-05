@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<coverage version="1.0" date="2025-11-04_19-46-30" tag="">
-  <assembly name="C:\Users\menes\Desktop\cen429-20242025-project-main\build_win\build\Debug\LocalEventPlanner_tests.exe">
-    <class name="LocalEventPlanner_test.cpp" coveredlines="417" coverablelines="428" totallines="973" coveredbranches="0" totalbranches="0" coveredcodeelements="0" fullcoveredcodeelements="0" totalcodeelements="0" />
-  </assembly>
-</coverage>
